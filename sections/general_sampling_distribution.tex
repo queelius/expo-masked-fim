@@ -1,0 +1,378 @@
+\documentclass[ ../main.tex]{subfiles}
+\providecommand{\mainx}{..}
+\begin{document}
+\chapter{Sampling distribution of parameter estimators}
+\label{sec:general_estimating_parameters:mle}
+By \cref{def:sysparametric,def:true_param}, the random system lifetime $\sv$ has a probability density function that is a member of the $\pfam$-family with a true parameter index $\tparam\sysparamvec$. Let some estimator of $\tparam\sysparamvec$ be a function of the information in a random sample of $n$ masked system failure times. The estimator is a function of a random sample, thus it has \emph{sampling distribution}, a random vector denoted by $\sampdpt$. That is,
+\begin{equation}
+\sampdpt = \operatorname{\vec{\psi}}\left(\mfs\right)\,.
+\end{equation}
+A particular realization of the estimator is denoted by $\pointest$, i.e., $\sampdpt = \pointest$. All else being equal, we prefer estimators which vary only \emph{slightly} from sample to sample with a \emph{central tendency} around $\tparam\sysparamvec$. That is, we prefer unbiased estimators in which each component has small variance.
+
+The sampling distribution of $\pointest$ has a variance-covariance given by $\var\left(\sampdpt\right)$ (see \cref{eq:covariance_matrix_op}) and a bias given by the following definition.
+\begin{definition}
+The bias of a point estimator $\sampdpt = \pointest$ is given by
+\begin{equation}
+    \bias\left(\sampdpt\right) = \expectation\left[\sampdpt\right] - \tparam\sysparamvec\,.
+\end{equation}
+\end{definition}
+We are often faced with a trade-off between bias and variance. A measure of estimator accuracy that is a function of both the bias and the variance is the mean squared error as given by the following definition.
+\begin{definition}[MSE]
+\label{def:mse}
+The mean squared error of the sampling distribution of $\pointest$ is given by
+\begin{equation}
+\label{eq:mse}
+\mse \left( \sampdpt \right) = \expectation \left [
+        \left (
+            \sampdpt - \tparam\sysparamvec
+        \right )^\intercal
+        \left (
+            \sampdpt - \tparam\sysparamvec
+        \right )
+    \right ]\\
+\end{equation}
+\end{definition}
+An equivalent way to compute the mean squared error is given by the following postulate.
+\begin{postulate}
+The mean squared error of the sampling distribution of $\pointest$ as given by \cref{def:mse} is equivalent to
+\begin{equation}
+\label{eq:mse_bias_var}
+\mse \left( \sampdpt \right) = \trace\left(\var \left ( \sampdpt \right )\right) +
+    \bias^2 \bigl(\sampdpt \bigr)\,,
+\end{equation}
+where $\trace\left(\matrx{A}\right)$ computes the sum of the diagonal elements of square matrix $\matrx{A}$.
+\end{postulate}
+
+\emph{Fisher information} reduces the uncertainty about $\tparam\sysparamvec$. The \emph{minimum-variance unbiased estimator} (UMVUE) has a lower-bound given by the inverse of the \emph{Fisher information matrix}, denoted the \emph{Cram\'{e}r-Rao lower-bound}. The minimum variance obtainable from a random sample of $n$ masked system failure times drawn from $\mfs$ is given by
+\begin{equation}
+\label{eq:crlb}
+    \matrx{\rm{CRLB}_{n}} = \frac{1}{n} \infomatrx^{-1}\left(\tparam\sysparamvec \right)\,.
+\end{equation}
+By \cref{eq:mse_bias_var}, if $\pointest$ is an unbiased estimator of $\tparam\sysparamvec$, then the mean squared error is given by
+\begin{equation}
+\label{eq:mse_unbiased}
+\mse \left( \sampdpt \right) = \trace \left( \var\left(\sampdpt\right) \right)\,.
+\end{equation}
+
+By \cref{eq:mse_unbiased,eq:crlb}, the mean squared error of any unbiased point estimator that is only a function of $\mfs$ has a lower-bound given by the trace of $\matrx{\rm{CRLB}_{n}}$,
+\begin{equation}
+\label{eq:mse_lower_bound_total}
+\mse\left(\rv{Y}\right) \geq \trace\left(\matrx{\rm{CRLB}_{n}}\right)\,.
+\end{equation}
+
+\section{Maximum likelihood estimator given $w$ candidates}
+Suppose the only information about the true parameter index $\tparam\sysparamvec$ is given by a sample of $n$ masked system failure times in which only those system failures with $w$ candidates are observed. The maximum likelihood estimator based on this conditional sample is given in the following definition.
+\begin{definition}
+\label{def:general_mle}
+A parameter index $\mle$ that maximizes the \emph{likelihood} of observing the given $\mfsw = \mfso$ (see \cref{def:msfs}) is a maximum likelihood estimator of $\tparam\sysparamvec$. That is,
+\begin{equation}
+\label{eq:general_mle}
+\mle = \argmax_{\sysparamvec \in \vec\Omega} \likelihood(\sysparamvec \given w, \mfso)\,,
+\end{equation}
+where $\vec\Omega$ is the feasible parameter space of the parametric family.
+\end{definition}
+As further justification of \cref{asm:cand_prob}, the maximum likelihood estimator maximizes the likelihood of generating the given $\mfso$ such that for each system failure time, a component in the corresponding candidate set is the cause.
+
+The accuracy of the maximum likelihood estimator is a function of how indicative candidate sets are. For instance, we assume that the candidates are generated from the joint probability density of $\sv$ and $\rvcand$. If this is not a very accurate model (e.g., the inspector who constructed the candidate sets in the sample preferred to check a subset of the components for failure, and tended to neglect the others), the maximum likelihood estimator will be inconsistent since the model is not consistent with reality. Rather, the maximum likelihood estimator will generate a maximum likelihood estimate that will make the provided sample the most likely to be generated by the assumed model, i.e., the component lifetimes will not be accurately modeled since they must be modeled in such a way as to make the ``biased'' sample more likely.
+
+The logarithm is a monotonically increasing function, thus the parameter value $\mle$ that maximizes $\likelihood$ also maximizes the log-likelihood $\ell$ (see \cref{def:general_log_like}), i.e.,
+\begin{equation}
+\label{eq:general_mle}
+\mle = \argmax_{\sysparamvec \in \vec\Omega} \ell(\sysparamvec \given w, \mfso)\,.
+\end{equation}
+
+According to Bickel~\cite{bickel}, if the parameter support $\vec\Omega$ of the parametric family is open, the log-likelihood $\ell$ is differentiable with respect to $\sysparamvec$, and $\mle$ exists, then $\mle$ must be a stationary point of $\ell$ as given by
+\begin{equation}
+\label{eq:score_zero}
+\score\left(\mle \given w, \mfso\right) = \vec{0}\,,
+\end{equation}
+where $\score$ is the score function given by \cref{eq:score}. In cases where there are no closed-form solutions to \cref{eq:score_zero}, iterative methods may be used as described in \cref{appendix:numerical_solution}.
+
+An estimator of $\tparam\sysparamvec$ given a sample $\mfsw = \mfso$ is the maximum likelihood estimator $\mle$ described in \cref{def:general_mle}. Since $\mle$ is a function of the random sample $\mfsw$, it has a \emph{sampling distribution}.
+\begin{definition}
+The \emph{sampling distribution} of $\mle$ is a random vector denoted by $\sampd \in \mathrm{R}^{m \cdot q}$.
+\end{definition}
+
+\sloppy
+The generative model for the maximum likelihood estimator, $\genSampleMLE(w \given \cdot\;)$, is described by \cref{alg:samp_d_gen_model}. This generative model depends on \genSampleFn, the generative model for the \emph{masked system failure time} as described by \cref{alg:Fn_generator}. Note that in \cref{alg:samp_d_gen_model}, \cref{alg:samp_d_gen_model_argmax} may be approximated with \findmle, a function that numerically solves the stationary points of the maximum likelihood equations as described by \cref{alg:mle_search}.
+
+\fussy
+\begin{algorithm}[H]
+\DontPrintSemicolon
+\KwResult{a realization of a maximum likelihood estimate from the sampling distribution of $\mle$.}
+\KwIn{\\
+    $\qquad \tparam\sysparamvec$, the true parameter index.\\
+    $\qquad w$, the cardinality of the candidate set.\\
+    $\qquad n$, the number of masked system failure times.
+}
+\KwOut{\\
+    $\qquad \mle$, a realization of $\sampd$.
+}
+\BlankLine
+\SetKwProg{func}{Model}{}{}
+\func{$\genSampleMLE${$\left(n, w, \tparam\sysparamvec\right)$}}{
+    $\mfso \gets \emptyset$\;
+    \For{$i \gets 1$ \KwTo $n$}{
+        $\mf \gets \genSampleFn\left(w, \tparam\sysparamvec\right)$\;
+        $\mfso \gets \mfso \cup \{ \mf \}$\;
+    }
+    $\mle \gets \argmax_{\sysparamvec \in \Omega} \ell\left(\sysparamvec \given w, \mfso\right)$\;\label{alg:samp_d_gen_model_argmax}
+    \KwRet{$\mle$}
+}
+\caption{Generative model of the maximum likelihood estimator conditioned on $w$ candidates}
+\label{alg:samp_d_gen_model}
+\end{algorithm}
+
+The asymptotic sampling distribution of $\mle$ is a consistent estimator of $\tparam\sysparamvec$.
+\begin{postulate}
+\label{def:consistent}
+    As $n \to \infty$, the sampling distribution of $\mle$ converges in probability to $\tparam{\sysparamvec}$, written
+    \begin{equation}
+    \label{eq:consistent}
+        \sampd \xrightarrow{P} \tparam{\sysparamvec}\,,
+    \end{equation}
+    since
+    \begin{equation}
+    \lim_{n \to \infty} \prob\left[\mse\left(\sampd\right) < \epsilon\right] = 1
+    \end{equation}
+    for every $\epsilon > 0$.
+\end{postulate}
+
+By \cref{eq:consistent,eq:covariance_matrix_op}, the variance-covariance of the asymptotic sampling distribution of $\mle$ is given by
+\begin{equation}
+\label{def:asym_covariance_matrix}
+    \var\!\left[\sampd\right] = \expectation
+    \left[
+        \left(\sampd - \tparam\sysparamvec \right)
+        \left(\sampd - \tparam\sysparamvec \right)^\intercal
+    \right]\,.
+\end{equation}
+
+\begin{postulate}
+The variance-covariance of the asymptotic sampling distribution of $\mle$ obtains the \emph{Cram\'{e}r-Rao lower-bound} for point estimators that are strictly a function of $n$ masked system failure times in which candidate sets are of cardinality $w$. We denote this variance-covariance by
+\begin{equation}
+    \cov\!\left(\tparam\sysparamvec \given w\right) \equiv \frac{1}{n} \infomatrx^{-1}\!\left(\tparam\sysparamvec\given w\right)\,.
+\end{equation}
+\end{postulate}
+
+The asymptotic sampling distribution of $\mle$ is normally distributed.
+\begin{postulate}
+\label{def:converge_in_dist}
+    As $n \to \infty$, the sampling distribution of $\mle$ converges in distribution to a multivariate normal distribution with a mean $\tparam\sysparamvec$ and a variance-covariance $\cov(\tparam\sysparamvec \given w)$, written
+    \begin{equation}
+    \label{eq:converge_in_dist}
+        \sampd \xrightarrow{d} \mvn\!
+            \left(
+                \tparam\sysparamvec, \cov\!\left(\tparam\sysparamvec \given w\right)
+            \right)\,.
+    \end{equation}
+\end{postulate}
+The maximum likelihood estimator $\mle$ is an asymptotically \emph{efficient} estimator since it obtains the Cram\'{e}r-Rao lower-bound as given by \cref{eq:inverse_info}. Thus, for a sufficiently large sample of masked system failure times, the sampling distribution of $\mle$ varies only \emph{slightly} from sample to sample with a \emph{central tendency} around $\tparam\sysparamvec$. 
+
+By \cref{eq:mse_unbiased,eq:crlb,eq:consistent,eq:inverse_info}, the asymptotic sampling distribution of $\mle$ has the minimum mean squared error of any unbiased estimator,
+\begin{equation}
+\label{eq:mse_mle_trace}
+\mse \left( \sampd \right) = \frac{1}{n} \trace \left ( \infomatrx^{-1} \bigl(\tparam\sysparamvec \given w\bigr) \right) = \trace\left(\matrx{\rm{CRLB}_{n\,w}}\right)\,.
+\end{equation}
+
+\begin{remark}
+Look up Slverty's theorem to justify the next paragraph.
+\end{remark}
+\sloppy
+To estimate the sampling distribution of $\mle$, we may assume the sample size is sufficiently large such that the asymptotic distribution becomes a reasonable approximation. Since $\sampd \xrightarrow{P} \tparam\sysparamvec$ and $\sampd \xrightarrow{d} \mvn\left(\tparam\sysparamvec, \cov\left(\tparam\sysparamvec \given w\right)\right)$, it follows that
+\begin{equation}
+\sampd \xrightarrow{d} \mvn\left(\mle, \cov\left(\mle \given w\right)\right)\,.
+\end{equation}
+
+\fussy
+Thus, we can approximate $\tparam\sysparamvec$ and $\infomatrx\left(\tparam\sysparamvec \given w\right)$ and obtain the following result. The proof of this theorem is beyond the scope of this paper.
+\begin{theorem}
+\label{thm:approx_normal}
+For sufficiently large sample size $n$, the sampling distribution of $\mle$ is approximately normally distributed with a mean $\mle$ and a variance-covariance matrix $\cov\left(\mle \given w\right)$, written
+\begin{equation}
+\label{eq:asymptotic_normality}
+    \sampd \stackrel{\text{approx.}}{\sim} \mvn\left(\mle, \cov\left(\mle \given w\right)\right)\,.
+\end{equation}
+\end{theorem}
+
+\section{Maximum likelihood estimator}
+\label{sec:full_samp_dist}
+Consider an i.i.d. sample of $r$ asymptotically unbiased estimates of $\tparam\sysparamvec$ denoted by $\bar{\vec\theta}^{(i)}$ which have sampling distributions with variance-covariances given respectively by $\matrx{\Sigma}^{(i)}$ for $i=1,\,\ldots\,,r$. The maximum likelihood estimator of $\tparam\sysparamvec$ given these point estimates is the inverse-variance weighted mean and is given by
+\begin{equation}
+    \hat{\vec\theta} = \left( \sum_{i=1}^{r} \matrx{A_i} \right)^{-1}
+    \left( \sum_{i=1}^{r} \matrx{A_i} \bar{\vec\theta}^{(i)} \right)\,,
+\end{equation}
+where $\matrx{A_i}$ is the inverse of $\matrx{\Sigma}^{(i)}$.
+
+Suppose that the estimates are given by the maximum likelihood estimator described in \cref{}. The maximum likelihood estimator given these estimates has a sampling distribution given by the following definition.
+\begin{definition}
+Let $\mfs$ be a random sample of $n$ masked system failure times in which $n_i$ realizations have $w_i$ candidates for $i = 1,\,\ldots\,,r$. The maximum likelihood estimator given by
+\begin{equation}
+    \mleu = \hat{\vec\theta} = \left( \sum_{i=1}^{r} \matrx{A_i} \right)^{-1}
+    \left( \sum_{i=1}^{r} \matrx{A_i} \bar{\vec\theta}^{(i)} \right)\,,
+\end{equation}
+has a sampling distribution given by
+\begin{equation}
+    \sampdu = \left( \sum_{i=1}^{r} \matrx{A_i} \right)^{-1}
+    \left( \sum_{i=1}^{r} \matrx{A_i} \sampdir{n_i}{w_i}{i} \right)\,,
+\end{equation}
+where $\sampdir{n_i}{w_i}{i}$ is the sampling distribution of $\mleir{n_i}{w_i}$ for $i=1,\ldots,r$ and
+\begin{equation}
+\label{eq:mat_A_info}
+    \matrx{A_i} = n_i \infomatrx\left(\tparam\sysparamvec \given w_i \right)
+\end{equation}
+is the information matrix for $\tparam\sysparamvec$ with respect to $\mfswn{n_i}{w_i}$.
+\end{definition}
+
+
+\begin{theorem}
+The random vector $\sampdu$ is an asymptotically unbiased estimator of $\tparam\sysparamvec$.
+\end{theorem}
+\begin{proof}
+The expectation of $\sampdu$ is given by
+\begin{align}
+    \expectation\left[\sampdu\right]
+    &= \expectation\left[\left( \sum_{i=1}^{r} \matrx{A_i} \right)^{-1} \left( \sum_{i=1}^{r} \matrx{A_i} \sampdir{n_i}{w_i}{i} \right)\right]\\
+    &=  \left( \sum_{i=1}^{r} \matrx{A_i} \right)^{-1}
+            \left( \sum_{i=1}^{r} \matrx{A_i}
+            \expectation\left[\sampdir{n_i}{w_i}{i}\right]\right)\\    
+    &= \left( \sum_{i=1}^{r} \matrx{A_i} \right)^{-1} \left(\sum_{i=1}^{r} \matrx{A_i} \right) \tparam\sysparamvec\\
+    &= \tparam\sysparamvec\,.
+\end{align}
+\end{proof}
+
+\begin{theorem}
+\label{thm:var_sampdu}
+The variance-covariance of $\sampdu$ is given by
+\begin{equation}
+\label{eq:var_samp_d_full}
+    \var\left[\sampdu\right] = \left( \sum_{i=1}^{r} n_i \infomatrx\left(\tparam\sysparamvec \given w_i \right) \right)^{-1}\,.
+\end{equation}
+\end{theorem}
+\begin{proof}
+Let
+\begin{equation}
+\label{eq:proof_of_var_samp_d_full_mat_B}
+    \matrx{B} = \left( \sum_{i=1}^{r} \matrx{A_i} \right)^{-1}\,.
+\end{equation}
+The variance-covariance of $\sampdu$ is given by
+\begin{align}
+    \var\left[\sampdu\right]
+        &= \var\left[\matrx{B} \left( \sum_{i=1}^{r} \matrx{A_i} \sampdir{n_i}{w_i}{i} \right)\right]\\
+        &= \matrx{B} \var\left[\sum_{i=1}^{r} \matrx{A_i} \sampdir{n_i}{w_i}{i} \right] \matrx{B^\intercal}\\
+        &= \matrx{B} \left(\sum_{i=1}^{r} \var\left[\matrx{A_i} \sampdir{n_i}{w_i}{i} \right]\right) \matrx{B^\intercal}\\
+        &= \matrx{B} \left(\sum_{i=1}^{r} \matrx{A_i} \var\left[ \sampdir{n_i}{w_i}{i} \right] \matrx{A_i^\intercal} \right) \matrx{B^\intercal}\,.
+\end{align}
+By \cref{eq:inverse_info}, the variance-covariance of $\sampdir{n_i}{w_i}{i}$ is given by
+\begin{equation}
+    \frac{1}{n_i} \infomatrx^{-1}\left(\tparam\sysparamvec \given w_i \right)\,.
+\end{equation}
+By \cref{eq:mat_A_info}, this is equivalent to $\matrx{A_i^{-1}}$. Performing this substitution results in
+\begin{align}
+    \var\left[\sampdu\right]
+        &= \matrx{B} \left(\sum_{i=1}^{r} \matrx{A_i} \matrx{A_i^{-1}} \matrx{A_i^\intercal} \right) \matrx{B^\intercal}\\
+        &= \matrx{B} \left(\sum_{i=1}^{r} \matrx{A_i^\intercal}\right) \matrx{B^\intercal}\,.
+\end{align}
+The summation is equivalent to $\matrx{\left({B^\intercal}\right)^{-1}}$. Performing this substitution results in
+\begin{align}
+    \var\left[\sampdu\right]
+        &= \matrx{B} \matrx{\left(B^\intercal\right)^{-1}} \matrx{B^\intercal}\\
+        &= \matrx{B}
+\end{align}
+By \cref{eq:proof_of_var_samp_d_full_mat_B}, $\matrx{B}$ is given by
+\begin{equation}
+    \left( \sum_{i=1}^{r} \matrx{A_i} \right)^{-1}
+\end{equation}
+and by \cref{eq:mat_A_info}, $\matrx{A_i}$ is given by
+\begin{equation}
+    n_i \infomatrx\left(\tparam\sysparamvec \given w_i \right)\,.
+\end{equation}
+Performing these substitution results in
+\begin{equation}
+    \var\left[\sampdu\right] = \left( \sum_{i=1}^{r} n_i \infomatrx\left(\tparam\sysparamvec \given w_i \right) \right)^{-1}\,.
+\end{equation}
+\end{proof}
+
+The weighted estimator asymptotically achieves the Cram\'{e}r-Rao lower-bound as given by \cref{eq:crlb} thus it is the asymptotic UMVUE estimator of $\tparam\sysparamvec$ given a random sample of masked system failure times in which $n_i$ realizations have $w_i$ candidates for $i=1,\ldots,r$.
+
+A linear combination of multivariate normal distributions is a multivariate normal distribution, thus the asymptotic sampling distribution of $\mleu$ is normally distributed.
+\begin{postulate}
+\label{def:converge_in_dist_full}
+As $n \to \infty$, the sampling distribution of $\mleu$ converges in distribution to a multivariate normal with a mean $\tparam\sysparamvec$ and a variance-covariance given by \cref{eq:var_samp_d_full}, written
+\begin{equation}
+\label{eq:converge_in_dist_weighted}
+    \sampdu \xrightarrow{d} \mvn\left(\tparam\sysparamvec, \left(\sum_{i=1}^{r} n_i \infomatrx\left(\tparam\sysparamvec \given w_i \right)\right)^{-1}\right)\,.
+\end{equation}
+\end{postulate}
+
+The generative model for $\sampdu$ is given by \cref{alg:samp_du_gen_model}.
+\begin{algorithm}
+    \DontPrintSemicolon
+    \KwIn{\\
+        $\qquad \tparam\sysparam$, the true parameter value of the series system.
+    }
+    \KwOut{\\
+        $\qquad \mleu$, a realization of $\sampdu$.
+    }
+    \BlankLine
+    \SetKwProg{func}{Model}{}{}
+    \func{$\genSampleMLE${$(\tparam\sysparam)$}}{
+        draw candidate cardinality $w \sim \pmf_{\rv{W}}(\, \cdot \,)$\;
+        $\mleu \gets \genSampleMLE(\tparam\sysparam, w)$\;
+        \KwRet{$\mleu$}
+    }
+\caption{Generative model of maximum likelihood estimator}
+\label{alg:samp_du_gen_model}
+\end{algorithm}
+
+\subsection{Bootstrap of sample covariance}
+Another estimator of the variance-covariance of $\sampdu$ is given by the sample covariance.
+\begin{definition}
+Given a sample of $r$ maximum likelihood estimates, $\mleui{1}, \ldots, \mleui{r}$, the maximum likelihood estimator of the variance-covariance of the sampling distribution of $\mleu$ is given by the sample covariance,
+\begin{align}
+\label{eq:sample_var_sampd}
+\estimator{\var}\left[\sampdu\right] = \frac{1}{r}
+    \sum_{i=1}^{r}
+    \left(\mleui{i} - \tparam\sysparamvec\right) \cdot
+    \left(\mleui{i} - \tparam\sysparamvec\right)^{\intercal}\,.
+\end{align}
+\end{definition}
+The sample covariance depends upon a random sample of maximum likelihood estimates, and thus the sample covariance is a random matrix. However, by the property that maximum likelihood estimators converge in probability to the true value,
+\begin{equation}
+    \estimator\var\left[\sampdu\right] \xrightarrow{P} \var\left[\sampdu\right]\,,
+\end{equation}
+it follows that
+\begin{equation}
+\sampdu \xrightarrow{d} \mvn\left(\tparam\sysparamvec, \estimator\var\left[\sampdu\right]\right)\,.
+\end{equation}
+If only one maximum likelihood estimate is realized, $\sampdu = \mleu$, then the sample covariance given by \cref{eq:sample_var_sampdu} cannot be computed. In the \emph{parametric Bootstrap}, the sample covariance is approximated by using $\mleu$ as an estimate of $\tparam\sysparamvec$ in the generative model described by \cref{}, i.e.,
+\begin{equation}
+    \mleui{1}, \ldots, \mleui{r} \gets \genSampleMLE\left(\mleu\right)\,,
+\end{equation}
+and the sample covariance of these approximate maximum likelihood estimates is an asymptotically unbiased estimator of $\var\left[\sampdu\right]$.
+
+\begin{algorithm}
+    \DontPrintSemicolon
+    \KwIn{\\
+        $\qquad \mleu$, an estimate of $\tparam\sysparamvec$.
+    }
+    \KwOut{\\
+        $\qquad$sample covariance of a bootstrapped sample of maximum likelihood estimates.
+    }
+    \BlankLine
+    \SetKwProg{func}{Model}{}{}
+    \func{BoostrapCovariance}{$(\mleu)$}
+    {
+        \For{$i=1$ to $r$}
+        {
+            $\mleui{i} \gets \genSampleMLE(\mleu)$\;
+        }
+        \KwRet{sample covariance of $\mleui{1},\,\ldots\,,\mleui{r}$}
+    }
+\caption{Sample covariance of a bootstrapped sample of maximum likelihood estimates.}
+\label{alg:samp_du_gen_model}
+\end{algorithm}
+
+
+
+\end{document}

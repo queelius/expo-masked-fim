@@ -1,0 +1,88 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\label{sec:entropy}
+\chapter{Information about component failure}
+Knowing the distribution of component lifetimes has many important applications. The canonical use-case is, if a failure occurs in a series system at time $t$, for any component we know the probability that it is the cause of the system failure.
+
+However, there are other applications as well. For instance, a system designer may desire a system where the component cause of failure is as uncertain as possible to prevent an \emph{adversary} from learning about critical vulnerabilities. Informally, \emph{entropy} is a fundamental measure of uncertainty.
+
+By definition, $\rv{K} = j$ given $\sv = t$ is the probability that component $j$ fails before the other $m-1$ components given a system failure at time $t$.
+
+If a diagnostician could ask ``yes'' or ``no'' questions about the component cause of failure, an \emph{expected lower-bound} on the number of questions required to determine which component caused the failure is given by
+\begin{equation}
+    \entropy(\rv{K}) = -\sum_{k \in \{1,\ldots,m\}} \pmf_{\rv{K}}(k) \log_2 \pmf_{\rv{K}}(k)\,.
+\end{equation}
+This is known as the \emph{entropy} of the random variable $\rv{K}$, which quantifies the amount of ``uncertainty'' about what value $\rv{K}$ realizes.
+
+The greater the entropy, the greater the number of questions the diagnostician needs on average to determine the component cause of failure. Each component may have a different distribution of lifetimes, and thus knowing when a system failure occurs may \emph{reduce} the uncertainty about the component cause of failure,
+\begin{equation}
+    \entropy(\rv{K} \given \sv) \leq \entropy(\rv{K})\,.
+\end{equation}
+
+%Since many systems may be abstractly modeled as \emph{series systems}, or more relevant, each \emph{critical path} of a system is a series and thus system failure occurs whenever any critical path fails... min( min(T1,T2),min(T1,T3,T5),min(T2,T3) ) given S = t...
+
+If $\rv{K}$ and $\sv$ are \emph{statistically independent}, then
+\begin{equation}
+    \entropy\left(\rv{K} \given \sv\right) = \entropy\left(\rv{K}\right)\,,
+\end{equation}
+that is, observing the system failure time does not reduce the uncertainty.
+
+The joint entropy of $\rv{K}$ and $\sv$ is given by
+\begin{equation}
+    \entropy\left(\rv{K}, \sv\right) = \entropy\left(\rv{K} \given \sv\right) + \entropy\left(\sv\right)\,.
+\end{equation}
+
+The \emph{information} conveyed by a system failure at time $t$ is the \emph{reduction in uncertainty} about the component failure. The information is given by
+\begin{equation}
+    \info(\rv{K} \given \sv) = \entropy(\rv{K}) - \entropy(\rv{K} \given \sv)\,.
+\end{equation}
+
+If $\rv{K}$ and $\sv$ are independent, then $\info(\rv{K} \given \sv) = 0$, i.e., there is no reduction in uncertainty about $\rv{K}$ given that a system failure has been observed at a particular time.
+
+The probabilistic model of the component responsible for a system failure at a given time described in \cref{} has an \emph{entropy} given by
+\begin{equation}
+    \entropy\!\left(\rv{K} \given \sv\right)\,.
+\end{equation}
+
+Given that the system failure time has a support $(0,\infty)$ and the mean time to system failure is $\expectation[\sv] = \frac{1}{\lambda}$, the \emph{maximum entropy distribution} for the system lifetime is exponentially distributed with a failure rate $\lambda$,
+\begin{equation}
+    \sv \sim \expdist(\lambda)\,.
+\end{equation}
+
+
+\begin{equation}
+    \frac{\lambda_j}{\sum_{p=1}^{m} \lambda_p}
+\end{equation}
+where $\lambda_1 + \cdots + \lambda_p = \lambda$.
+
+
+
+
+
+
+
+
+
+
+
+Consider a series system of $m$ components. The entropy is minimized if $m-1$ components have infinite expect
+Any degenerate distribution $\rv{T}$
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
