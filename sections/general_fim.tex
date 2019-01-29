@@ -137,21 +137,22 @@ For clarity, the $(i,j)$-th element of the information matrix is given by the fo
 \begin{definition}
 The $(i,j)$-th element of $\infomatrxn(\;\cdot \;\given w)$ is given by
 \begin{equation}
-\label{eq:info_matrix_el}
 \begin{split}
+\label{eq:info_matrix_el}
     \infomatrxn\!\left(\tparam\sysparamvec \given w\right)_{i\,j}
-        = -\sum_{\cand \in \candsw{w}} \int_{0}^{\infty}
-        {
-            \biggl[
-                & \md{}{2}{\paramv_i}{}{\paramv_j}{}
-                \ln \jointpdf\left(\cand_i, \ti_i \given w, \sysparamvec\right)
-            \biggr]
-        }
-        \bigg \rvert_{\sysparamvec=\tparam\sysparamvec} \times\\
-        & \qquad \jointpdf\left(\cand_i, \ti_i \given w, \tparam\sysparamvec \right) \dif t\,,
+= -\sum_{\cand \in \candsw{w}} \int_{0}^{\infty}
+{
+    \biggl[
+    \md{}{2}{\paramv_i}{}{\paramv_j}{}
+    \ln \jointpdf\left(\cand_i, \ti_i \given w, \sysparamvec\right)
+    \biggr]
+}
+\bigg \rvert_{\sysparamvec=\tparam\sysparamvec} \times\\
+\qquad \jointpdf\left(\cand_i, \ti_i \given w, \tparam\sysparamvec 
+\right) \dif t\,,
 \end{split}
 \end{equation}
-where $\candsw{w} \times (0,\infty)$ is the sample space of $\rvcand, \sv \given \rv{W} = w$.
+where $\candsw{w} \times (0,\infty)$ is the sample space.
 \end{definition}
 
 \begin{notation}
@@ -180,7 +181,9 @@ By \cref{post:info_add}, the Fisher information of a random sample of $n$ masked
     \infomatrxn\left(\tparam\sysparamvec \given w\right) = n \infomatrx\left(\tparam\sysparamvec \given w\right)\,.
 \end{equation}
 
-A \emph{masked system failure time} in which the cardinality of the candidate set is distributed according to $\rv{W}$, as described by \cref{}, has a Fisher information matrix given by the following theorem.
+A \emph{masked system failure time} in which the cardinality of the candidate 
+set is distributed according to $\rv{W}$, as described by \cref{dummyref}, has 
+a Fisher information matrix given by the following theorem.
 \begin{theorem}
 The \emph{Fisher information} matrix of true parameter index $\tparam\sysparamvec$ with respect to a realization of jointly distributed random system lifetime $\sv = t$ and candidate set $\rvcand = \cand$ is given by
 \begin{equation}
@@ -190,7 +193,9 @@ The \emph{Fisher information} matrix of true parameter index $\tparam\sysparamve
 where $\pmf_{\rv{W}}(w)$ is the marginal distribution of $\rv{W} = \cardinality{\rvcand}$.
 \end{theorem}
 \begin{proof}
-Suppose we have a random sample of $n$ masked system failure times. By \cref{}, the expected number of sample points that have $w$ candidates is given by
+Suppose we have a random sample of $n$ masked system failure times. By 
+\cref{dummyref}, the expected number of sample points that have $w$ candidates 
+is given by
 \begin{equation}
     n \cdot \pmf_{\rv{W}}(w)\,.
 \end{equation}    

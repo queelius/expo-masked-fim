@@ -137,7 +137,10 @@ results in
         &= \mathsmaller{\frac{ \indicator{\cardinality{\cand} = w} }{\binom{m-1}{w-1}} \frac{\sum_{j \in \cand} \lambda_j}{\sum_{j=1}^{m} \lambda_j}}\,.
 \end{align}
 \end{proof}
-The marginal distribution of $\rvcand \given \rv{W} = w$ given by \cref{} is the same as the joint distribution of $\rvcand, \sv \given \rv{W} = w$ given by \cref{eq:expo_cand_given_s}. Thus, $\rvcand$ and $\sv$ are conditionally independent given $\rv{W} = w$.
+The marginal distribution of $\rvcand \given \rv{W} = w$ given by 
+\cref{dummyref} is the same as the joint distribution of $\rvcand, \sv \given 
+\rv{W} = w$ given by \cref{eq:expo_cand_given_s}. Thus, $\rvcand$ and $\sv$ are 
+conditionally independent given $\rv{W} = w$.
  
 \section{Maximum likelihood estimator}
 According to \cref{def:general_mle}, the maximum likelihood estimator of $\tparam{\vec\lambda}$ is the value that maximizes the log-likelihood on a given masked system failure time sample, denoted $\mfs$. The likelihood function is given by
@@ -595,7 +598,10 @@ As $n$ goes to infinity, the probability that $\vec{\tparam\lambda}$ intersects 
 \end{figure}
 
 \subsection{Rate of convergence to the asymptotic sampling distribution}
-In this section, we evaluate how rapidly the sampling distribution of $\mle$ converges to the asymptotic distribution as given by \cref{}, a multivariate normal with a mean $\tparam\sysparamvec$ and a variance-covariance matrix $\frac{1}{n} \infomatrx^{-1}\left(\tparam\sysparamvec\right)$.
+In this section, we evaluate how rapidly the sampling distribution of $\mle$ 
+converges to the asymptotic distribution as given by \cref{dummyref}, a 
+multivariate normal with a mean $\tparam\sysparamvec$ and a variance-covariance 
+matrix $\frac{1}{n} \infomatrx^{-1}\left(\tparam\sysparamvec\right)$.
 
 By \cref{eq:mse_mle_trace}, the asymptotic mean squared error of the maximum likelihood estimator $\mle$ is given by the trace of the variance-covariance matrix, $\mse = \frac{1}{n} \trace \left ( \infomatrx^{-1} \bigl(\tparam\sysparamvec\bigr) \right)$. An estimator of the mean squared error from a sample of $r$ maximum likelihood estimates is given by
 \begin{equation}

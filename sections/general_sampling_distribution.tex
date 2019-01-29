@@ -204,7 +204,9 @@ Consider an i.i.d. sample of $r$ asymptotically unbiased estimates of $\tparam\s
 \end{equation}
 where $\matrx{A_i}$ is the inverse of $\matrx{\Sigma}^{(i)}$.
 
-Suppose that the estimates are given by the maximum likelihood estimator described in \cref{}. The maximum likelihood estimator given these estimates has a sampling distribution given by the following definition.
+Suppose that the estimates are given by the maximum likelihood estimator 
+described in \cref{dummyref}. The maximum likelihood estimator given these 
+estimates has a sampling distribution given by the following definition.
 \begin{definition}
 Let $\mfs$ be a random sample of $n$ masked system failure times in which $n_i$ realizations have $w_i$ candidates for $i = 1,\,\ldots\,,r$. The maximum likelihood estimator given by
 \begin{equation}
@@ -345,7 +347,11 @@ it follows that
 \begin{equation}
 \sampdu \xrightarrow{d} \mvn\left(\tparam\sysparamvec, \estimator\var\left[\sampdu\right]\right)\,.
 \end{equation}
-If only one maximum likelihood estimate is realized, $\sampdu = \mleu$, then the sample covariance given by \cref{eq:sample_var_sampdu} cannot be computed. In the \emph{parametric Bootstrap}, the sample covariance is approximated by using $\mleu$ as an estimate of $\tparam\sysparamvec$ in the generative model described by \cref{}, i.e.,
+If only one maximum likelihood estimate is realized, $\sampdu = \mleu$, then 
+the sample covariance given by \cref{eq:sample_var_sampdu} cannot be computed. 
+In the \emph{parametric Bootstrap}, the sample covariance is approximated by 
+using $\mleu$ as an estimate of $\tparam\sysparamvec$ in the generative model 
+described by \cref{dummyref}, i.e.,
 \begin{equation}
     \mleui{1}, \ldots, \mleui{r} \gets \genSampleMLE\left(\mleu\right)\,,
 \end{equation}
