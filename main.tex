@@ -3,6 +3,7 @@
 \usepackage[activate={true,nocompatibility},final,tracking=true,kerning=true,spacing=true,factor=1100,stretch=10,shrink=10]{microtype}
 \microtypecontext{spacing=nonfrench}
 \usepackage{nomencl}
+\makenomenclature
 \usepackage[english]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage{commath}
@@ -37,16 +38,16 @@
 
 \begin{document}
 \maketitle
-\makenomenclature
 
 \begin{abstract}
 First, the \emph{parametric family} of an abstract \emph{series system} is derived. Then, the \emph{asymptotic sampling distribution} (\emph{multivariate normal}) of a \emph{maximum likelihood estimator} of the true parameter is derived conditioned on the \emph{information} given by a random sample of \emph{masked system failure times}. The asymptotic sampling distributions of statistics that are functions of the parameter follow as a result. Finally, these results are applied to series systems in which component lifetimes are \emph{exponentially} distributed, which lead to closed formulas on a set of \emph{minimally sufficient statistics}.
 \end{abstract}
 
 \tableofcontents
-\listoffigures
-\listofalgorithms
+%\listoffigures
+%\listofalgorithms
 \printnomenclature
+
 \subfile{sections/intro}
 \subfile{sections/general_model}
 \subfile{sections/general_distribution_functions}

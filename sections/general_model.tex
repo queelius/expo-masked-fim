@@ -125,6 +125,17 @@ where $\cv_1\,, \ldots\,, \cv_m$ are the component lifetimes.
 A series system fails whenever any component fails, therefore its lifetime is equal to the lifetime of the component with the minimum lifetime.
 \end{proof}
 
+By \cref{thm:series_system_lifetime}, if a system failure occurs at time $\ti$, 
+then one of the components failed at time $\ti$ (only a single component can 
+cause a system failure since two or more continuous random variables cannot 
+realize the same value).
+\begin{definition}
+    \label{def:comp_cause}
+    Let $\rv{K}$ denote the discrete random variable indicating the component 
+    responsible for a system failure, e.g., $\rv{K} = j$ indicates that $\cv_j 
+    < \cv_k$ for $k \in \{1\,, \ldots\,, m \} \setminus \{ j \}$.
+\end{definition}
+
 \begin{notation}
 Matrices are denoted by boldface upper case greek letters, e.g., $\matrx{A}$. The \jth column of $\matrx{A}$ is denoted by $\matrx{A}_j$ (or $\left[\matrx{A}\right]_j$) and the $(j,k)$-th element of $\matrx{A}$ is denoted by $\matrx{A}_{j\,k}$ (or $\left[\matrx{A}\right]_{j\,k}$).
 \end{notation}
@@ -149,13 +160,10 @@ The true parameter index of the parametric family of system lifetime is denoted 
 \end{definition}
 
 \section{Candidate sets}
-By \cref{thm:series_system_lifetime}, if a system failure occurs at time $\ti$, then one of the components failed at time $\ti$ (only a single component can cause a system failure since two or more continuous random variables cannot realize the same value).
-\begin{definition}
-\label{def:comp_cause}
-Let $\rv{K}$ denote the discrete random variable indicating the component responsible for a system failure, e.g., $\rv{K} = j$ indicates that $\cv_j < \cv_k$ for $k \in \{1\,, \ldots\,, m \} \setminus \{ j \}$.
-\end{definition}
-
-The probability that a component in a set $\cand$ is the cause of a system failure follows from the definition of $\rv{K}$, i.e., $\prob\left[\rv{K} \in \cand\right]$. The total probability over all of the subsets of components does not sum to unity since candidate sets are not disjoint events with respect to the sample space of $\rv{K}$. However, we may construct a new sample space in which the subsets of the components are disjoint atomic events.
+Each time a system failure occurs, one of the components failed. Given a set of 
+them, we may compute the probability that one of them was 
+the cause. The set of all component sets is given by the following 
+definition.
 \begin{definition}
 We denote the set of all candidate sets by
 \begin{equation}
@@ -163,10 +171,20 @@ We denote the set of all candidate sets by
 \end{equation}
 where $\powerset$ is the power set function.
 \end{definition}
+
+The probability that a component in a set $\cand$ is the cause of a system 
+failure follows from the definition of $\rv{K}$, i.e., $\prob\left[\rv{K} \in 
+\cand\right]$. The total probability over $\cands$ does not sum to unity since 
+candidate sets are not disjoint events with respect to the sample space of 
+$\rv{K}$. We consider another random variable (random set) in which the sample 
+space is $\cands$.
+
 The uncertain candidate sets are given by the following definition.
 \begin{definition}
 \label{def:random_candidate_set}
-Let $\rvcand \subset \cands$ denote the random set of components in which a component in the given set is the cause of a system failure.
+Let $\rvcand$ denote the random set of components which are the most likely 
+causees of a corresponding system failure. The sample space of $\rvcand$ is 
+$\cands$.
 \end{definition}
 \begin{assumption}
 \label{asm:indep_W_S}
