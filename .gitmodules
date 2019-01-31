@@ -1,0 +1,3 @@
+[submodule "series_system_estimation_from_masked_system_failure_time_samples_code"]
+	path = series_system_estimation_from_masked_system_failure_time_samples_code
+	url = https://github.com/queelius/series_system_estimation_from_masked_system_failure_time_samples_code.git
