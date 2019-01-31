@@ -1,0 +1,69 @@
+% Environment configurations for Alex Towell.
+%
+% Includes things like theorems, proofs with separate counters, and so on.
+% TODO: make another proof environment without the separate counter, because
+% sometimes the proof is not connected to a particular theorem.
+%
+%
+\NeedsTeXFormat{LaTeX2e}[1994/06/01]
+\ProvidesPackage{envnotation}[2018/01/01 alex towell's environment notation (style) for his various papers]
+
+\RequirePackage{amsmath}
+\RequirePackage{etoolbox}
+\RequirePackage{xparse}
+\RequirePackage{cleveref}
+
+\newcounter{proofeqcounter}
+\AtBeginEnvironment{proof}{\setcounter{proofeqcounter}{\value{equation}}
+\setcounter{equation}{0}\renewcommand{\theequation}{\alph{equation}}}
+\AtEndEnvironment{proof}{\setcounter{equation}{\value{proofeqcounter}}}
+
+\theoremstyle{plain}
+\newtheorem{lemma}{Lemma}[chapter]
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{definition}{Definition}[chapter]
+\newtheorem{postulate}{Postulate}[chapter]
+
+\newtheorem{assumption}{Assumption}
+\crefname{assumption}{ assumption }{ assumptions }
+\Crefname{assumption}{ Assumption }{ assumptions }
+
+\newtheorem{axiom}{Axiom}
+\crefname{axiom}{ axiom }{ axioms }
+\Crefname{axiom}{ Axiom }{ Axioms }
+
+
+
+
+
+\newtheorem{conjecture}{Conjecture}[chapter]
+
+\newcounter{examplecounter}
+
+\newenvironment{example}
+{
+    \refstepcounter{examplecounter}%
+    \par\vspace{\baselineskip}\noindent 
+    \textbf{Example \theexamplecounter}%
+    \begin{itshape}
+    \quad
+}
+{
+    \end{itshape}
+    \par\vspace{\baselineskip}% 
+    \noindent\ignorespacesafterend     
+}
+
+\newcounter{exampleeqcounter}
+\AtBeginEnvironment{example}{\setcounter{exampleeqcounter}{\value{equation}}
+\setcounter{equation}{0}\renewcommand{\theequation}{\alph{equation}}}
+\AtEndEnvironment{example}{\setcounter{equation}{\value{exampleeqcounter}}}
+
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+\newtheorem*{notation}{Notation}
+
+
+\endinput

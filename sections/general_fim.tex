@@ -173,7 +173,9 @@ The information about $\tparam\sysparamvec$ of independent samples is \emph{addi
 \label{post:info_add}
 Algebraically, the Fisher information about the true parameter index $\tparam\sysparamvec$ of independent samples is additive. That is,
 \begin{equation}
-    \matrx{\infomatrx_{n_1 + n_2}}\left(\tparam\sysparamvec \given \cdot \; \right) = \matrx{\infomatrx_{n_1}}(\tparam\sysparamvec \given \cdot \;) + \matrx{\infomatrx_{n_2}}(\tparam\sysparamvec \given \cdot \;)\,.
+    \infomatrx_{\matrx{n_1} + \matrx{n_2}}\left(\tparam\sysparamvec \given 
+    \cdot \; \right) = \infomatrx_{\matrx{n_1}}(\tparam\sysparamvec \given 
+    \cdot \;) + \infomatrx_{\matrx{n_2}}(\tparam\sysparamvec \given \cdot \;)\,.
 \end{equation}
 \end{postulate}
 By \cref{post:info_add}, the Fisher information of a random sample of $n$ masked system failure times drawn from $\mfsw$ is given by

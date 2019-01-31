@@ -1,11 +1,25 @@
 \documentclass[../main.tex]{subfiles}
 \begin{document}
 \label{sec:distribution_functions}
-\chapter{Parametric functions}
+\chapter{Derivation of parametric probability distribution functions}
 \Cref{sec:general_series_system} described the probabilistic model. In what follows, we derive the parametric functions that are entailed by the model.
 
 \section{System lifetime}
-The reliability function of the system lifetime is given by the following theorem.
+The complement of the cumulative distribution function is the reliability 
+function and is given by the following definition.
+\begin{definition}
+    \label{def:rel_function}
+    Let $\rv{X}$ be some random variable. The probability that $\rv{X} > x$ is 
+    given by its reliability function, denoted by
+    \begin{equation}
+    \label{eq:rel_function}
+    \srv_{\rv{X}}\!\left(x\right) = \prob\left[\rv{X} > x\right] = 1 - 
+    \cdf_{\rv{X}}\!\left(x\right)\,.
+    \end{equation}
+\end{definition}
+
+The reliability function of the system lifetime is given by the following 
+theorem.
 \begin{theorem}
 \label{thm:series_reliability_function}
 The system lifetime has a reliability function given by
@@ -13,7 +27,7 @@ The system lifetime has a reliability function given by
 \label{eq:series_reliability_function}
     \srv_{\sv}\left(\ti \given \tparam\sysparam\right) = \prod_{j=1}^{m} \srv_j\left(\ti \given \tparam\sysparam_j\right)\,,
 \end{equation}
-where $\srv_j(\; \cdot \;)$ is the reliability function of the \jth component lifetime.
+where $\srv_j$ is the reliability function of the \jth component.
 \end{theorem}
 \begin{proof}
 By \cref{def:rel_function}, the reliability function is given by
@@ -46,7 +60,8 @@ The lifetime of the $m$-out-of-$m$ system has a probability density function giv
     \spdf(t \given \tparam\sysparam) = \sum_{j=1}^{m} \left(\pdf_j(t \given \tparam{\sysparam}_j)
     \prod_{\substack{k=1\\k \neq j}}^{m} \srv_k(t \given \tparam{\sysparam}_k)\right )\,,
 \end{equation}
-where $\srv_k(\; \cdot \;)$ and $\pdf_j(\; \cdot \;)$ are respectively the reliability function and probability density function of the \jth component lifetime.
+where $\srv_k$ and $\pdf_k$ are respectively the reliability and probability 
+density functions of the \kth component.
 \end{theorem}
 \begin{proof}
 By \cref{eq:f_and_R_related},
@@ -94,7 +109,8 @@ We see a pattern emerge. Applying the product rule $m-1$ times results in
 The failure rate function simplifies some of the subsequent material and is given by the following definition.
 \begin{definition}
 \label{def:failure_rate}
-A random variable $\rv{X}$ with a probability density function $\pdf_{\rv{X}}(\;\cdot\;)$ and reliability function $\srv_{\rv{X}}(\;\cdot\;)$ has a failure rate function given by
+A random variable $\rv{X}$ with a probability density function $\pdf_{\rv{X}}$ 
+and reliability function $\srv_{\rv{X}}$ has a failure rate function given by
 \begin{equation}
 \label{eq:def_failure_rate}
     \haz_{\rv{X}}(t) = \frac{\pdf_{\rv{X}}(t)}{\srv_{\rv{X}}(t)}\,.
@@ -107,9 +123,11 @@ The failure rate function of the system lifetime is given by the following theor
 The system lifetime has a failure rate function given by
 \begin{equation}
 \label{eq:series_failure_rate_function}
-    \haz_{\sv}(\ti \given \tparam\sysparam) = \sum_{j=1}^{m} \haz_j(\ti \given \tparam\sysparam_j)
+    \haz_{\sv}(t \given \tparam\sysparam) =
+        \sum_{j=1}^{m}
+            \haz_j(t \given \tparam{\sysparam}_j)
 \end{equation}
-where $\haz_j(\;\cdot\;)$ is the failure rate function of the \jth component lifetime.
+where $\haz_j$ is the failure rate function of the \jth component lifetime.
 \end{theorem}
 \begin{proof}
 By \cref{eq:def_failure_rate}, the failure rate function for the system is given by
@@ -128,7 +146,7 @@ which can be simplified to
 \end{align}
 \end{proof}
 
-\section{Cause of system failure}
+\section{Component cause of system failure}
 \label{sec:joint_dist}
 According to \cref{def:comp_cause}, the component responsible for a system failure is given by the discrete random variable $\rv{K}$. The joint likelihood that component $k$ is the cause of a system failure occurring at time $t$ is given by the following theorem.
 \begin{theorem}
@@ -138,10 +156,19 @@ The joint probability density function of random variable $\rv{K}$ and random sy
 \label{eq:general_joint_density}
     \pdf_{\rv{K}, \sv}(k, t \given \tparam{\sysparam}) = \pdf_k(t \given \tparam\sysparam) \prod_{\substack{j=1\\j \neq k}}^{m} \srv_j(t \given \tparam\sysparam)\,,
 \end{equation}
-where $\pdf_k(\; \cdot \given \tparam{\sysparam}_k)$ is the probability density function of component $k$ and $\srv_j(\; \cdot \given \tparam{\sysparam}_k)$ is the reliability function of component $k$.
+where $\pdf_k$ and $\srv_k$ are respectively the probability density and 
+reliability functions of the \kth component.
 \end{theorem}
 \begin{proof}
-See \cref{appendix:alternative_joint_proof} for a detailed proof. However, a quick justification follows. The likelihood that component $k$ is the cause of a system failure at time $t$ is equivalent to the likelihood that component $k$ fails at time $t$ and the other components do not fail before time $t$. According to \cref{asm:indep}, the random variables $\cv_1, \ldots, \cv_m$ are mutually independent, therefore the likelihood is the product of the probability density function $\pdf_k(t \given \tparam{\sysparam}_k)$ and the reliability functions $\srv_j(t \given \tparam{\sysparam}_j)$ for $j \in \{1, \ldots, m \} \setminus \{ k \}$.
+See \cref{appendix:alternative_joint_proof} for a detailed proof. However, a 
+quick justification follows. The likelihood that component $k$ is the cause of 
+a system failure at time $t$ is equivalent to the likelihood that component $k$ 
+fails at time $t$ and the other components do not fail before time $t$. 
+According to \cref{asm:indep}, the random variables $\cv_1, \ldots, \cv_m$ are 
+mutually independent, therefore the likelihood is the product of the 
+probability density function $\pdf_k(t \given \tparam{\sysparam}_k)$ and the 
+reliability functions $\srv_j(t \given \tparam{\sysparam}_j)$ for $j \in 
+\SetDiff[\Set{K}][\{ k \}]$.
 \end{proof}
 
 By \cref{def:comp_cause}, if a system failure occurs at time $t$, then each component has a particular probability of being the cause as given by the following theorem.
@@ -152,7 +179,8 @@ The conditional probability mass function $\pmf_{\rv{K} \given \sv}(k \given t, 
 \label{eq:general_cond_prob_failure_rate}
     \pmf_{\rv{K} \given \sv}\left(k \given t, \tparam{\sysparam}\right) = \frac{\haz_k\left(t \given \tparam{\sysparam}_k\right)}{\haz_{\sv}\left(t \given \tparam{\sysparam}\right)}\,,
 \end{equation}
-where $\haz_j(\; \cdot \given \tparam{\sysparam}_j)$ is the failure rate function of the \jth component and $\haz_{\sv}(\; \cdot \given \tparam\sysparam)$ is the failure rate function of the system.
+where $\haz_j$ and $\haz_{\sv}$ are respectively the failure rate functions of 
+the \jth component and the system.
 \end{theorem}
 \begin{proof}
 By the axioms of probability,
@@ -214,10 +242,12 @@ The joint probability density function of random variable $\rv{K}$ and random sy
 \end{corollary}
 The proof of \cref{eq:k_s_haz} immediately follows from \cref{eq:general_joint_density,eq:general_cond_prob_failure_rate}.
 
-\section{Candidate sets}
-According to \cref{def:random_candidate_set}, the random set $\rvcand$ denotes a subset of components in which one of the components is responsible for the system failure.
 
-By \cref{asm:indep_W_S}, the distribution of $\rv{W}$ is not dependent on the true parameter index $\tparam\sysparam$.
+\section{Masked system failure times}
+According to \cref{def:random_candidate_set}, the random set $\rvcand$ is a 
+subset of components that are the top $\rv{W} = \Card{\rvcand}$ most probable 
+causes of system failure. By \cref{asm:indep_W_S}, the distribution of $\rv{W}$ 
+is not dependent on the true parameter index $\tparam\sysparam$.
 \begin{definition}
 \label{def:pmf_w}
 The probability that $\rv{W} = \cardinality{\rvcand} = w$ is given by the marginal probability mass function $\pmf_{\rv{W}}\left(w\right)$.
@@ -347,7 +377,6 @@ By the axioms of probability,
 where $\jointpdf(\; \cdot \given \tparam\sysparam)$ is the joint probability density function given by \cref{thm:general_joint_likelihood_cand}. Making this substitution immediately yields the result.
 \end{proof}
 
-\section{Masked system failure times}
 \begin{definition}
 \label{def:msfs}
 A random sample of $n$ masked system failure times in which it is given that each system failure has $w$ candidates, i.e., $\sv_i, \rvcand_i \given \rv{W} = w$ for $i=1,\ldots,n$, is denoted by $\mfsw$. That is, if given a random sample of masked system failure times, the conditional distribution $\mfsw$ is the subset of the random sample with $w$ candidates. 

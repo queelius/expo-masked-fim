@@ -1,11 +1,24 @@
-%\documentclass[final,11pt,hidelinks]{report}
-\documentclass[11pt,oldfontcommands,final,oneside]{memoir}
-\usepackage[activate={true,nocompatibility},final,tracking=true,kerning=true,spacing=true,factor=1100,stretch=10,shrink=10]{microtype}
-\microtypecontext{spacing=nonfrench}
-\usepackage{nomencl}
-\makenomenclature
+\documentclass[
+    11pt,
+    extrafontsizes,
+    article,
+    oldfontcommands,
+    final,
+    oneside,
+    openany,
+    hidelinks]{memoir}
+\pagestyle{headings}
+
 \usepackage[english]{babel}
 \usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[activate={true,nocompatibility},final,tracking=true,kerning=true,
+spacing=true,factor=1100,stretch=10,shrink=10]{microtype}
+\microtypecontext{spacing=nonfrench}
+\usepackage{graphicx}
+
+%code\usepackage{nomencl}
+%\makenomenclature
 \usepackage{commath}
 \usepackage{amsmath}
 \usepackage{amsthm}
@@ -25,14 +38,58 @@
 \usepackage{mathdots}
 \usepackage{appendix}
 \usepackage{fancyhdr}
-%\pagestyle{fancy}
-\fancyhf{}
+
+\usepackage{setnotation}
+\usepackage{relationnotation}
+\usepackage{envnotation}
+
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{2}
+
+\newcommand{\Transpose}{\mathsf{T}}
+
+\graphicspath{{images/}{../images/},{../../images/}}
+
+\setlrmarginsandblock{1in}{1in}{*}
+\setulmarginsandblock{1in}{1in}{*}
+\checkandfixthelayout 
+
+\hypersetup{
+    %bookmarks=true,                             % show bookmarks bar?
+    pdftitle={Estimating the sampling distribution of the maximum likelihood 
+    estimator of the parameters of a series system given a sample of masked 
+    system failure times},  % title
+    pdfauthor={Alexander Towell},               % author
+    pdfsubject={statistical inference},                    % subject of the 
+    %document
+    pdfkeywords={maximum likelihood estimation,
+        information matrix,
+        covariance matrix,
+        multivariate normal,
+        sampling distribution,
+        statistical models,
+        statistical inference,
+        parameter estimation,
+        parametric bootstrap,
+        entropy,
+        maximum entropy distribution,
+        series systems,
+        m-out-of-m system,
+        exponential distribution,
+        masked system failure time},           % keywords
+    colorlinks=true,                            % false: boxed links; true: 
+    %colored links
+    linkcolor=blue,                             % color of internal links
+    citecolor=green,                            % color of links to bibliography
+    filecolor=magenta,                          % color of file links
+    urlcolor=green                              % color of external links
+}
+
 
 \include{defs}
-\include{nom}
+%\include{nom}
 
 \title{Estimating the sampling distribution of the maximum likelihood estimator of the parameters of a series system given a sample of masked system failure times}
-%\renewcommand{\maketitlehookb}{\centering Testing 123}
 \author{Alexander Towell\\\texttt{atowell@siue.edu}}
 \date{}
 
@@ -46,12 +103,11 @@ First, the \emph{parametric family} of an abstract \emph{series system} is deriv
 \tableofcontents
 %\listoffigures
 %\listofalgorithms
-\printnomenclature
+%\printnomenclature
 
 \subfile{sections/intro}
 \subfile{sections/general_model}
 \subfile{sections/general_distribution_functions}
-\subfile{sections/entropy}
 \subfile{sections/general_fim}
 \subfile{sections/general_sampling_distribution}
 \subfile{sections/general_applications}

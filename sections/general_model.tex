@@ -4,15 +4,17 @@
 \label{sec:general_series_system}
 A probabilistic model is specified by equations involving random variables which make assumptions about how observable data about the system is generated. In what follows, we describe our model and observable data.
 
-\section{Components}
-The system consists of $m$ components. We make the following assumption about the states of the components.
+\section{Series system}
+The system consists of $m$ components. We make the following assumption about 
+the state of the components.
 \begin{assumption}
 \label{asm:binary_state}
 The \jth component is initially in a non-failed state and permanently enters a failed state at some uncertain time $t_j > 0$ for $j=1\,,\ldots\,,m$.
 \end{assumption}
-Components have lifetimes as given by the following definition.
+Components have uncertain lifetimes as given by the following definition.
 \begin{definition}
-The uncertain lifetime of the \jth component is given by the continuous random variable $\cv_j \in \left(0\,,\infty\right)$ for $j=1\,,\ldots\,,m$.
+The lifetime of the \jth component is given by the continuous random variable 
+$\cv_j \in \left(0\,,\infty\right)$ for $j=1\,,\ldots\,,m$.
 \end{definition}
 We make the following assumption about the joint distribution of the component lifetimes.
 \begin{assumption}
@@ -20,188 +22,163 @@ We make the following assumption about the joint distribution of the component l
 The random variables $\cv_1\,, \ldots\,, \cv_m$ are mutually independent.
 \end{assumption}
 
-The cumulative distribution function describes the distribution of random variables and is given by the following definition.
-\begin{definition}[Cumulative distribution function]
-\label{def:cdf_function}
-Let $\rv{X}$ be some random variable. The probability that $\rv{X} \leq x$ is given by its cumulative distribution function, denoted by
-\begin{equation}
-    \cdf_{\rv{X}}\!\left(x\right) = \prob[\rv{X} \leq x]\,.
-\end{equation}
-\end{definition}
-The component lifetimes have cumulative distribution functions given by the following definition.
+The system is a series system.
+\begin{assumption}
+    The system is in a non-failed state if all $m$ components are in a 
+    non-failed state, otherwise the system is in a failed state.
+\end{assumption}
+A system in which at least $k$ of the components must be in a non-failed state 
+for the system to be in a non-failed system is denoted a $k$-out-of-$m$ system, 
+thus a series system is an $m$-out-of-$m$ system.
+
+The uncertain lifetime of the system is given by the following definition.
+\begin{theorem}
+    \label{thm:series_system_lifetime}
+    The lifetime of the system is given by the random variable
+    \begin{equation}
+    \label{eq:series_system_lifetime}
+    \sv = \min{\!\left(\cv_1\,, \ldots\,, \cv_m\right)} \in \left(0, 
+    \infty\right)\,,
+    \end{equation}
+    where $\cv_1\,, \ldots\,, \cv_m$ are the component lifetimes.
+\end{theorem}
+\begin{proof}
+    A series system fails whenever any component fails, therefore its lifetime 
+    is equal to the lifetime of the component with the minimum lifetime.
+\end{proof}
+
+\section{Probability distribution functions and parametric families}
+As random variables, it is not certain which values $\sv,\cv_1,\ldots,\cv_m$ 
+will realize. However, their respective probability distribution functions 
+quantify the uncertainty. The cumulative distribution function is given by the 
+following definition.
 \begin{definition}
-\label{def:comp_cdf}
-The probability that the \jth component will fail before time $t$, $\cv_j \leq t$, is given by
-\begin{equation}
-    \cdf_j\!\left(t\right) \equiv \cdf_{\cv_j}\!\left(t\right)\,.
-\end{equation}
+    \label{def:cdf_function}
+    Let $\rv{X}$ be some random variable. The probability that $\rv{X} \leq x$ 
+    is given by its cumulative distribution function, denoted by
+    \begin{equation}
+    \cdf_{\rv{X}}\!\left(x\right) = \prob[\rv{X} \leq x]\,.
+    \end{equation}
 \end{definition}
 The probability density function is given by the following definition.
 \begin{definition}
-\label{def:pdf}
-Let $\rv{X}$ be some continuous random variable. The probability density function is given by
-\begin{equation}
+    \label{def:pdf}
+    Let $\rv{X}$ be some continuous random variable. The \emph{relative 
+        likelihood} that $\rv{X} = x$ is given by its probability density 
+    function, denoted by
+    \begin{equation}
     \pdf_{\rv{X}}(x) = \derivative{t}\cdf_{\rv{X}}(t)\,.
-\end{equation}
+    \end{equation}
 \end{definition}
-By the Second Fundamental Theorem of Calculus, the probability that a continuous random variable $\rv{X} \in \left(a,b\right]$, $a \leq b$, is given by
+By the Second Fundamental Theorem of Calculus, the probability that a 
+continuous random variable $\rv{X} \in \left(a,b\right]$, $a \leq b$, is given 
+by
 \begin{equation}
 \label{eq:prob_F_R_p}
-\prob[a < \rv{X} \leq b] = \cdf_{\rv{X}}(b) - \cdf_{\rv{X}}(a) = \int_{a}^{b} \pdf_{\rv{X}}(s) \mathrm{d}s\,.
+\prob[a < \rv{X} \leq b] = \cdf_{\rv{X}}(b) - \cdf_{\rv{X}}(a) = \int_{a}^{b} 
+\pdf_{\rv{X}}(s) \mathrm{d}s\,.
 \end{equation}
-By \cref{eq:prob_F_R_p}, the probability that a continuous random variable $\rv{X} = x$ is given by
-\begin{equation}
-    \prob[x < \rv{X} \leq x] = \int_{t}^{t} \pdf_{\rv{X}}(s) \mathrm{d}s = 0\,.
-\end{equation}
-The probability density function evaluated at $x$ is said to calculate the \emph{relative likelihood} of $x$.
 
-The component lifetimes have probability density functions given by the following definition.
-\begin{definition}
-\label{def:general_pdf_function}
-The \emph{relative likelihood} that the \jth component will fail at time $t$, $\cv_j = t$, is given by
-\begin{equation}
-    \pdf_j(t) \equiv \pdf_{\cv_j}(t)\,.
-\end{equation}
-\end{definition}
-We restrict our attention to parametrized probability density functions.
-
+By these definitions, the relative likelihood that the system will fail at time 
+$t$ is $\spdf(t)$ and probability the \jth component will before time $t$ is 
+$\cdf_{\cv_j}(t)$.
 \begin{notation}
-Column vectors are denoted by boldface lower case letters, e.g., $\vec{x}$, and row vectors are denoted by the transpose of column vectors, e.g., $\vec{x}^\intercal$.
+We let $\cdf_j \equiv \cdf_{\cv_j}$ and $\pdf_j \equiv \pdf_{\cv_j}$. Column 
+vectors are denoted by boldface lower case letters, e.g., $\vec{x}$, and row 
+vectors are denoted by the transpose of column vectors, e.g.,  
+$\vec{x}^\Transpose$. Matrices are denoted by boldface upper case greek 
+letters, 
+e.g., $\matrx{A}$. The \jth column of $\matrx{A}$ is denoted by $\matrx{A}_j$ 
+(or $\left[\matrx{A}\right]_j$) and the $(j,k)$-th element of $\matrx{A}$ is 
+denoted by $\matrx{A}_{j\,k}$ (or $\left[\matrx{A}\right]_{j\,k}$).
 \end{notation}
-\begin{assumption}
-\label{asm:parametric}
-The component lifetimes have probability density functions that are members of the parametric family of probability density functions denoted by
-\begin{equation}
-    \pfami = \left \{ \pdf\!\left(\; \cdot \given \cparamv\right) \colon \cparamv \in \boldsymbol\Omega \right \}\,,
-\end{equation}
-where $\boldsymbol\Omega \subset \mathbb{R}^q$ is the parameter support.
-\end{assumption}
 
-Particular values of $\cparamv$ index particular probability density functions within the $\pfami$-family. The true probability density function of the \jth component lifetime is given by the following definition.
+We restrict our attention to parametrized families of probability distribution 
+functions. The system lifetime has a probability density function that is a 
+member of the following parametric family.
 \begin{definition}
-\label{def:comp_true_param}
-The true parameter index of the parametric family of the \jth component lifetime is denoted by $\tparam\cparamv_j$, therefore
-\begin{equation}
-    \cv_j \sim \pdf_j\!\left(\;\cdot \given \tparam\cparamv_j\right)\,.
-\end{equation}
+    \label{def:sysparametric}
+    The system lifetime has a probability density function that is a member of 
+    the parametric family of probability density functions denoted by
+    \begin{equation}
+    \label{eq:paramsys}
+    \pfam = \left \{ \spdf\left(\; \cdot \given \sysparam\right) \colon 
+    \sysparam \in \mathbb{R}^{q \times m} \right \}\,,
+    \end{equation}
+    where $\sysparam_j \in \boldsymbol\Omega$ corresponds to the parameter 
+    index of the \jth component lifetime.
 \end{definition}
-
-The complement of the cumulative distribution function is the reliability function and is given by the following definition.
-\begin{definition}[Reliability function]
-\label{def:rel_function}
-Let $\rv{X}$ be some random variable. The probability that $\rv{X} > x$ is given by the reliability function, denoted by
-\begin{equation}
-\label{eq:rel_function}
-    \srv_{\rv{X}}\!\left(x\right) = \prob\left[\rv{X} > x\right] = 1 - \cdf_{\rv{X}}\!\left(x\right)\,.
-\end{equation}
-\end{definition}
-The component lifetimes have reliability functions given by the following definition.
+Particular values of $\sysparam$ index particular probability density functions 
+within the $\pfam$-family. The true probability density function of the system 
+lifetime is given by the following definition.
 \begin{definition}
-\label{def:comp_rel}
-The probability that the \jth component will not fail before time $t$, $\cv_j > t$, is given by
-\begin{equation}
-    \srv_j\!\left(t \given \tparam\cparamv\right) \equiv \srv_{\cv_j}\!\left(t \given \tparam\cparamv\right)\,.
-\end{equation}
+    \label{def:true_param}
+    The distribution of the system lifetime has a true parameter index denoted 
+    by $\tparam\sysparam$, and we say that
+    \begin{equation}
+        \sv \sim \spdf\!\left(\;\cdot \given \tparam\sysparam\right)\,.
+    \end{equation}
 \end{definition}
-
-\section{System}
-The system is a series system as given by the following assumption.
-\begin{assumption}
-The system is in a non-failed state if all $m$ components are in a non-failed state, otherwise the system is in a failed state.
-\end{assumption}
-A system in which at least $k$ of the components must be in a non-failed state for the system to be in a non-failed system is denoted a $k$-out-of-$m$ system, thus a series system is an $m$-out-of-$m$ system.
-
-The system lifetime of the system is given by the following definition.
-\begin{theorem}
-\label{thm:series_system_lifetime}
-The uncertain lifetime of the system is given by
+By these definitions, it follows that
 \begin{equation}
-\label{eq:series_system_lifetime}
-\sv = \min{\!\left(\cv_1\,, \ldots\,, \cv_m\right)} \in \left(0, \infty\right)\,,
+    \cv_j \sim \pdf_j\!\left(\; \cdot \given \tparam\sysparam_j\right)\,.
 \end{equation}
-where $\cv_1\,, \ldots\,, \cv_m$ are the component lifetimes.
-\end{theorem}
-\begin{proof}
-A series system fails whenever any component fails, therefore its lifetime is equal to the lifetime of the component with the minimum lifetime.
-\end{proof}
 
+\section{Masked system failure times}
 By \cref{thm:series_system_lifetime}, if a system failure occurs at time $\ti$, 
 then one of the components failed at time $\ti$ (only a single component can 
 cause a system failure since two or more continuous random variables cannot 
 realize the same value).
 \begin{definition}
     \label{def:comp_cause}
-    Let $\rv{K}$ denote the discrete random variable indicating the component 
-    responsible for a system failure, e.g., $\rv{K} = j$ indicates that $\cv_j 
-    < \cv_k$ for $k \in \{1\,, \ldots\,, m \} \setminus \{ j \}$.
+    The discrete random variable indicating the component 
+    responsible for a system failure is denoted by $\rv{K}$ with a sample space 
+    $\Set{K} = \{1,\ldots,m\}$. That is, $\rv{K} = j$ indicates that $\cv_j 
+    < \cv_k$ for $k \in \SetDiff[\Set{K}][\{ j \}]$.
 \end{definition}
 
-\begin{notation}
-Matrices are denoted by boldface upper case greek letters, e.g., $\matrx{A}$. The \jth column of $\matrx{A}$ is denoted by $\matrx{A}_j$ (or $\left[\matrx{A}\right]_j$) and the $(j,k)$-th element of $\matrx{A}$ is denoted by $\matrx{A}_{j\,k}$ (or $\left[\matrx{A}\right]_{j\,k}$).
-\end{notation}
+We may not be certain which component caused a system failure, but may be able 
+to narrow the component cause to some \emph{subset}. The set of all component 
+sets is given by the power set of $\Set{K}$, denoted by $\PowerSet(\Set{K})$.
 
-The system lifetime has a probability density function given by the following definition.
-\begin{definition}
-\label{def:sysparametric}
-The system lifetime has a probability density function that is a member of the parametric family of probability density functions denoted by
-\begin{equation}
-\label{eq:paramsys}
-    \pfam = \left \{ \pdf\left(\; \cdot \given \sysparam\right) \colon \sysparam \in \mathbb{R}^{q \times m} \right \}\,,
-\end{equation}
-where $\sysparam_j \in \boldsymbol\Omega$ corresponds to the parameter index of the \jth component lifetime.
-\end{definition}
-Particular values of $\sysparam$ index particular probability density functions within the $\pfam$-family. The true probability density function of the system lifetime is given by the following definition.
-\begin{definition}
-\label{def:true_param}
-The true parameter index of the parametric family of system lifetime is denoted by $\tparam\sysparam$, therefore
-\begin{equation}
-    \sv \sim \spdf\!\left(\;\cdot \given \tparam\sysparam\right)\,.
-\end{equation}
-\end{definition}
+The probability that a component in a set $\Set{A} \in \PowerSet(\Set{K})$ is 
+the cause of a system failure follows from the definition of $\rv{K}$, i.e., 
+$\prob\left[\rv{K} \in \Set{A}\right]$.
 
-\section{Candidate sets}
-Each time a system failure occurs, one of the components failed. Given a set of 
-them, we may compute the probability that one of them was 
-the cause. The set of all component sets is given by the following 
-definition.
-\begin{definition}
-We denote the set of all candidate sets by
-\begin{equation}
-    \cands \equiv \left\{\cand \in \powerset\left(\{1\,,\ldots\,,m\}\right) \colon \cand \neq \emptyset \cap \cand \neq \{1\,,\ldots\,,m\}\right\}\,,
-\end{equation}
-where $\powerset$ is the power set function.
-\end{definition}
-
-The probability that a component in a set $\cand$ is the cause of a system 
-failure follows from the definition of $\rv{K}$, i.e., $\prob\left[\rv{K} \in 
-\cand\right]$. The total probability over $\cands$ does not sum to unity since 
-candidate sets are not disjoint events with respect to the sample space of 
+The total probability over $\PowerSet(\Set{K})$ does not sum to unity since 
+component sets are not disjoint events with respect to the sample space of 
 $\rv{K}$. We consider another random variable (random set) in which the sample 
-space is $\cands$.
+space is defined by the outcomes in $\PowerSet(\Set{K})$.
 
-The uncertain candidate sets are given by the following definition.
+The uncertain component sets are given by the following definition.
 \begin{definition}
 \label{def:random_candidate_set}
-Let $\rvcand$ denote the random set of components which are the most likely 
-causees of a corresponding system failure. The sample space of $\rvcand$ is 
-$\cands$.
+Let $\rvcand$ denote the random set of components that are the most likely 
+causes of system failure. The sample space of $\rvcand$ is 
+$\PowerSet(\Set{K})$.
 \end{definition}
+
+The \emph{cardinality} of a component set could theoretically convey 
+information about the system. As a simplification, we make the following 
+assumption.
 \begin{assumption}
 \label{asm:indep_W_S}
 The cardinality of the random set $\rvcand$, denoted by the discrete random variable
 \begin{equation}
-\rv{W} = \lvert \rvcand \rvert \in \{1\,, \ldots\,, m-1\}\,,
+\rv{W} = \Card{\rvcand}\,,
 \end{equation}
-is independent of the random system lifetime $\sv$ and does not carry information about the true parameter index $\tparam\sysparam$.
+is independent of the random system lifetime $\sv$ and the random component 
+cause $\rvcand$ and therefore does not carry information about the true 
+parameter index $\tparam\sysparam$.
 \end{assumption}
 
-\section{Masked system failure time}
 \begin{definition}
 A \emph{masked system failure time} consists of a system failure time $\ti$ and a corresponding set of components $\cand$ that \emph{plausibly} caused the system failure.
 \end{definition}
 \begin{assumption}
 \label{asm:cand_prob}
-A random \emph{masked system failure time} is a jointly distributed random system lifetime $\sv$ and random candidate set $\rvcand$.
+A random \emph{masked system failure time} is a jointly distributed random 
+system lifetime $\sv$ and random component set $\rvcand$.
 \end{assumption}
 
 \begin{assumption}
@@ -212,14 +189,15 @@ A random sample of $n$ \emph{masked system failure times}, denoted by
 \end{equation}
 consists of $n$ independent and identically jointly distributed pairs of system failure times and candidate sets.
 \end{assumption}
-\begin{definition}
-A particular realization of $\mfs$ is denoted by
-\begin{equation}
-    \mfso = \left(\ti_1,\,\cand_1\right)\,,\,\ldots\,,\,\left(\ti_n,\,\cand_n\right)\,.
-\end{equation}
-\end{definition}
+
 \begin{assumption}
-The only information we have about the system and its true parameter index $\tparam\sysparam$ is given by $\mfso$, a sample of $n$ masked system failure times.
+The only information we have about the system and its true parameter index 
+$\tparam\sysparam$ is given by observing a random sample of $n$ masked system 
+failure times,
+\begin{equation}
+    \left(\sv_1=\ti_1,\rvcand_1=\Set{C}[1]\right), \ldots, 
+    \left(\sv_n=\ti_n,\rvcand_n=\Set{C}[n]\right)\,.
+\end{equation}
 \end{assumption}
 
 Given the assumed model, the object of statistical interest is the (unknown) true parameter index $\tparam\sysparam$. Provided an estimate of $\tparam\sysparam$, any characteristic that is a function of $\tparam\sysparam$ can be estimated as a result, thus the primary objective is to use the \emph{information} in a sample of $n$ masked system failure times to estimate $\tparam\sysparam$ with some quantifiable uncertainty.

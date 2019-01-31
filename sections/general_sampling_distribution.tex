@@ -25,7 +25,7 @@ The mean squared error of the sampling distribution of $\pointest$ is given by
 \mse \left( \sampdpt \right) = \expectation \left [
         \left (
             \sampdpt - \tparam\sysparamvec
-        \right )^\intercal
+        \right )^{\Transpose}
         \left (
             \sampdpt - \tparam\sysparamvec
         \right )
@@ -46,7 +46,8 @@ where $\trace\left(\matrx{A}\right)$ computes the sum of the diagonal elements o
 \emph{Fisher information} reduces the uncertainty about $\tparam\sysparamvec$. The \emph{minimum-variance unbiased estimator} (UMVUE) has a lower-bound given by the inverse of the \emph{Fisher information matrix}, denoted the \emph{Cram\'{e}r-Rao lower-bound}. The minimum variance obtainable from a random sample of $n$ masked system failure times drawn from $\mfs$ is given by
 \begin{equation}
 \label{eq:crlb}
-    \matrx{\rm{CRLB}_{n}} = \frac{1}{n} \infomatrx^{-1}\left(\tparam\sysparamvec \right)\,.
+    \matrx{CRLB_n} = \frac{1}{n} \infomatrx^{-1}\left(\tparam\sysparamvec 
+    \right)\,.
 \end{equation}
 By \cref{eq:mse_bias_var}, if $\pointest$ is an unbiased estimator of $\tparam\sysparamvec$, then the mean squared error is given by
 \begin{equation}
@@ -57,10 +58,10 @@ By \cref{eq:mse_bias_var}, if $\pointest$ is an unbiased estimator of $\tparam\s
 By \cref{eq:mse_unbiased,eq:crlb}, the mean squared error of any unbiased point 
 estimator of $\tparam\sysparamvec$ in which the only \emph{a priori} 
 information is given by a random sample $\mfs$ has a lower-bound given by the 
-trace of $\matrx{\rm{CRLB}_{n}}$,
+trace of $\matrx{CRLB_n}$,
 \begin{equation}
 \label{eq:mse_lower_bound_total}
-\mse\left(\rv{Y}\right) \geq \trace\left(\matrx{\rm{CRLB}_{n}}\right)\,.
+\mse\left(\rv{Y}\right) \geq \trace\left(\matrx{CRLB_n}\right)\,.
 \end{equation}
 
 \section{Maximum likelihood estimator given $w$ candidates}
@@ -159,7 +160,7 @@ By \cref{eq:consistent,eq:covariance_matrix_op}, the variance-covariance of the 
     \var\!\left[\sampd\right] = \expectation
     \left[
         \left(\sampd - \tparam\sysparamvec \right)
-        \left(\sampd - \tparam\sysparamvec \right)^\intercal
+        \left(\sampd - \tparam\sysparamvec \right)^{\Transpose}
     \right]\,.
 \end{equation}
 
@@ -187,7 +188,10 @@ The maximum likelihood estimator $\mle$ is an asymptotically \emph{efficient} es
 By \cref{eq:mse_unbiased,eq:crlb,eq:consistent,eq:inverse_info}, the asymptotic sampling distribution of $\mle$ has the minimum mean squared error of any unbiased estimator,
 \begin{equation}
 \label{eq:mse_mle_trace}
-\mse \left( \sampd \right) = \frac{1}{n} \trace \left ( \infomatrx^{-1} \bigl(\tparam\sysparamvec \given w\bigr) \right) = \trace\left(\matrx{\rm{CRLB}_{n\,w}}\right)\,.
+\mse \left( \sampd \right) =
+    \frac{1}{n} \trace \left (
+        \infomatrx^{-1} \bigl(\tparam\sysparamvec \given w\bigr)
+    \right) = \trace\left(\rm{CRLB}_{n\,w}\right)\,.
 \end{equation}
 
 \begin{remark}
@@ -276,9 +280,13 @@ The variance-covariance of $\sampdu$ is given by
 \begin{align}
     \var\left[\sampdu\right]
         &= \var\left[\matrx{B} \left( \sum_{i=1}^{r} \matrx{A_i} \sampdir{n_i}{w_i}{i} \right)\right]\\
-        &= \matrx{B} \var\left[\sum_{i=1}^{r} \matrx{A_i} \sampdir{n_i}{w_i}{i} \right] \matrx{B^\intercal}\\
-        &= \matrx{B} \left(\sum_{i=1}^{r} \var\left[\matrx{A_i} \sampdir{n_i}{w_i}{i} \right]\right) \matrx{B^\intercal}\\
-        &= \matrx{B} \left(\sum_{i=1}^{r} \matrx{A_i} \var\left[ \sampdir{n_i}{w_i}{i} \right] \matrx{A_i^\intercal} \right) \matrx{B^\intercal}\,.
+        &= \matrx{B} \var\left[\sum_{i=1}^{r} \matrx{A_i} \sampdir{n_i}{w_i}{i} 
+        \right] \matrx{B^{\Transpose}}\\
+        &= \matrx{B} \left(\sum_{i=1}^{r} \var\left[\matrx{A_i} 
+        \sampdir{n_i}{w_i}{i} \right]\right) \matrx{B^{\Transpose}}\\
+        &= \matrx{B} \left(\sum_{i=1}^{r} \matrx{A_i} \var\left[ 
+        \sampdir{n_i}{w_i}{i} \right] \matrx{A_i^{\Transpose}} \right) 
+        \matrx{B^{\Transpose}}\,.
 \end{align}
 By \cref{eq:inverse_info}, the variance-covariance of $\sampdir{n_i}{w_i}{i}$ is given by
 \begin{equation}
@@ -287,13 +295,17 @@ By \cref{eq:inverse_info}, the variance-covariance of $\sampdir{n_i}{w_i}{i}$ is
 By \cref{eq:mat_A_info}, this is equivalent to $\matrx{A_i^{-1}}$. Performing this substitution results in
 \begin{align}
     \var\left[\sampdu\right]
-        &= \matrx{B} \left(\sum_{i=1}^{r} \matrx{A_i} \matrx{A_i^{-1}} \matrx{A_i^\intercal} \right) \matrx{B^\intercal}\\
-        &= \matrx{B} \left(\sum_{i=1}^{r} \matrx{A_i^\intercal}\right) \matrx{B^\intercal}\,.
+        &= \matrx{B} \left(\sum_{i=1}^{r} \matrx{A_i} \matrx{A_i^{-1}} 
+        \matrx{A_i^{\Transpose}} \right) \matrx{B^{\Transpose}}\\
+        &= \matrx{B} \left(\sum_{i=1}^{r} \matrx{A_i^{\Transpose}}\right) 
+        \matrx{B^{\Transpose}}\,.
 \end{align}
-The summation is equivalent to $\matrx{\left({B^\intercal}\right)^{-1}}$. Performing this substitution results in
+The summation is equivalent to $\matrx{\left({B^{\Transpose}}\right)^{-1}}$. 
+Performing this substitution results in
 \begin{align}
     \var\left[\sampdu\right]
-        &= \matrx{B} \matrx{\left(B^\intercal\right)^{-1}} \matrx{B^\intercal}\\
+        &= \matrx{B} \matrx{\left(B^{\Transpose}\right)^{-1}} 
+        \matrx{B^{\Transpose}}\\
         &= \matrx{B}
 \end{align}
 By \cref{eq:proof_of_var_samp_d_full_mat_B}, $\matrx{B}$ is given by

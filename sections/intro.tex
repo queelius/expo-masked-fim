@@ -2,7 +2,24 @@
 \begin{document}
 \chapter{Introduction}
 \label{sec:intro}
-We consider a series system composed of $m$ components, where each component has an uncertain lifetime. We desire a mathematical model that predicts the failure time of the system and its component causes. However, since the system lifetime and the cause of failure is uncertain, we are interested in probabilistically modeling the system lifetime, e.g., there is a $75\%$ chance that component $3$ will cause a system failure in the next $3$ years.
+We consider series systems consisting of some fixed number of components with 
+uncertain lifetimes. We desire a mathematical model of the system that may be 
+used to predict the failure time of the system and its component cause. 
+However, since the system lifetime and the component cause of failure is 
+uncertain, we are interested in probabilistically modeling the system lifetime, 
+e.g., there is a $75\%$ chance that component $3$ will cause a system failure 
+in the next $3$ years.
 
-We assume no prior information about the system except for a parametric model and a sample of $n$ \emph{masked system failure times}. We employ the frequentist approach of repeated experiments which induces a sampling distribution on the point estimator and assume the true parameter of the model is a fixed unknown value. This is in contrast to the Bayesian approach where the true parameter is treated probabilistically. However, we assume the large sample approximation which overrides any Bayesian prior on the true parameter, in which case the frequentist and Bayesian approaches converge to the same result, a point estimator with a multivariate normal sampling distribution.
+We assume the system belongs to some parametric family but whose true parameter 
+index is unknown. Furthermore, we also assume there is a sample of 
+\emph{masked system failure times} that carry information about the true 
+parameter index.
+
+Using the information in the sample, we employ the frequentist approach of 
+repeated experiments which induces a sampling distribution on the maximum 
+likelihood point estimator of the fixed but unknown true parameter index where 
+\emph{a priori} any value in the parameter space is equally likely. The point 
+estimator converges to a multivariate normal sampling distribution with a mean 
+given by the true parameter index and a variance that is inversely proportional 
+to sample size.
 \end{document}
