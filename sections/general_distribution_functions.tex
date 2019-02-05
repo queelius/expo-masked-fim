@@ -174,7 +174,9 @@ reliability functions $\srv_j(t \given \tparam{\sysparam}_j)$ for $j \in
 By \cref{def:comp_cause}, if a system failure occurs at time $t$, then each component has a particular probability of being the cause as given by the following theorem.
 \begin{theorem}
 \label{def:general_cond_prob}
-The conditional probability mass function $\pmf_{\rv{K} \given \sv}(k \given t, \tparam\sysparam)$ maps each component $k \in \{1, \ldots, m\}$ to the probability that component $k$ is the cause of the system failure at time $t$ and is given by
+The conditional probability mass function $\pmf_{\rv{K} \given \sv}(k \given t, 
+\tparam\sysparam)$ maps each component $k \in \Set{K}$ to the probability that 
+component $k$ is the cause of the system failure at time $t$ and is given by
 \begin{equation}
 \label{eq:general_cond_prob_failure_rate}
     \pmf_{\rv{K} \given \sv}\left(k \given t, \tparam{\sysparam}\right) = \frac{\haz_k\left(t \given \tparam{\sysparam}_k\right)}{\haz_{\sv}\left(t \given \tparam{\sysparam}\right)}\,,
@@ -185,7 +187,7 @@ the \jth component and the system.
 \begin{proof}
 By the axioms of probability,
 \begin{equation}
-    \pmf_{\rv{K} \given \sv}(k, \given t, \tparam\sysparam) =
+    \pmf_{\rv{K} \given \sv}(k \given t, \tparam\sysparam) =
     \frac { \pdf_{\rv{K}, \sv}(k, t \given \tparam{\sysparam}) }
     { \spdf(t \given \tparam{\sysparam}) }\,,
 \end{equation}
@@ -272,17 +274,20 @@ is equal to $1$ if $x \in \bf{E}$ and $0$ otherwise.
 \end{definition}
 
 \begin{definition}
-The conditional random variable $\rvcand \given \rv{W} = w$ has a sample space given by
+The random variable $\rvcand$ conditioned on $\rv{W} = w$ has a 
+sample space given by
 \begin{equation}
     \candsw{w} \equiv \left\{\cand \in \cands \given \cardinality{\cand} = w\right\}\,,
 \end{equation}
 the set of all candidate sets of cardinality $w$.
 \end{definition}
 
-The conditional probability density of $\rvcand$ and $\sv$ given $\rv{W} = w$ is given by the following theorem.
+The joint probability density of $\rvcand$ and $\sv$ conditioned on 
+$\rv{W} = w$ is given by the following theorem.
 \begin{theorem}
 \label{thm:general_joint_likelihood_cand}
-The joint conditional probability density of $\rvcand$ and $\sv$ given $\rv{W} = w$ is given by
+The joint probability density of $\rvcand$ and $\sv$ conditioned on $\rv{W} = 
+w$ is given by
 \begin{equation}
 \label{eq:general_joint_likelihood_cand}
     \jointpdf(\cand, t \given w, \tparam\sysparam) = \eta
@@ -310,7 +315,9 @@ Since the events $\rv{K} = j, \sv = t$ for $j \in \cand$ are mutually exclusive,
 \begin{equation}
     L(E) = \sum_{j \in \cand} \haz_j\left(t \given \tparam{\sysparam}_j\right) \srv_{\sv}\left(t \given \tparam\sysparam\right)\,.
 \end{equation}
-Since outcomes in the sample space $\candsw{w}$ are not atomic with respect to the sample space of $\rv{K} \in \{1,\,,\ldots\,,m\}$, we multiply by a normalizing constant $\eta$ to make it a proper joint probability density function.
+Since outcomes in the sample space $\candsw{w}$ are not atomic with respect to 
+the sample space of $\rv{K} \in \Set{K}$, we multiply by a normalizing constant 
+$\eta$ to make it a proper joint probability density function.
 \end{proof}
 
 The normalizing constant $\eta$ indicated in \cref{eq:general_joint_likelihood_cand} is given by the following theorem.
@@ -361,7 +368,8 @@ The conditional probability mass function $\pmf_{\rvcand \given \sv, \rv{W}}(\ca
         \haz_{\sv}\left(t \given \tparam\sysparam\right)
     } \indicator{\candsw{w}}(\cand)\,,
 \end{equation}
-where $\haz_{\sv}(\; \cdot \given \tparam\sysparam)$ and $\haz_j(\; \cdot \given \tparam\sysparam_j)$ are the failure rate functions of the system and the \jth component respectively.
+where $\haz_{\sv}$ and $\haz_j$ are the failure rate functions of the system 
+and the \jth component respectively.
 \end{corollary}
 \begin{proof}
 By the axioms of probability,
@@ -379,8 +387,13 @@ where $\jointpdf(\; \cdot \given \tparam\sysparam)$ is the joint probability den
 
 \begin{definition}
 \label{def:msfs}
-A random sample of $n$ masked system failure times in which it is given that each system failure has $w$ candidates, i.e., $\sv_i, \rvcand_i \given \rv{W} = w$ for $i=1,\ldots,n$, is denoted by $\mfsw$. That is, if given a random sample of masked system failure times, the conditional distribution $\mfsw$ is the subset of the random sample with $w$ candidates. 
+A random sample of $n$ masked system failure times in which it is given that 
+each system failure has $w$ candidates is denoted by $\mfsw$.
 \end{definition}
+That is, if given a random sample of masked system failure times $\mfs$, the 
+conditional distribution $\mfsw$ is the subset of $\mfs$ with $w$ candidates. 
+
+
 The likelihood of observing a particular realization, $\mfsw = \mfso$, is given by the following definition.
 \begin{theorem}
 \label{def:msft_joint_pdf}

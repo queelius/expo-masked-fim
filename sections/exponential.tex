@@ -1,16 +1,13 @@
 \documentclass[../main.tex]{subfiles}
  
 \begin{document}
-\chapter{Expoentially distributed components}
+\chapter{Exponentially distributed component lifetimes}
 \label{sec:common_distributions}
-
-We consider series systems in which component lifetimes are exponentially 
-distributed and compare them to the constrained maximum entropy distribution, 
-which consists of identical exponentially distributed component lifetimes. 
+Suppose we have a series systems in which component lifetimes are exponentially 
+distributed.
 
 \section{Parametric functions}
-Suppose the \jth component has an exponentially distributed lifetime and a 
-failure rate $\tparam{\lambda}_j$, denoted by 
+Suppose the \jth component has a failure rate $\tparam{\lambda}_j$, denoted by 
 $\cv_j \sim \text{EXP}(\tparam{\lambda}_j)$. The random variable $\cv_j$ has 
 reliability, density, and failure rate functions given respectively by
 \begin{align}
@@ -26,8 +23,8 @@ reliability, density, and failure rate functions given respectively by
 \end{align}
 where $t > 0$ and $\tparam{\lambda}_j > 0$.
 
-An $m$-out-of-$m$ system with exponentially distributed lifetimes is also 
-exponentially distributed as proved by the following theorem.
+A series system with exponentially distributed lifetimes is also 
+exponentially distributed.
 \begin{theorem}
 \label{thm:expo_series_family}
 The random lifetime $\sv$ of a series system composed of $m$ components with 
@@ -82,7 +79,8 @@ The conditional probability that component $k$ is the cause of a system failure 
 \begin{equation}
 \label{eq:expo_prob_K_given_S}
     \pmf_{\rv{K} \given \sv}(k \given t, \tparam{\vec\lambda}) = \pmf_{\rv{K}}(k \given \tparam{\vec\lambda}) =
-        \frac{\tparam{\lambda}_k}{\sum_{p=1}^{m} \tparam{\lambda}_p}\indicator{k \in \{1, \ldots, m\}}\,.
+        \frac{\tparam{\lambda}_k}{\sum_{p=1}^{m} 
+        \tparam{\lambda}_p}\indicator{k \in \Set{K}}\,.
 \end{equation}
 \begin{proof}
 By \cref{thm:series_failure_rate_function},
@@ -280,7 +278,7 @@ The $(j,k)$-th element of the Fisher information matrix is given by
             \binom{m-1}{w-1} \sum_{p=1}^{m} \tparam{\lambda}_p
         }\,.
 \end{equation}
-where the summation indexed by $\cand$ is over $\powerset(\{1,\ldots,m\})$.
+where the summation indexed by $\cand$ is over $\PowerSet(\Set{K})$.
 \begin{proof}
 By \cref{eq:info_matrix_el}, the $(j,k)$-th element of the information matrix is given by
 \begin{equation}
@@ -446,13 +444,6 @@ The $(j, k)$-th element of the observed information matrix $\observed_n$ is give
 which only depends on the statistic $\cntsymb$.
 
 \section{Applications}
-Knowing the distribution of component lifetimes has many important 
-applications. The canonical use-case is, if a failure occurs in a series system 
-at time $t$, for any component we know the probability that it is the component 
-cause of failure. However, there are other applications as well. For instance, 
-a system designer may desire a system where the component cause of failure is 
-as uncertain as possible to prevent an \emph{adversary} from learning about 
-critical vulnerabilities. 
 
 A $(1-\alpha) \cdot 100 \%$-confidence interval for $\tparam{\lambda}_j$ is 
 given by
@@ -461,29 +452,6 @@ given by
     \sqrt{\frac{1}{n} \left [ \infomatrx^{-1}(\vec{\estimator{\vec\lambda}_n}) \right ]_{j j}}\,.
 \end{equation}
 
-The expected lifetime of the system is given by
-\begin{equation}
-    \operatorname{\expectation_{\vec{\tparam\lambda}}}[\sv] = \frac{1}{\sum_{p=1}^{m} \tparam\lambda_j}\,.
-\end{equation}
-The maximum likelihood estimator of $\operatorname{\expectation_{\vec{\tparam\lambda}}}[\sv]$ is given by $\operatorname{\expectation_{\expomle}}[\sv]$, which has an asymptotic sampling distribution given by
-\begin{equation}
-    \rv{S}_{\operatorname{\expectation_{\expomle}}[\sv]} \sim \mathcal{N}\left(\operatorname{\expectation_{\vec{\tparam\lambda}}}[\sv], \var\left[\operatorname{\expectation_{\expomle}}[\sv]\right]\right)\,,
-\end{equation}
-where
-\begin{equation}
-    \var\left[\operatorname{\expectation_{\expomle}}[\sv]\right] = a\,.
-\end{equation}
-
-If a system failure occurs, the expected number of inspections is given by
-\begin{equation}
-    \operatorname{\expectation_{\vec{\tparam\lambda}}}[\rv{N}] =
-    \frac{\sum_{n=1}^{m} n \cdot \tparam{\lambda}_{\orderfunc(n)}}{\sum_{p=1}^{m} \tparam{\lambda}_p}\,,
-\end{equation}
-where $\orderfunc(j) \leq \orderfunc(k) \implies \tparam\lambda_j \geq \tparam\lambda_k$. The maximum likelihood estimator of $\operatorname{\expectation_{\vec{\tparam\lambda}}}[\rv{N}]$ is given by $\operatorname{\expectation_{\expomle}}[\rv{N}]$, which has an asymptotic sampling distribution given by
-\begin{equation}
-    \rv{S}_{\operatorname{\expectation_{\expomle}}[\rv{N}]} \sim \mathcal{N}\left(\operatorname{\expectation_{\vec{\tparam\lambda}}}[\rv{N}], \var\left[\operatorname{\expectation_{\expomle}}[\rv{N}]\right]\right)\,,
-\end{equation}
-where an estimator of the variance-covariance $\var\left[\operatorname{\expectation_{\expomle}}[\rv{N}]\right]$ is described in \cref{sec:app:monte_carlo}.
 
 \section{Case study: 3-out-of-3 system}
 The $3$-out-of-$3$ system's lifetime distribution functions are given by
@@ -503,10 +471,11 @@ The $3$-out-of-$3$ system's lifetime distribution functions are given by
 \end{align}
 where $t > 0$, $\tparam\lambda_1 > 0$, $\tparam\lambda_2 > 0$, and $\tparam\lambda_3 > 0$.
 
-\subsection{Sampling distributions}
-\subsubsection{Two candidates} If we condition on samples in which each 
-observation consists of two candidates, $\rv{W} = \cardinality{\rvcand} = 2$, 
-the likelihood function is given by
+\subsection{Sampling distributions of the maximum likelihood estimator}
+\subsubsection{Component sets of size two}
+If we condition on samples in which each observation consists of two 
+candidates, $\rv{W} = \cardinality{\rvcand} = 2$, the likelihood function is 
+given by
 \begin{equation}
 \begin{split}
     \likelihood(\vec\lambda \given \bar{t}, \cntsymb) &= (\lambda_1 + \lambda_2)^{\cnt{1,2}} (\lambda_1 + \lambda_3)^{\cnt{1,3}} (\lambda_2 + \lambda_3)^{\cnt{2,3}} \exp\left(-n \bar{t} \left(\lambda_1 + \lambda_2 + \lambda_3\right)\right)
@@ -584,7 +553,7 @@ Consequently, each time we observe a particular $\sampdexpo = \expomle$, we draw
     \right)\,.
 \end{equation}
 
-\subsubsection{One candidate}
+\subsubsection{Component sets of size one}
 If we condition on samples in which each observation consists of one candidate, $\rv{W} = \cardinality{\rvcand} = 1$, the likelihood function is given by
 \begin{equation}
     \likelihood(\vec\lambda \given \bar{t}, \cntsymb) = \lambda_1^{\cnt{1}} \lambda_2^{\cnt{2}} \lambda_3^{\cnt{3}} \exp\left(-n \bar{t} \left(\lambda_1 + \lambda_2 + \lambda_3\right)\right)
@@ -654,7 +623,7 @@ By comparison, the confidence interval when conditioning on $\cardinality{\rvcan
 \end{equation}
 as wide.
 
-\subsubsection{Three candidates}
+\subsubsection{Degenerate: component sets of size three}
 The degenerate case is all components are candidates, $\rv{W} = \cardinality{\rvcand} = 3$. There is no maximum likelihood estimator $\vec{\estimator{\vec\lambda}_n}$. Rather, solving the equation results in the underspecified system given by
 \begin{equation}
     \sum_{j=1}^{3} \estimator\lambda_j - \frac{1}{\bar{t}} = 0\,,

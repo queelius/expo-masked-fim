@@ -124,7 +124,18 @@ By these definitions, it follows that
     \cv_j \sim \pdf_j\!\left(\; \cdot \given \tparam\sysparam_j\right)\,.
 \end{equation}
 
-\section{Masked system failure times}
+\section{Latent variables and masked system failure times}
+
+\begin{figure}
+\label{fig:true_model}
+\caption{Graphical model of random variables}
+\begin{center}
+    \input{img/true_graph_model.tex}
+\end{center}
+\end{figure}
+
+
+
 By \cref{thm:series_system_lifetime}, if a system failure occurs at time $\ti$, 
 then one of the components failed at time $\ti$ (only a single component can 
 cause a system failure since two or more continuous random variables cannot 
