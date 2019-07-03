@@ -83,19 +83,13 @@ By these definitions, the relative likelihood that the system will fail at time
 $t$ is $\spdf(t)$ and probability the \jth component will before time $t$ is 
 $\cdf_{\cv_j}(t)$.
 \begin{notation}
-We let $\cdf_j \equiv \cdf_{\cv_j}$ and $\pdf_j \equiv \pdf_{\cv_j}$. Column 
-vectors are denoted by boldface lower case letters, e.g., $\vec{x}$, and row 
-vectors are denoted by the transpose of column vectors, e.g.,  
-$\vec{x}^\Transpose$. Matrices are denoted by boldface upper case greek 
-letters, 
-e.g., $\matrx{A}$. The \jth column of $\matrx{A}$ is denoted by $\matrx{A}_j$ 
-(or $\left[\matrx{A}\right]_j$) and the $(j,k)$-th element of $\matrx{A}$ is 
-denoted by $\matrx{A}_{j\,k}$ (or $\left[\matrx{A}\right]_{j\,k}$).
+We simplify the notation and let $\cdf_j$ denote $\cdf_{\cv_j}$ and $\pdf_j$ denote $\pdf_{\cv_j}$.
+Column vectors are denoted by boldface lower case letters, e.g., $\vec{x}$, and row vectors are denoted by the transpose of column vectors, e.g., $\vec{x}^\Transpose$.
+Matrices are denoted by boldface upper case greek letters, e.g., $\matrx{A}$.
+The \jth column of $\matrx{A}$ is denoted by $\matrx{A}_j$ (or $\left[\matrx{A}\right]_j$) and the $(j,k)$-th element of $\matrx{A}$ is denoted by $\matrx{A}_{j\,k}$ (or $\left[\matrx{A}\right]_{j\,k}$).
 \end{notation}
 
-We restrict our attention to parametrized families of probability distribution 
-functions. The system lifetime has a probability density function that is a 
-member of the following parametric family.
+We restrict our attention to parametrized families of probability distribution functions. The system lifetime has a probability density function that is a member of the following parametric family.
 \begin{definition}
     \label{def:sysparametric}
     The system lifetime has a probability density function that is a member of 
@@ -124,7 +118,7 @@ By these definitions, it follows that
     \cv_j \sim \pdf_j\!\left(\; \cdot \given \tparam\sysparam_j\right)\,.
 \end{equation}
 
-\section{Latent variables and masked system failure times}
+\section{Hidden variables and masked system failure times}
 
 \begin{figure}
 \label{fig:true_model}
