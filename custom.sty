@@ -2,13 +2,15 @@
 \usepgfplotslibrary{fillbetween}
 \pgfplotsset{compat=1.13}
 
+\RequirePackage{matrixnotation}
+\RequirePackage{setnotation}
+
+\numberwithin{equation}{chapter}
+
 \DeclareMathOperator{\likelihood}{\mathcal{L}}
 \DeclareMathOperator{\expectation}{\mathbb{E}}
-\DeclareMathOperator*{\argmax}{arg\,max}
-\DeclareMathOperator*{\argmin}{arg\,min}
 \DeclareMathOperator{\hessian}{\mathcal{H}}
 \DeclareMathOperator{\jacobian}{\mathcal{J}}
-\DeclareMathOperator{\powerset}{\mathcal{P}}
 \DeclareMathOperator{\infomatrx}{\matrx{\mathcal{I}}}
 \DeclareMathOperator{\infomatrxn}{\matrx{\mathcal{I}_n}}
 \DeclareMathOperator{\observed}{\matrx{\mathcal{J}}}
@@ -17,31 +19,19 @@
 \DeclareMathOperator{\score}{\rm{s}}
 \DeclareMathOperator{\entropy}{H}
 \DeclareMathOperator{\info}{I}
-\DeclareMathOperator{\mvn}{\rm{MVN}}
-\DeclareMathOperator{\expdist}{\rm{EXP}}
-\DeclareMathOperator{\unifdist}{\rm{UNIF}}
-\DeclareMathOperator{\var}{\rm{Var}}
 \DeclareMathOperator{\infi}{\rm{inf}}
-\DeclareMathOperator{\mse}{\rm{MSE}}
-\DeclareMathOperator{\cov}{\mathlarger{\Sigma_n}}
-\DeclareMathOperator{\trace}{tr}
-\DeclareMathOperator{\bias}{bias}
+\DeclareMathOperator{\cov}{\mathlarger{\matrx{\Sigma_n}}}
 \DeclareMathOperator{\scalarstat}{g}
-
-\renewcommand{\vec}[1]{\boldsymbol{\mathbf{#1}}}
 
 \newcommand{\covn}[1]{\matrx{\Sigma_{#1}}}
 \newcommand{\pfam}{\mathcal{F}_{\sysparam}}
 \newcommand{\pfami}{\mathcal{F}_{\cparamv}}
 \newcommand{\infomatrxni}[1]{\operatorname{\matrx{\mathcal{I}_{#1}}}}
-\newcommand{\cardinality}[1]{{\lvert#1\rvert}}
 \newcommand{\given}{{\,|\,}}
-\newcommand{\matrx}[1]{\boldsymbol{#1}}
 \newcommand{\vtopr}{\operatorname{vec}}
 \newcommand{\vt}[1]{\vtopr\left(#1\right)}
 \newcommand{\vectomat}[1]{\operatorname{mat}(#1)}
 \newcommand{\biconditional}{\leftrightarrow}
-\newcommand{\indicator}[1]{\operatorname{\mathbbm{1}_{#1}}}
 \newcommand{\cntsymb}{\boldsymbol{\hat\omega}}
 \newcommand{\cnt}[1]{\cntsymb_{\{#1\}}}
 \newcommand{\veclist}[1]{ \left (#1 \right )}
@@ -50,15 +40,12 @@
 \newcommand{\ppderivative}[2]{\frac {\mathrm{\partial} #1}{\mathrm{\partial}#2}}
 \newcommand{\psecondderivative}[2]{\frac {\mathrm{\partial^2}}{\mathrm{\partial}#1\mathrm{\partial}#2}}
 \newcommand{\psecondderivativesame}[1]{\frac {\mathrm{\partial^2}}{\mathrm{\partial}#1^2}}
-\newcommand{\rv}[1]{\mathrm{#1}}
 \newcommand{\cdf}{F}
 \newcommand{\pdf}{f}
 \newcommand{\haz}{h}
 \newcommand{\srv}{R}
 \newcommand{\pmf}{p}
-\newcommand{\prob}{\Pr} %\mathrm{Pr}
 \newcommand{\kth}{$k^{\text{th }}$}
-\newcommand{\ith}{$i^{\text{th }}$}
 \newcommand{\jth}{$j^{\text{th }}$}
 \newcommand{\nth}{$n^{\text{th }}$}
 \newcommand{\rth}{$r^{\text{th }}$}
@@ -67,23 +54,6 @@
 \newcommand{\nonmleestimator}[1]{\bar{#1}} %\tidle{#1}
 \newcommand{\tparam}[1]{{#1}^{\star}}
 \newcommand{\vecstat}{\vec{\scalarstat}}
-
-\newcount\colveccount
-\newcommand*\colvec[1]{
-        \global\colveccount#1
-        \begin{pmatrix}
-        \colvecnext
-}
-\def\colvecnext#1{
-        #1
-        \global\advance\colveccount-1
-        \ifnum\colveccount>0
-                \\
-                \expandafter\colvecnext
-        \else
-                \end{pmatrix}
-        \fi
-}
 
 \makeatletter
 \def\namedlabel#1#2{\begingroup
@@ -111,7 +81,7 @@
 
 \newcommand{\pointest}{\vec{\nonmleestimator\sysparamvec_{n}}}
 \newcommand{\pointesti}[1]{\vec{\nonmleestimator\sysparamvec_{n}^{(#1)}}}
-\newcommand{\sampdpt}{\rv{\vec{Y_n}}}
+\newcommand{\sampdpt}{\RV{\vec{Y_n}}}
 
 \newcommand{\mleir}[2]{\vec{\estimator{\sysparamvec}}(#1 \given #2)}
 \newcommand{\mlei}[1]{\vec{\estimator{\sysparamvec}}^{(#1)}(n \given w)}
@@ -122,48 +92,29 @@
 \newcommand{\expomle}{\vec{\estimator{\vec\lambda}_n}}
 \newcommand{\expomlei}[2]{\vec{\estimator{\vec\lambda}_{#2}^{(#1)}}}
 
-\newcommand{\sampdu}{\rv{\vec{Y_{\!n}}}}
-\newcommand{\sampd}{\rv{\vec{Y}}(n \given w)}
-\newcommand{\sampdi}[1]{\rv{\vec{Y_{\!n}^{(#1)}}}}
-\newcommand{\sampdir}[3]{\rv{\vec{Y}}^{(#3)}(#1 \given #2)}
-\newcommand{\sampdexpo}{\rv{\vec{\Lambda_n}}}
-\newcommand{\sampdexpoi}[2]{\rv{\vec{\Lambda_{#2}}^{(#1)}}}
+\newcommand{\sampdu}{\RV{\vec{Y_{\!n}}}}
+\newcommand{\sampd}{\RV{\vec{Y}}(n \given w)}
+\newcommand{\sampdi}[1]{\RV{\vec{Y_{\!n}^{(#1)}}}}
+\newcommand{\sampdir}[3]{\RV{\vec{Y}}^{(#3)}(#1 \given #2)}
+\newcommand{\sampdexpo}{\RV{\vec{\Lambda_n}}}
+\newcommand{\sampdexpoi}[2]{\RV{\vec{\Lambda_{#2}}^{(#1)}}}
 
-\newcommand{\cands}{\PowerSet(\Set{K})}
-\newcommand{\candsw}[1]{\FancySet{W}_{#1}}
+\newcommand{\cands}{\PS{\Set{K}}}
+\newcommand{\candsw}[1]{\Set{W}_{#1}}
 \newcommand{\cand}{\Set{C}}
-\newcommand{\rvcand}{\FancySet{C}}
-\newcommand{\rvcandi}[1]{\FancySet{C}_{#1}}
-\newcommand{\cv}{\rv{T}}
-\newcommand{\sv}{\rv{S}}
+\newcommand{\rvcand}{\RV{C}}
+\newcommand{\rvcandi}[1]{\RV{C}_{#1}}
+\newcommand{\cv}{\RV{T}}
+\newcommand{\sv}{\RV{S}}
 \newcommand{\ti}{\rm{t}}
 
 \newcommand{\harmonic}[2]{H_{#1,#2}}
 
 \newcommand{\spdf}{\pdf_{\sv}}
-\newcommand{\jointpdf}{\pdf_{\rvcand, \sv \given \rv{W}}}
+\newcommand{\jointpdf}{\pdf_{\rvcand, \sv \given \RV{W}}}
 
-\numberwithin{equation}{chapter}
+\SetKwFunction{findmle}{find\_mle}
+\SetKwFunction{proj}{project}
+\SetKwFunction{genSampleFn}{generate\_msft}
+\SetKwFunction{genSampleMLE}{generate\_mle}
 
-%\theoremstyle{plain}
-%\newtheorem{theorem}{Theorem}[chapter]
-%\newtheorem{corollary}{Corollary}[theorem]
-%\newtheorem{definition}{Definition}[chapter]
-%\newtheorem{postulate}{Postulate}[chapter]
-%\newtheorem{assumption}{Assumption}[chapter]
-%\theoremstyle{definition}
-%\newtheorem{example}{Example}
-
-%\newcounter{equationstore}
-%\newcounter{proofnum}
-
-%\AtBeginEnvironment{proof}{\setcounter{equationstore}{\value{equation}}
-%\refstepcounter{proofnum}
-%\setcounter{equation}{0}\renewcommand{\theequation}{\alph{equation}}
-%\renewcommand{\theHequation}{\arabic{proofnum}.\alph{equation}}}
-%\AtEndEnvironment{proof}{\setcounter{equation}{\value{equationstore}}}
-
-\SetKwFunction{findmle}{FindMLE}
-\SetKwFunction{proj}{Project}
-\SetKwFunction{genSampleFn}{GenerateMSFT}
-\SetKwFunction{genSampleMLE}{GenerateMLE}

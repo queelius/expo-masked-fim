@@ -54,29 +54,29 @@ quantify the uncertainty. The cumulative distribution function is given by the
 following definition.
 \begin{definition}
     \label{def:cdf_function}
-    Let $\rv{X}$ be some random variable. The probability that $\rv{X} \leq x$ 
+    Let $\RV{X}$ be some random variable. The probability that $\RV{X} \leq x$ 
     is given by its cumulative distribution function, denoted by
     \begin{equation}
-    \cdf_{\rv{X}}\!\left(x\right) = \prob[\rv{X} \leq x]\,.
+    \cdf_{\RV{X}}\!\left(x\right) = \Prob{\RV{X} \leq x}\,.
     \end{equation}
 \end{definition}
 The probability density function is given by the following definition.
 \begin{definition}
     \label{def:pdf}
-    Let $\rv{X}$ be some continuous random variable. The \emph{relative 
-        likelihood} that $\rv{X} = x$ is given by its probability density 
+    Let $\RV{X}$ be some continuous random variable. The \emph{relative 
+        likelihood} that $\RV{X} = x$ is given by its probability density 
     function, denoted by
     \begin{equation}
-    \pdf_{\rv{X}}(x) = \derivative{t}\cdf_{\rv{X}}(t)\,.
+    \pdf_{\RV{X}}(x) = \derivative{t}\cdf_{\RV{X}}(t)\,.
     \end{equation}
 \end{definition}
 By the Second Fundamental Theorem of Calculus, the probability that a 
-continuous random variable $\rv{X} \in \left(a,b\right]$, $a \leq b$, is given 
+continuous random variable $\RV{X} \in \left(a,b\right]$, $a \leq b$, is given 
 by
 \begin{equation}
 \label{eq:prob_F_R_p}
-\prob[a < \rv{X} \leq b] = \cdf_{\rv{X}}(b) - \cdf_{\rv{X}}(a) = \int_{a}^{b} 
-\pdf_{\rv{X}}(s) \mathrm{d}s\,.
+\Prob{a < \RV{X} \leq b} = \cdf_{\RV{X}}(b) - \cdf_{\RV{X}}(a) = \int_{a}^{b} 
+\pdf_{\RV{X}}(s) \mathrm{d}s\,.
 \end{equation}
 
 By these definitions, the relative likelihood that the system will fail at time 
@@ -97,7 +97,7 @@ We restrict our attention to parametrized families of probability distribution f
     \begin{equation}
     \label{eq:paramsys}
     \pfam = \left \{ \spdf\left(\; \cdot \given \sysparam\right) \colon 
-    \sysparam \in \mathbb{R}^{q \times m} \right \}\,,
+    \sysparam \in \RealSet^{q \times m} \right \}\,,
     \end{equation}
     where $\sysparam_j \in \boldsymbol\Omega$ corresponds to the parameter 
     index of the \jth component lifetime.
@@ -135,32 +135,28 @@ then one of the components failed at time $\ti$ (only a single component can
 cause a system failure since two or more continuous random variables cannot 
 realize the same value).
 \begin{definition}
-    \label{def:comp_cause}
-    The discrete random variable indicating the component 
-    responsible for a system failure is denoted by $\rv{K}$ with a sample space 
-    $\Set{K} = \{1,\ldots,m\}$. That is, $\rv{K} = j$ indicates that $\cv_j 
-    < \cv_k$ for $k \in \SetDiff[\Set{K}][\{ j \}]$.
+\label{def:comp_cause}
+The discrete random variable indicating the component responsible for a system failure is denoted by $\RV{K}$ with a sample space $\Set{K} = \{1,\ldots,m\}$. That is, $\RV{K} = j$ indicates that $\cv_j < \cv_k$ for $k \in \SetDiff[\Set{K}][\{ j \}]$.
 \end{definition}
 
 We may not be certain which component caused a system failure, but may be able 
 to narrow the component cause to some \emph{subset}. The set of all component 
-sets is given by the power set of $\Set{K}$, denoted by $\PowerSet(\Set{K})$.
+sets is given by the power set of $\Set{K}$, denoted by $\PS{\Set{K}}$.
 
-The probability that a component in a set $\Set{A} \in \PowerSet(\Set{K})$ is 
-the cause of a system failure follows from the definition of $\rv{K}$, i.e., 
-$\prob\left[\rv{K} \in \Set{A}\right]$.
+The probability that a component in a set $\Set{A} \in \PS{\Set{K}}$ is the cause of a system failure follows from the definition of $\RV{K}$, i.e., 
+$\Prob{\RV{K} \in \Set{A}}$.
 
-The total probability over $\PowerSet(\Set{K})$ does not sum to unity since 
+The total probability over $\PS{\Set{K}}$ does not sum to unity since
 component sets are not disjoint events with respect to the sample space of 
-$\rv{K}$. We consider another random variable (random set) in which the sample 
-space is defined by the outcomes in $\PowerSet(\Set{K})$.
+$\RV{K}$. We consider another random element (random set) in which the sample 
+space is defined by the outcomes in $\PS{\Set{K}}$.
 
 The uncertain component sets are given by the following definition.
 \begin{definition}
 \label{def:random_candidate_set}
 Let $\rvcand$ denote the random set of components that are the most likely 
 causes of system failure. The sample space of $\rvcand$ is 
-$\PowerSet(\Set{K})$.
+$\PS{\Set{K}}$.
 \end{definition}
 
 The \emph{cardinality} of a component set could theoretically convey 
@@ -170,7 +166,7 @@ assumption.
 \label{asm:indep_W_S}
 The cardinality of the random set $\rvcand$, denoted by the discrete random variable
 \begin{equation}
-\rv{W} = \Card{\rvcand}\,,
+\RV{W} = \Card{\rvcand}\,,
 \end{equation}
 is independent of the random system lifetime $\sv$ and the random component 
 cause $\rvcand$ and therefore does not carry information about the true 

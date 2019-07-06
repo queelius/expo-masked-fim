@@ -2,15 +2,16 @@
 \begin{document}
 \chapter{Sampling distribution of functions of parameters}
 \label{sec:app}
-Suppose we have a characteristic of interest that is a function of $\tparam\sysparamvec \in \mathbb{R}^{m \cdot q}$, denoted by $\vecstat(\tparam\sysparamvec) \colon \mathbb{R}^{m \cdot q} \mapsto \mathbb{R}^{p}$. By the invariance property of maximum likelihood estimators, if $\mleu$ is the maximum likelihood estimator of $\tparam\sysparamvec$ then $\vecstat(\mleu)$ is the maximum likelihood estimator of $\vecstat(\tparam\sysparamvec)$.
+Suppose we have a characteristic of interest $\vecstat \colon \mathbb{R}^{m \cdot q} \mapsto \mathbb{R}^{p}$ that is a function of the parametric model.
+The \emph{true} value of the characteristic is given by $\vecstat(\tparam\sysparamvec)$.
+By the invariance property of maximum likelihood estimators, if $\mleu$ is the maximum likelihood estimator of $\tparam\sysparamvec$ then $\vecstat(\mleu)$ is the maximum likelihood estimator of $\vecstat(\tparam\sysparamvec)$.
 
 By \cref{def:converge_in_dist}, $\sampdu$ is a random vector drawn from a multivariate normal distribution,
 \begin{equation*}
     \sampdu \sim \mvn\left(\tparam\sysparamvec, \var\left[\sampdu\right]\right)\,,
     \tag{\text{\ref{eq:converge_in_dist_weighted} revisited}}
 \end{equation*}
-
-Therefore, $\vecstat\left(\sampdu\right)$ is a random vector. Under the regularity conditions (see \cref{def:reg_cond}), $\vecstat\left(\sampdu\right)$ is asymptotically normally distributed with a mean given by $\vecstat(\tparam\sysparamvec)$ and a variance-covariance given by $\var\left[\vecstat(\sampdu)\right]$, written
+therefore $\vecstat\left(\sampdu\right)$ is a random vector. Under the regularity conditions (see \cref{def:reg_cond}), $\vecstat\left(\sampdu\right)$ is asymptotically normally distributed with a mean given by $\vecstat(\tparam\sysparamvec)$ and a variance-covariance given by $\var\left[\vecstat(\sampdu)\right]$, written
 \begin{equation}
 \vecstat\left(\sampdu\right) \xrightarrow{d} \mvn\left(\vecstat\left(\tparam\sysparamvec\right), \var\left[\vecstat(\sampdu)\right]\right)\,.
 \end{equation}
@@ -26,23 +27,23 @@ If we are interested in the asymptotic marginal distribution of the \jth compone
 \end{equation}
 where $\sigma^2 = \left[\infomatrx^{-1}\left(\tparam\sysparamvec\right)\right]_{j j}$.
 
-Asymptotically, the random variable $\left[\sampdu\right]_j$ realizes value less than constant $a$ with probability given by
+Asymptotically, the random variable $\left[\sampdu\right]_j$ realizes a value less than any constant $a$ with a probability given by
 \begin{equation}
-    \prob\left[\left[\sampdu\right]_j < a \right] = \operatorname{\Phi}\!\left(\frac{a - \tparam\sysparamvec_j}{\sigma_j}\right)\,,
+    \Prob{\left[\sampdu\right]_j < a } = \operatorname{\Phi}\!\left(\frac{a - \tparam\param_j}{\sigma_j}\right)\,,
 \end{equation}
 where $\Phi$ is the cumulative distribution function of the standard normal.
 
 The smallest interval in which $\left[\sampdu\right]_j$ is realized with probability $p$ is given by
 \begin{equation}
 \label{eq:prob_interval}
-     \tparam\sysparamvec_j \, \raisebox{.2ex}{$\scriptstyle\pm$} \, \sigma_j \operatorname{\Phi^{-1}}\!\left(p/2\right)\,,
+     \tparam\paramv_j \, \raisebox{.2ex}{$\scriptstyle\pm$} \, \sigma_j \operatorname{\Phi^{-1}}\!\left(p/2\right)\,,
 \end{equation}
 where $\Phi^{-1}$ is the inverse cumulative distribution function of the standard normal.
 
 By the invariance property of maximum likelihood estimators, a maximum likelihood estimator of \cref{eq:prob_interval} is the confidence interval given by the following definition.
 \begin{definition}
 \label{def:conf_interval}
-An asymptotic $(1 - \alpha) \cdot 100 \%$ confidence interval for the \jth component of the true parameter index $\tparam\sysparamvec$ is given by
+An asymptotic $(1 - \alpha) \cdot 100 \%$ confidence interval for the \jth component of the true parameter index $\tparam\paramv$ is given by
 \begin{equation}
 \label{eq:conf_interval}
     \estimator\paramv_j \, \raisebox{.2ex}{$\scriptstyle\pm$} \, \estimator{\sigma}_j \, \operatorname{\Phi^{-1}}\!\left(1-\alpha/2\right)\,,

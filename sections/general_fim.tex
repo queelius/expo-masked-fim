@@ -4,15 +4,13 @@
 \label{sec:general_fisher_info}
 In what follows, we frequently prefer to work with vectors rather than matrices.
 \begin{definition}
+\label{def:vtopr}
 Let $\vtopr \colon \mathbb{R}^{m \times q} \mapsto \mathbb{R}^{m \cdot q}$ denote the linear transformation of a matrix of $m$ rows and $q$ columns into a column vector of $m \cdot q$ elements, where consecutive matrix rows are placed side by side.
+Additionally, the \jth component of a vector $\vec{a}$ is denoted by $\left[\vec{a}\right]_j$ or $a_j$.
 \end{definition}
-
 \begin{notation}
-A matrix parameter index $\sysparam$ has a vector representation denoted by
-\begin{equation}
-    \sysparamvec \equiv \vt{\sysparam}\,,
-\end{equation}
-thus the true matix parameter index $\tparam\sysparam$ has a vector representation denoted by $\tparam\sysparamvec$. We use matrix and vector representations interchangeably.
+By \cref{def:vtopr}, $\tparam\sysparam$ has an equivalent representation denoted by $\tparam\sysparamvec \equiv \vtopr\!\left(\tparam\sysparam\right)$ and the \jth component of $\tparam\sysparamvec$ is denoted by $\tparam\paramv_j$.
+We use matrix and vector representations interchangeably.
 \end{notation}
 
 The subsequent material makes a few assumptions, denoted \emph{regularity conditions}, given by the following.
@@ -42,16 +40,15 @@ By \cref{def:msft_joint_pdf}, the probability density that $\mfsw = \mfso$ is gi
 If we fix $\mfso$ and allow the parameter $\sysparamvec$ to change, we have the likelihood function.
 \begin{definition}
 \label{def:likelihood_func}
-The likelihood function represents the \emph{likelihood} of parameter index $\sysparamvec$ conditioned on $\mfsw = \mfso$ is given by
+The likelihood function represents the \emph{likelihood} of parameter index $\sysparamvec$ conditioned on $\mfsw = \mfso$ and is given by
 \begin{equation}
     \likelihood(\sysparamvec \given w, \mfso) = \prod_{i=1}^{n} \jointpdf(\cand_i, t_i \given w, \sysparamvec)\,.
 \end{equation}
 \end{definition}
-The likelihood is a measure of the extent to which the given sample provides support for particular values of a parameter in $\pfam$.
+The likelihood is a measure of the extent to which the given sample provides support for particular values of a parameter in $\pfam$;
+its surface captures all the information there is about $\tparam\sysparamvec$ from the given sample.
 
-The surface of the likelihood function captures all the information there is about $\tparam\sysparamvec$ in a sample. Any statistic that is equivalent to the likelihood function is a \emph{sufficient} statistic. The likelihood function is a minimally sufficient statistic.
-
-The log-likelihood plays a more central role than the likelihood for reasons that will be made clear later on. The log-likelihood function is given by the following theorem.
+The log-likelihood plays a more central role than the likelihood for reasons that will be made clear later on.
 \begin{definition}
 \label{def:general_log_like}
 The log-likelihood with respect to $\sysparamvec$ given a particular $\mfsw = \mfso$ is given by
@@ -62,36 +59,36 @@ The log-likelihood with respect to $\sysparamvec$ given a particular $\mfsw = \m
 \end{equation}
 \end{definition}
 
-In subsequent material, we need the gradient operator as given by the following definition.
+In subsequent material, we need the gradient operator given by the following definition.
 \begin{definition}[Gradient operator]
-The gradient of a function $\operatorname{g} \colon \mathbb{R}^q \mapsto \mathbb{R}$ with respect to column vector $\vec{x} \in \mathbb{R}^q$ is given by
+The gradient operator $\nabla \colon \left(\RealSet^q \mapsto \RealSet\right) \mapsto \left(\RealSet^q \mapsto \RealSet^q\right)$ is defined as
 \begin{equation}
-    \nabla_{\vec{x}} \operatorname{g}\left(\vec{x}\right) = \left (
-        \pd{\operatorname{g}(\vec{x})}{x_1},\,
+    \nabla \operatorname{g}\left(x_1,\ldots,x_q\right) = \left (
+        \pd{\operatorname{g}(x_1,\ldots,x_q)}{x_1},\,
         \ldots\,,
-        \pd{\operatorname{g}(\vec{x})}{x_q}
-    \right )^{\intercal}\,.
+        \pd{\operatorname{g}(x_1,\ldots,x_q)}{x_q}
+    \right )^{\Transpose}\,.
 \end{equation}
 \end{definition}
 
 The score function is given by the following definition.
 \begin{definition}[Score function]
-The gradient of the log-likelihood function with respect to $\sysparamvec$ is the Fisher's score function is denoted by $\score \colon \mathbb{R}^{m \cdot q} \mapsto \mathbb{R}^{m \cdot q}$. That is,
+The Fisher's score function, denoted by $\score \colon \RealSet^{m \cdot q} \mapsto \RealSet^{m \cdot q}$, is the gradient of the log-likelihood function
 \begin{equation}
 \label{eq:score}
-    \score\left(\sysparamvec \given w, \mfso\right) = \nabla_{\sysparamvec} \ell(\sysparamvec \given w, \mfso)\,.
+    \score\left(\sysparamvec \given w, \mfso\right) \coloneqq \nabla \ell(\sysparamvec \given w, \mfso)\,.
 \end{equation}
 \end{definition}
 
 The variance-covariance is given by the following definition.
 \begin{definition}[Variance-covariance]
-A random vector $\rv{\vec{X}} \in \mathbb{R}^{p}$ has a variance-covariance given by
+A random vector $\RV{\vec{X}} \in \mathbb{R}^{p}$ has a variance-covariance given by
 \begin{equation}
 \label{eq:covariance_matrix_op}
-    \var\!\left(\rv{\vec{X}}\right) = \expectation
+    \var\!\left(\RV{\vec{X}}\right) = \expectation
     \left [
-        \left(\rv{\vec{X}} - \expectation[\rv{\vec{X}}] \right)
-        \left(\rv{\vec{X}} - \expectation[\rv{\vec{X}}] \right)^\intercal
+        \left(\RV{\vec{X}} - \expectation[\RV{\vec{X}}] \right)
+        \left(\RV{\vec{X}} - \expectation[\RV{\vec{X}}] \right)^\intercal
     \right ]\,,
 \end{equation}
 which is a $p$-by-$p$ semi-positive definite matrix.
@@ -106,7 +103,7 @@ The score as a function of a random sample $\mfsw$ has a variance-covariance kno
     \infomatrxn\left(\tparam\sysparamvec \given w \right)
         = \operatorname{\var_{\tparam\sysparamvec}}\!\!\left[\score\left(\tparam\sysparamvec \given w, \mfsw\right)\right]\,,
 \end{equation}
-where the variance is taken with respect to the joint probability density function of $\rvcand\,, \sv \given \rv{W} = w$ indexed by $\tparam\sysparamvec$.
+where the variance is taken with respect to the joint probability density function of $\rvcand\,, \sv \given \RV{W} = w$ indexed by $\tparam\sysparamvec$.
 \end{definition}
 The Hessian is given by the following definition.
 \begin{definition}[Hessian operator]
@@ -168,10 +165,10 @@ The information matrix is a key quantity in large sample theory; it quantifies t
 \end{equation}
 which is maximized at $\tparam\sysparamvec$. Intuitively, the more ``peaked'' the log-likelihood is expected to be at $\tparam\sysparamvec$, the more information a random sample is expected to carry about $\tparam\sysparamvec$.
 
-The information about $\tparam\sysparamvec$ of independent samples is \emph{additive} as given by the following postulate.
+The information independent samples have about about $\tparam\sysparamvec$ is \emph{additive} as given by the following postulate.
 \begin{postulate}
 \label{post:info_add}
-Algebraically, the Fisher information about the true parameter index $\tparam\sysparamvec$ of independent samples is additive. That is,
+Algebraically, the Fisher information independent samples have about the true parameter index $\tparam\sysparamvec$  is additive such that
 \begin{equation}
     \infomatrx_{\matrx{n_1} + \matrx{n_2}}\left(\tparam\sysparamvec \given 
     \cdot \; \right) = \infomatrx_{\matrx{n_1}}(\tparam\sysparamvec \given 
@@ -184,35 +181,35 @@ By \cref{post:info_add}, the Fisher information of a random sample of $n$ masked
 \end{equation}
 
 A \emph{masked system failure time} in which the cardinality of the candidate 
-set is distributed according to $\rv{W}$, as described by \cref{dummyref}, has 
+set is distributed according to $\RV{W}$, as described by \cref{dummyref}, has 
 a Fisher information matrix given by the following theorem.
 \begin{theorem}
 The \emph{Fisher information} matrix of true parameter index $\tparam\sysparamvec$ with respect to a realization of jointly distributed random system lifetime $\sv = t$ and candidate set $\rvcand = \cand$ is given by
 \begin{equation}
     \infomatrx\left(\tparam\sysparamvec\right) =
-        \sum_{w=1}^{m-1} \pmf_{\rv{W}}(w) \infomatrx\left(\tparam\sysparamvec \given w\right)\,,
+        \sum_{w=1}^{m-1} \pmf_{\RV{W}}(w) \infomatrx\left(\tparam\sysparamvec \given w\right)\,,
 \end{equation}
-where $\pmf_{\rv{W}}(w)$ is the marginal distribution of $\rv{W} = \cardinality{\rvcand}$.
+where $\pmf_{\RV{W}}(w)$ is the marginal distribution of $\RV{W} = \Card{\rvcand}$.
 \end{theorem}
 \begin{proof}
 Suppose we have a random sample of $n$ masked system failure times. By 
 \cref{dummyref}, the expected number of sample points that have $w$ candidates 
 is given by
 \begin{equation}
-    n \cdot \pmf_{\rv{W}}(w)\,.
+    n \cdot \pmf_{\RV{W}}(w)\,.
 \end{equation}    
 By the additive property of \emph{Fisher information} given by \cref{post:info_add}, the information matrix is given by
 \begin{equation}
-    \infomatrxn\left(\tparam\sysparamvec\right) = \sum_{w=1}^{m-1} n \cdot \pmf_{\rv{W}}(w) \infomatrx\left(\tparam\sysparamvec \given w\right)\,.
+    \infomatrxn\left(\tparam\sysparamvec\right) = \sum_{w=1}^{m-1} n \cdot \pmf_{\RV{W}}(w) \infomatrx\left(\tparam\sysparamvec \given w\right)\,.
 \end{equation}
 Setting $n$ to $1$ results in
 \begin{equation}
-    \infomatrx(\tparam\sysparamvec) = \sum_{w=1}^{m-1} \pmf_{\rv{W}}(w) \infomatrx\left(\tparam\sysparamvec \given w\right)\,.
+    \infomatrx(\tparam\sysparamvec) = \sum_{w=1}^{m-1} \pmf_{\RV{W}}(w) \infomatrx\left(\tparam\sysparamvec \given w\right)\,.
 \end{equation}
 \end{proof}
 
 \begin{remark}
-A model is a simplification of reality. The model denoted by $\mfs$ is an approximation of some (unknown) underlying generative model, e.g., $\rv{W}$ and $\sv$ may not truly be independent. Since the \emph{expected} information matrix is an expectation with respect to the simplified model, the \emph{expected} information is also a simplified approximation. The \emph{observed} information matrix, given by
+A model is a simplification of reality. The model denoted by $\mfs$ is an approximation of some (unknown) underlying generative model, e.g., $\RV{W}$ and $\sv$ may not truly be independent. Since the \emph{expected} information matrix is an expectation with respect to the simplified model, the \emph{expected} information is also a simplified approximation. The \emph{observed} information matrix, given by
 \begin{equation}
     \observedn(\mleu \given \mfso) = - \eval
     {

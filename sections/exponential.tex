@@ -1,7 +1,7 @@
 \documentclass[../main.tex]{subfiles}
  
 \begin{document}
-\chapter{Exponentially distributed component lifetimes}
+\chapter{The maximum entropy distribution: exponentially distributed component lifetimes}
 \label{sec:common_distributions}
 Suppose we have a series systems in which component lifetimes are exponentially 
 distributed.
@@ -78,64 +78,65 @@ where $t > 0$ and $\tparam{\lambda}_j > 0$.
 The conditional probability that component $k$ is the cause of a system failure at time $t$ is given by
 \begin{equation}
 \label{eq:expo_prob_K_given_S}
-    \pmf_{\rv{K} \given \sv}(k \given t, \tparam{\vec\lambda}) = \pmf_{\rv{K}}(k \given \tparam{\vec\lambda}) =
+    \pmf_{\RV{K} \given \sv}(k \given t, \tparam{\vec\lambda}) = \pmf_{\RV{K}}(k \given \tparam{\vec\lambda}) =
         \frac{\tparam{\lambda}_k}{\sum_{p=1}^{m} 
-        \tparam{\lambda}_p}\indicator{k \in \Set{K}}\,.
+        \tparam{\lambda}_p}\SetIndicator{\Set{K}}(k)\,.
 \end{equation}
 \begin{proof}
 By \cref{thm:series_failure_rate_function},
 \begin{equation}
-\pmf_{\rv{K} \given \sv}(k \given t, \tparam{\vec\lambda}) = \frac
+\pmf_{\RV{K} \given \sv}(k \given t, \tparam{\vec\lambda}) = \frac
     {\haz_k(t \given \tparam{\vec\lambda}_k)}
     {\haz_{\sv}(t \given \tparam{\vec\lambda})}\,.
 \end{equation}
 Plug in the failure rate of component $k$ and the failure rate of the system given by \cref{eq:expo_sys_failure_rate,eq:expo_haz}.
 \end{proof}
-Due to the constant failure rates of the components, $\rv{K}$ and $\sv$ are independent. The joint density of $\rv{K}$ and $\sv$ is given by
+Due to the constant failure rates of the components, $\RV{K}$ and $\sv$ are independent. The joint density of $\RV{K}$ and $\sv$ is given by
 \begin{equation}
 \label{eq:expo_joint_k_s}
-\pdf_{\rv{K}, \sv}(k, t \given \tparam{\vec\lambda}) =
+\pdf_{\RV{K}, \sv}(k, t \given \tparam{\vec\lambda}) =
     \tparam{\lambda}_k \exp \left(-\left [ \sum_{j=1}^{m}{\tparam{\lambda_j}} \right ] t\right)
-    \indicator{t > 0}\indicator{\Set{K} \times \RealSet^{+}}(k,t)
+    \SetIndicator{\Set{K} \times \RealSet^{+}}(k,t)
 \end{equation}
 \begin{proof}
 By definition,
 \begin{equation}
-\pdf_{\rv{K}, \sv}(k, t \given \tparam{\vec\lambda}) =
-    \pmf_{\rv{K} \given \sv}(k \given t, \tparam{\vec\lambda}) \spdf(t \given \tparam{\vec\lambda})\,.
+\pdf_{\RV{K}, \sv}(k, t \given \tparam{\vec\lambda}) =
+    \pmf_{\RV{K} \given \sv}(k \given t, \tparam{\vec\lambda}) \spdf(t \given \tparam{\vec\lambda})\,.
 \end{equation}
 Plug in the conditional probability and the marginal probability given by \cref{eq:expo_prob_K_given_S,eq:expo_sys_pdf}.
 \end{proof}
 
-The conditional joint density of $\rvcand$ and $\sv$ given $\rv{W} = w$ is given by
+The conditional joint density of $\rvcand$ and $\sv$ given $\RV{W} = w$ is given by
 \begin{equation}
-    \jointpdf(\cand, t \given w, \tparam{\vec\lambda}) = \frac{\indicator{t > 0} \indicator{\cardinality{\cand} = w}}{\binom{m-1}{w-1}} \left ( \sum_{j \in \cand} \lambda_j \right ) \exp \left [ - \left ( \sum_{j=1}^{m} \lambda_j \right ) t \right ]\,,
+    \jointpdf(\cand, t \given w, \tparam{\vec\lambda}) = \frac{\SetIndicator{t > 0} \SetIndicator{\Card{\cand} = w}}{\binom{m-1}{w-1}} \left ( \sum_{j \in \cand} \lambda_j \right ) \exp \left [ - \left ( \sum_{j=1}^{m} \lambda_j \right ) t \right ]\,,
 \end{equation}
 whose proof follows from \cref{thm:general_joint_likelihood_cand}.
 
-The conditional probability that a component in $\rvcand$ is the cause of a system failure given that $\sv = t$ and $\rv{W} = w$ is given by
+The conditional probability that a component in $\rvcand$ is the cause of a system failure given that $\sv = t$ and $\RV{W} = w$ is given by
 \begin{equation}
 \label{eq:expo_cand_given_s}
-    \pmf_{\rvcand \given \sv, \rv{W}}(\cand \given t, w, \tparam{\vec\lambda}) =
+    \pmf_{\rvcand \given \sv, \RV{W}}(\cand \given t, w, \tparam{\vec\lambda}) =
         \frac{ \sum_{j \in \cand} \tparam{\lambda}_j }
-            { \binom{m-1}{w-1} \sum_{p=1}^{m} \tparam{\lambda}_p } \indicator{t > 0} \indicator{\cardinality{\cand} = w}\,.
+            { \binom{m-1}{w-1} \sum_{p=1}^{m} \tparam{\lambda}_p } \SetIndicator{\RealSet_{+} \times \candsw{w}}(t,\Card{\cand})\,.
 \end{equation}
 whose proof follows from \cref{def:general_cond_cand_probability}.
 
-Note that the marginal distribution of $\rvcand \given \rv{W} = w$ is given by
+Note that the marginal distribution of $\rvcand \given \RV{W} = w$ is given by
 \begin{equation}
 \label{eq:expo_cand_given_s}
-     \pmf_{\rvcand \given \rv{W}}\left(\cand \given w, \tparam{\vec\lambda}\right) =
+     \pmf_{\rvcand \given \RV{W}}\left(\cand \given w, \tparam{\vec\lambda}\right) =
         \frac{ \sum_{j \in \cand} \tparam{\lambda}_j }
-            { \binom{m-1}{w-1} \sum_{p=1}^{m} \tparam{\lambda}_p } \indicator{\cardinality{\cand} = w}\,,
+            { \binom{m-1}{w-1} \sum_{p=1}^{m} \tparam{\lambda}_p } \SetIndicator{\candsw{w}}(\Card{\cand})\,,
 \end{equation}
 \begin{proof}
 The marginal is given by
 \begin{align}
-     \pmf_{\rvcand \given \rv{W}}(\cand \given w, \tparam{\vec\lambda})
+     \pmf_{\rvcand \given \RV{W}}(\cand \given w, \tparam{\vec\lambda})
         &= \int_{-\infty}^{\infty} \jointpdf\left(\cand, t \given w, \tparam{\vec\lambda}\right) \dif t\\
-        &= \int_{0}^{\infty} \mathsmaller{\frac{\indicator{t > 0} \indicator{\cardinality{\cand} = w}}{\binom{m-1}{w-1}}     \left ( \sum_{j \in \cand} \lambda_j \right ) \exp \left [ - \left ( \sum_{j=1}^{m} \lambda_j \right ) t \right ] \dif t}\\
-        &= \mathsmaller{\frac{ \indicator{\cardinality{\cand} = w}}{\binom{m-1}{w-1}}} \sum_{j \in \cand} \lambda_j \int_{0}^{\infty} \mathsmaller{ \exp \left [ - \left ( \sum_{j=1}^{m} \lambda_j \right ) t \right ] \dif t}\,.
+        &= \int_{0}^{\infty} \mathsmaller{\frac{\SetIndicator{\RealSet_{+} \times \candsw{w}}(t,\Card{\cand})}{\binom{m-1}{w-1}}
+        	\left ( \sum_{j \in \cand} \lambda_j \right ) \exp \left [ - \left ( \sum_{j=1}^{m} \lambda_j \right ) t \right ] \dif t}\\
+        &= \mathsmaller{\frac{ \SetIndicator{\candsw{w}(\cand)}}{\binom{m-1}{w-1}}} \sum_{j \in \cand} \lambda_j \int_{0}^{\infty} \mathsmaller{ \exp \left [ - \left ( \sum_{j=1}^{m} \lambda_j \right ) t \right ] \dif t}\,.
 \end{align}
 Multiplying the integrand by
 \begin{equation}
@@ -143,18 +144,18 @@ Multiplying the integrand by
 \end{equation}
 results in
 \begin{align}
-     \pmf_{\rvcand \given \rv{W}}(\cand \given w, \tparam{\vec\lambda})
-        &= \mathsmaller{\frac{ \indicator{\cardinality{\cand} = w} }{\binom{m-1}{w-1}} \frac{\sum_{j \in \cand} \lambda_j}{\sum_{j=1}^{m} \lambda_j}} \int_{0}^{\infty} \mathsmaller{ \left ( \sum_{j=1}^{m} \lambda_j \right) \exp \left [ - \left ( \sum_{j=1}^{m} \lambda_j \right ) t \right ] \dif t}\\
-        &= \mathsmaller{\frac{ \indicator{\cardinality{\cand} = w} }{\binom{m-1}{w-1}} \frac{\sum_{j \in \cand} \lambda_j}{\sum_{j=1}^{m} \lambda_j}} \int_{0}^{\infty} \spdf\left(t \given \vec{\tparam\lambda}\right) \dif t\\
-        &= \mathsmaller{\frac{ \indicator{\cardinality{\cand} = w} }{\binom{m-1}{w-1}} \frac{\sum_{j \in \cand} \lambda_j}{\sum_{j=1}^{m} \lambda_j}}\,.
+     \pmf_{\rvcand \given \RV{W}}(\cand \given w, \tparam{\vec\lambda})
+        &= \mathsmaller{\frac{ \SetIndicator{\candsw{w}(\Card{\cand})} }{\binom{m-1}{w-1}} \frac{\sum_{j \in \cand} \lambda_j}{\sum_{j=1}^{m} \lambda_j}} \int_{0}^{\infty} \mathsmaller{ \left ( \sum_{j=1}^{m} \lambda_j \right) \exp \left [ - \left ( \sum_{j=1}^{m} \lambda_j \right ) t \right ] \dif t}\\
+        &= \mathsmaller{\frac{ \SetIndicator{\candsw{w}(\Card{\cand})} }{\binom{m-1}{w-1}} \frac{\sum_{j \in \cand} \lambda_j}{\sum_{j=1}^{m} \lambda_j}} \int_{0}^{\infty} \spdf\left(t \given \vec{\tparam\lambda}\right) \dif t\\
+        &= \mathsmaller{\frac{ \SetIndicator{\candsw{w}(\Card{\cand})}}{\binom{m-1}{w-1}} \frac{\sum_{j \in \cand} \lambda_j}{\sum_{j=1}^{m} \lambda_j}}\,.
 \end{align}
 \end{proof}
-The marginal distribution of $\rvcand \given \rv{W} = w$ given by 
+The marginal distribution of $\rvcand \given \RV{W} = w$ given by 
 \cref{dummyref} is the same as the joint distribution of $\rvcand, \sv \given 
-\rv{W} = w$ given by \cref{eq:expo_cand_given_s}. Thus, $\rvcand$ and $\sv$ are 
-conditionally independent given $\rv{W} = w$.
+\RV{W} = w$ given by \cref{eq:expo_cand_given_s}. Thus, $\rvcand$ and $\sv$ are 
+conditionally independent given $\RV{W} = w$.
 
-\section{The maximum entropy distribution}
+\section{Maximum entropy distribution}
 The larger the variance of the estimator, the larger a sample necessary to 
 obtain an estimate with a given mean squared error.
 
@@ -163,72 +164,64 @@ could ask ``yes'' or ``no'' questions about the component
 cause of failure, an \emph{expected lower-bound} on the number of 
 questions required to determine which component caused the failure is given by
 \begin{equation}
-\entropy(\rv{K}) = -\sum_{k \in \Set{K}} \pmf_{\rv{K}}(k) \log_2 
-\pmf_{\rv{K}}(k)\,.
+\entropy(\RV{K}) = -\sum_{k \in \Set{K}} \pmf_{\RV{K}}(k) \log_2 
+\pmf_{\RV{K}}(k)\,.
 \end{equation}
-This is known as the \emph{entropy} of the discrete random variable $\rv{K}$, 
-which quantifies the amount of uncertainty about which value $\rv{K}$ will 
+This is known as the \emph{entropy} of the discrete random variable $\RV{K}$, 
+which quantifies the amount of uncertainty about which value $\RV{K}$ will 
 realize.
 
-The greater the entropy, the greater the number of questions the diagnostician 
-needs on average to determine the component cause of failure. Each component 
-may have a different distribution of lifetimes, and thus knowing when a system 
-failure occurs may \emph{reduce} the uncertainty about the component cause of 
-failure,
+The greater the entropy, the greater the number of questions the diagnostician needs on average to determine the component cause of failure.
+Each component may have a different distribution of lifetimes, and thus knowing when a system failure occurs may \emph{reduce} the uncertainty about the component cause of failure,
 \begin{equation}
-\entropy(\rv{K} \given \sv) \leq \entropy(\rv{K})\,.
+\entropy(\RV{K} \given \sv) \leq \entropy(\RV{K})\,.
 \end{equation}
-If $\rv{K}$ and $\sv$ are \emph{statistically independent}, then
+If $\RV{K}$ and $\sv$ are \emph{statistically independent}, then
 \begin{equation}
-\entropy(\rv{K} \given \sv) = \entropy(\rv{K})\,,
+\entropy(\RV{K} \given \sv) = \entropy(\RV{K})\,,
 \end{equation}
-that is, observing the system failure time does not reduce the uncertainty. The 
-joint entropy of $\rv{K}$ and $\sv$ is given by
+that is, observing the system failure time does not reduce the uncertainty.
+The joint entropy of $\RV{K}$ and $\sv$ is given by
 \begin{equation}
-\entropy(\rv{K}, \sv) = -\sum_{k \in \Set{K}} 
-\pdf_{\rv{K},\sv}(k,t) \log_2 \pdf_{\rv{K},\sv}(k,t)\,,
+\entropy(\RV{K}, \sv) = -\sum_{k \in \Set{K}} 
+\pdf_{\RV{K},\sv}(k,t) \log_2 \pdf_{\RV{K},\sv}(k,t)\,,
 \end{equation}
 which is equivalent to
 \begin{equation}
-\entropy(\rv{K} \given \sv) + \entropy(\sv)\,.
+\entropy(\RV{K} \given \sv) + \entropy(\sv)\,.
 \end{equation}
 
-Given that $\entropy(\rv{K} \given \sv) \leq \entropy(\rv{K})$, a maximum 
-entropy distribution has the form
+Given that $\entropy(\RV{K} \given \sv) \leq \entropy(\RV{K})$, a maximum entropy distribution has the form
 \begin{equation}
-\entropy(\rv{K}, \sv) = \entropy(\rv{K}) + \entropy(\rv{S})\,,
+\entropy(\RV{K}, \sv) = \entropy(\RV{K}) + \entropy(\sv)\,,
 \end{equation}
-where each of the components, and thus the system lifetime $\rv{S}$, has an 
-interval of support $(0,\infty)$. We may thus maximize each part above, 
-$\entropy(\rv{S})$ and $\entropy(\rv{K})$, independently, to derive the maximum 
-entropy.
+where each of the components, and thus the system lifetime $\sv$, has an interval of support $(0,\infty)$.
 
-If we constrain the system lifetime to have an expectation $\mu$ (which may be 
-easily estimable from a sample), then the constrained maximum entropy 
-distribution of $\rv{S}$ is given by
-\begin{equation}
-\rv{S} \sim \expdist(\lambda)
-\end{equation}
-where $\lambda = 1 / \mu$.
+Given the way in which $\RV{K}$ is defined as a function of $\sv$, there is a possibility that $\sv$ and $\RV{K}$ are necessarily dependent.
+However, by \cref{?}, we see that if the component lifetimes are exponentially distributed, then the system lifetime $\sv$ is exponentially distributed, and by \cref{?} $\RV{K}$ is \emph{independent} of $\sv$.
 
-Independently, the maximum entropy distribution of the discrete random variable 
-$\rv{K}$ is given by the discrete uniform distribution
+Moreover, if we constrain the system lifetime to have an expectation $\mu$, then the maximum entropy distribution of $\sv$ is given by
 \begin{equation}
-\rv{K} \sim \unifdist(1,m)\,,
+\sv \sim \expdist(\lambda = 1 / \mu)\,.
 \end{equation}
-which is fortunate since the only series system that has an exponentially 
-distributed lifetime is a 
-series system where each of the components has exponentially distributed 
-lifetimes. Thus, each component must have a lifetime
+
+Independently, the maximum entropy distribution of the discrete random variable $\RV{K}$ is given by the discrete uniform distribution
+\begin{equation}
+\RV{K} \sim \unifdist(1,m)\,.
+\end{equation}
+By \cref{?}, we know that these components must be exponentially distributed and that each component must be uniformly distributed such the sum of their failure rates must equal $\lambda$, i.e.,
 \begin{equation}
 \cv_j \sim \expdist(\lambda / m)
 \end{equation}
-for $j=1,\ldots,m$, which is independent of $\rv{S}$.
+for $j=1,\ldots,m$.
+
+TODO: fix this
+
+The entropy of $\Pair{\sv}{\RV{K}}$ has very little to do determining the \emph{parameters}. The preceding discussion only applied to the number of questions, on average, needed to discern which component failed, and, independently, when did it fail, i.e., sample from $\RV{K}$ and then from $\sv$
 
 % compare max entropy distribution against other exp dists that aren't max... 
 %see asymptotics and such
 
- 
 \section{Maximum likelihood estimator}
 According to \cref{def:general_mle}, the maximum likelihood estimator of $\tparam{\vec\lambda}$ is the value that maximizes the log-likelihood on a given masked system failure time sample, denoted $\mfs$. The likelihood function is given by
 \begin{equation}
@@ -250,7 +243,7 @@ The solution to \cref{eq:expo_sys_mle} must be a stationary point, i.e., a point
 \begin{equation}
 \label{eq:score_expo_j}
     \frac{\partial \ell}{\partial \lambda_j} = 
-    \sum_{i=1}^{n} \left ( \sum_{p \in \cand_i} \lambda_p \right )^{-1} \indicator{j \in \cand_i} - \sum_{i=1}^{n} t_i\,.
+    \sum_{i=1}^{n} \left ( \sum_{p \in \cand_i} \lambda_p \right )^{-1} \SetIndicator{\cand_i}(j) - \sum_{i=1}^{n} t_i\,.
 \end{equation}
 
 According to \cref{def:converge_in_dist}, the sampling distribution of $\expomle$ converges in distribution to a multivariate normal with a mean given by $\tparam{\vec\lambda}$ and a variance-covariance given by
@@ -271,14 +264,14 @@ The $(j,k)$-th element of the Fisher information matrix is given by
             \sum_{\cand}
             \left [
                 \left ( \sum_{p \in \cand} \tparam{\lambda}_p \right )^{-1}
-                \indicator{j \in \cand, k \in \cand}
+                \SetIndicator{\cand \times \cand}(j,k)
             \right ]
         }
         {
             \binom{m-1}{w-1} \sum_{p=1}^{m} \tparam{\lambda}_p
         }\,.
 \end{equation}
-where the summation indexed by $\cand$ is over $\PowerSet(\Set{K})$.
+where the summation indexed by $\cand$ is over $\PS{\Set{K}}$.
 \begin{proof}
 By \cref{eq:info_matrix_el}, the $(j,k)$-th element of the information matrix is given by
 \begin{equation}
@@ -300,9 +293,9 @@ In the above equation, the second-order partial derivative of the log of the joi
     \frac{\partial{}}{\partial \lambda_k} \frac{\partial \ell}{\partial \lambda_j}
         &= \frac{\partial{}}{\partial \lambda_k} \left (
             \left [ \sum_{p \in \cand} \lambda_p \right ]^{-1}
-            \indicator{j \in \cand} - t \right )\\
+            \SetIndicator{\cand}(j) - t \right )\\
     \label{eq:proof_expo_info_2}
-        &= -\left ( \sum_{p \in \cand} \lambda_p \right )^{-2} \indicator{j \in \cand, k \in \cand}\,.
+        &= -\left ( \sum_{p \in \cand} \lambda_p \right )^{-2} \SetIndicator{\cand \times \cand}(j,k)\,.
 \end{align}
 Plugging in the joint density and substituting \cref{eq:proof_expo_info_2} into \cref{eq:proof_expo_info_1} results in
 \begin{equation}
@@ -310,7 +303,7 @@ Plugging in the joint density and substituting \cref{eq:proof_expo_info_2} into 
     \sum_{\cand}
     \int_{0}^{\infty}
     \eval{
-        \left ( \sum_{p \in \cand} \lambda_p \right )^{-2} \indicator{p \in \cand, k \in \cand}
+        \left ( \sum_{p \in \cand} \lambda_p \right )^{-2} \SetIndicator{\cand \times \cand}(p,k)
     }_{\vec\lambda = \vec{\tparam\lambda}}
     \frac{1}{\binom{m-1}{w-1}}
     \left ( \sum_{p \in \cand} \tparam\lambda_p \right ) \exp \left ( - \left [ \sum_{p=1}^{m} \tparam\lambda_p \right ] t \right )
@@ -323,7 +316,7 @@ Simplifying and rearranging results in
     \frac{1}{\binom{m-1}{w-1}}
     \sum_{\cand}
     \left ( \sum_{p \in \cand} \tparam\lambda_p \right )^{-1}
-    \indicator{p \in \cand, k \in \cand}
+    \SetIndicator{\cand \times \in \cand}(p,k)
     \int_{0}^{\infty}
     \exp \left ( - \left [ \sum_{p=1}^{m} \tparam\lambda_p \right ] t \right ) 
      \dif t\,.
@@ -349,7 +342,7 @@ Substituting \cref{eq:proof_expo_info_4} into \cref{eq:proof_expo_info_3} result
     \frac{1}{\binom{m-1}{w-1}}
     \sum_{\cand} \left\{
     \left ( \sum_{p \in \cand} \tparam\lambda_p \right )^{-1}
-    \frac{1}{\sum_{p=1}^{m} \tparam\lambda_p} \indicator{p \in \cand, k \in \cand} \right \}\,.
+    \frac{1}{\sum_{p=1}^{m} \tparam\lambda_p} \SetIndicator{\cand \times \cand}(p,k) \right \}\,.
 \end{equation}
 \end{proof}
 
@@ -361,7 +354,7 @@ Consider a sample of $n$ masked system failure times denoted by $\mfso$. The mea
 \end{equation}
 and another statistic, denoted by $\cntsymb$, is a dictionary of candidate set-frequency count pairs where a candidate set $\vec{k} \in \cands$ maps to its sample frequency and is given by
 \begin{equation}
-    \cntsymb_{\vec{k}} = \sum_{i=1}^{n} \indicator{\vec{k}}(\cand_i)\,.
+    \cntsymb_{\vec{k}} = \sum_{i=1}^{n} \SetIndicator{\vec{k}}(\cand_i)\,.
 \end{equation}
 Given a sample $\mfso$, the likelihood $\likelihood(\vec\lambda \given \mfso)$ described by \cref{eq:expo_like} is the same as the likelihood given by
 \begin{equation}
@@ -402,44 +395,45 @@ The statistics $\bar{t}$ and $\cntsymb$ are jointly sufficient for $\vec{\tparam
 By the Fisher–Neyman factorization theorem, since $\likelihood$ given by \cref{eq:expo_like} can be factored as $\likelihood(\bar{t}, \cntsymb) = h(\bar{t}, \cntsymb) g(\bar{t}, \cntsymb)$, $\cntsymb$ and $\bar t$ are joint sufficient statistics for $\tparam{\vec\lambda}$.
 \end{proof}
 
-It may be helpful to consider an example given by the following
+It may be helpful to consider the following example.
 \begin{example}
-Let a masked failure time sample of size $n$ for a $3$-out-of-$3$ system with exponentially distributed lifetime components be given by
-\begin{equation*}
-    \mfso{4} = \left(
-        \left(t_1 = 1, \cand_1 = \{ 1, 2 \} \right),
-        \left(t_2 = 1, \cand_2 = \{ 1, 3 \} \right),
-        \left(t_3 = 2, \cand_3 = \{ 1, 2 \} \right),
-        \left(t_4 = 2, \cand_4 = \{ 1, 2 \} \right)
-    \right)\,.
-\end{equation*}
-Then, joint sufficient statics of $\vec{\tparam\lambda}$ are given by
+Suppose we have a $3$-out-of-$3$ system with exponentially distributed component lifetimes.
+If we are given a sample of $4$ masked system times,
+\begin{equation}
+    \mfsoi{4} = \left(
+        \Pair{t_1 = 1}{\cand_1 = \{ 1, 2 \}},
+        \Pair{t_2 = 1}{\cand_2 = \{ 1, 3 \}},
+        \Pair{t_3 = 2}{\cand_3 = \{ 1, 2 \}},
+        \Pair{t_4 = 2}{\cand_4 = \{ 1, 2 \}}
+    \right)\,,
+\end{equation}
+then joint sufficient statics of $\vec{\tparam\lambda}$ are
 \begin{align*}
     \bar t &= \frac{1 + 1 + 2 + 2}{4} = \frac{3}{2}\,,\\
     \cntsymb &= \{\cntsymb_{\{1,2\}} \mapsto 3\,,\cntsymb_{\{1,3\}} \mapsto 1\}\,.
 \end{align*}
-No additional information is needed to compute the likelihood of $\vec\lambda$ with respect to the given $\mfs_4$ sample.
+No additional information is needed to compute the likelihood of $\vec\lambda$ with respect to the given $\mfsn{4}$ sample.
 \end{example}
 
 The log-likelihood $\ell$ is given by
 \begin{equation}
 \ell(\sysparamvec \given \bar t, \vec\cntsymb, w) =
     -n \bar t \left ( \sum_{j=1}^{m} \lambda_j \right ) +
-    \sum_{\cand} \cntsymb_{\cand} \ln
+    \sum_{\cand \in \candsw{w}} \cntsymb_{\cand} \ln
         \left ( \sum_{j \in \cand} \lambda_j \right )\,.
 \end{equation}
 To find the MLE $\estimator{\vec\lambda}_n$, we find the stationary points for $\lambda_1, \ldots, \lambda_m$ given by
 \begin{equation}
     0   =  -n \bar t +
-            \sum_{\cand} \cntsymb_{\cand}
+            \sum_{\cand \in \candsw{w}} \cntsymb_{\cand}
                 \left (
                     \sum_{j \in \cand} \lambda_j
-                \right )^{-1} \indicator{k \in \cand}\;; k = 1, \ldots, m\,.
+                \right )^{-1} \SetIndicator{\cand}(k)\;; k = 1, \ldots, m\,.
 \end{equation}
 The $(j, k)$-th element of the observed information matrix $\observed_n$ is given by
 \begin{equation}
     \left [ \observed_n(\tparam{\vec\lambda} \vec\cntsymb) \right ]_{j k} =
-        - \sum_{\cand} \cntsymb_{\cand} \left( \sum_{i \in \cand} \tparam\lambda_i \right)^{-2} \indicator{j \in \cand} \indicator{k \in \cand}\,,
+        - \sum_{\cand \in \candsw{w}} \cntsymb_{\cand} \left( \sum_{i \in \cand} \tparam\lambda_i \right)^{-2} \SetIndicator{\cand \times \cand}(j,k)\,,
 \end{equation}
 which only depends on the statistic $\cntsymb$.
 
@@ -474,7 +468,7 @@ where $t > 0$, $\tparam\lambda_1 > 0$, $\tparam\lambda_2 > 0$, and $\tparam\lamb
 \subsection{Sampling distributions of the maximum likelihood estimator}
 \subsubsection{Component sets of size two}
 If we condition on samples in which each observation consists of two 
-candidates, $\rv{W} = \cardinality{\rvcand} = 2$, the likelihood function is 
+candidates, $\RV{W} = \Card{\rvcand} = 2$, the likelihood function is 
 given by
 \begin{equation}
 \begin{split}
@@ -545,7 +539,7 @@ According to \cref{thm:approx_normal}, for a sufficiently large sample size $n$,
 \label{eq:expo_mvn3}
     \sampdexpo \sim \mathrm{MVN}\biggl(\tparam{\vec\lambda}, \frac{1}{n}\infomatrx^{-1}(\tparam{\vec\lambda})\biggr)\,.
 \end{equation}
-Consequently, each time we observe a particular $\sampdexpo = \expomle$, we draw a random vector from the multivariate normal distribution given by \cref{eq:expo_mvn3}. Thus, the independent asymptotic $(1-\alpha) \cdot 100 \%$-confidence interval for $\tparam\lambda_j$ is given by
+Consequently, each time we observe a particular $\sampdexpo = \expomle$, we draw a random vector from the multivariate normal distribution given by \cref{eq:expo_mvn3}. Thus, an independent asymptotic $(1-\alpha) \cdot 100 \%$-confidence interval for $\tparam\lambda_j$ is given by
 \begin{equation}
     \estimator{\lambda}_j \raisebox{.2ex}{$\scriptstyle\pm$} \frac{z_{1 - \alpha/2}}{\sqrt n}
     \left (
@@ -554,7 +548,7 @@ Consequently, each time we observe a particular $\sampdexpo = \expomle$, we draw
 \end{equation}
 
 \subsubsection{Component sets of size one}
-If we condition on samples in which each observation consists of one candidate, $\rv{W} = \cardinality{\rvcand} = 1$, the likelihood function is given by
+If we condition on samples in which each observation consists of one candidate, $\RV{W} = \Card{\rvcand} = 1$, the likelihood function is given by
 \begin{equation}
     \likelihood(\vec\lambda \given \bar{t}, \cntsymb) = \lambda_1^{\cnt{1}} \lambda_2^{\cnt{2}} \lambda_3^{\cnt{3}} \exp\left(-n \bar{t} \left(\lambda_1 + \lambda_2 + \lambda_3\right)\right)
 \end{equation}
@@ -596,7 +590,7 @@ The asymptotic mean squared error is given by the trace of the variance-covarian
 \begin{equation}
     \mse\left(\sampdexpo\right) = \frac{(\estimator{\lambda}_1 +  \estimator{\lambda}_2 +  \estimator{\lambda}_3)^2}{n}\,,
 \end{equation}
-which has three times less mean squared error than when conditioning on $\cardinality{\rvcand} = 2$. That is, an $\mfs$ sample in which each observation consists of one candidate has more information about $\vec{\tparam\lambda}$ than a sample in which each observation consists of two candidates.
+which has three times less mean squared error than when conditioning on $\Card{\rvcand} = 2$. That is, an $\mfs$ sample in which each observation consists of one candidate has more information about $\vec{\tparam\lambda}$ than a sample in which each observation consists of two candidates.
 
 The independent asymptotic $(1-\alpha) \cdot 100 \%$-confidence interval for $\tparam\lambda_j$ is given by
 \begin{equation}
@@ -609,7 +603,7 @@ The independent asymptotic $(1-\alpha) \cdot 100 \%$-confidence interval for $\t
         {n}
     }\,.
 \end{equation}
-By comparison, the confidence interval when conditioning on $\cardinality{\rvcand} = 2$ is
+By comparison, the confidence interval when conditioning on $\Card{\rvcand} = 2$ is
 \begin{equation}
     \sqrt{
         \frac
@@ -624,7 +618,7 @@ By comparison, the confidence interval when conditioning on $\cardinality{\rvcan
 as wide.
 
 \subsubsection{Degenerate: component sets of size three}
-The degenerate case is all components are candidates, $\rv{W} = \cardinality{\rvcand} = 3$. There is no maximum likelihood estimator $\vec{\estimator{\vec\lambda}_n}$. Rather, solving the equation results in the underspecified system given by
+The degenerate case is all components are candidates, $\RV{W} = \Card{\rvcand} = 3$. There is no maximum likelihood estimator $\vec{\estimator{\vec\lambda}_n}$. Rather, solving the equation results in the underspecified system given by
 \begin{equation}
     \sum_{j=1}^{3} \estimator\lambda_j - \frac{1}{\bar{t}} = 0\,,
 \end{equation}
@@ -719,7 +713,7 @@ where
     \right)\,.
 \end{equation}
 
-We generated two different sets of data points, one from the theoretical distribution described in \cref{eq:expo_mvn_2_3_4} and the other from the maximum likelihood method applied to $\mfs_{1000}$ samples. Refer to \cref{fig:theory_vs_actual} for a visualization of the data points. Visually, they have a similar distribution of data points, indicating that the asymptotic distribution is a reasonable approximation of the sampling distribution of the MLE $\estimator{\vec\lambda}_{1000}$.
+We generated two different sets of data points, one from the theoretical distribution described in \cref{eq:expo_mvn_2_3_4} and the other from the maximum likelihood method applied to $\mfsn{1000}$ samples. Refer to \cref{fig:theory_vs_actual} for a visualization of the data points. Visually, they have a similar distribution of data points, indicating that the asymptotic distribution is a reasonable approximation of the sampling distribution of the MLE $\vec{\estimator{\vec\lambda}_{1000}}$.
 \begin{figure}
 \centering
 \includegraphics[width=0.5\linewidth]{superimposed.png}
@@ -770,10 +764,13 @@ where $\lVert \matrx{C} \rVert_F$ is the Frobenius norm of matrix $\matrx{C}$,
 In \cref{fig:frob_error}, we log-log plot the error between a simulated estimate of the true covariance matrix and the asymptotic covariance matrix with respect to sample size. The errors approximately follow a straight line, suggesting a power law error. We fit a power function of the form $a n^b$ to the differences with respect to sample size $n$ and found the best fit for the relative difference to be approximately proportional to $\frac{1}{n}$ and the best fit for the absolute difference to be approximately proportional to $\frac{1}{n^2}$.
 
 %In fact, the bias of $\mle$ is up to order $n^{-\frac{1}{2}}$, i.e., $\mse = \trace{\covmatrixn} + \beta n^{-\frac{1}{2}}$. [Can we empirically estimate $\beta$? Does this hold? Investigate.]
-The asymptotic sampling distribution of $\mle$ can be transformed into a Chi-squared distribution, which is given by
-\begin{equation}
-    n(\mle - \tparam\sysparamvec)^\Transpose \infomatrx(\tparam\sysparamvec) 
-    (\mle - \tparam\sysparamvec) \sim \chi_{m \cdot q}^2\,.
-\end{equation}
-Therefore, for a given $n$, we can construct a $(1 - \alpha)$ confidence region of this statistic. We expect that $(1-\alpha)$ of the $\mle$ point estimates to be inside of this region.
+
+
+
+%The asymptotic sampling distribution of $\mle$ can be transformed into a Chi-squared distribution, which is given by
+%\begin{equation}
+%    n(\mle - \tparam\sysparamvec)^\Transpose \infomatrx(\tparam\sysparamvec) 
+%    (\mle - \tparam\sysparamvec) \sim \chi_{m \cdot q}^2\,.
+%\end{equation}
+%Therefore, for a given $n$, we can construct a $(1 - \alpha)$ confidence region of this statistic. We expect that $(1-\alpha)$ of the $\mle$ point estimates to be inside of this %region.
 \end{document}
