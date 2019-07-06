@@ -1,0 +1,269 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+
+
+-----------------------------------------------------------------------------------
+Large likelihood theory.
+
+
+Also, approximately, 
+\begin{equation}
+    \left(\infomatrxn(\mleu)\right)^{\frac{1}{2}}\left(\sysparamvec - \mleu\right) \approx \mvn\left(\vec{0}, \vec{1}\right)\,.
+\end{equation}
+----
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+We claim without proof that $\mleu$ is the maximum likelihood estimator of $\mfs$ in which $\pmf_{\RV{W}}(\,\cdot\,)$ is defined to be the empirical distribution,
+
+
+\begin{definition}
+\label{def:general_mleu}
+A parameter value $\mleu$ that maximizes the \emph{likelihood} of observing $\mfs = \mfso$ is a maximum likelihood estimator of $\tparam\sysparamvec$ given $\mfs = \mfso$. That is,
+\begin{equation}
+\label{eq:general_mleu}
+\mleu = \argmax_{\sysparamvec \in \vec\Omega} L(\sysparamvec \given \mfso)\,,
+\end{equation}
+where $\vec\Omega$ is the feasible parameter space of the parametric family.
+\end{definition}
+
+The \emph{sampling distribution} of $\sampd$ depends on the random sample denoted by $\mfsw$. The maximum likelihood estimator with respect to a sample of $n$ masked system failure times, in which a candidate set is any subset of the components\footnote{Excluding the empty set and all of the components.} is denoted by the following definition.
+\begin{definition}
+The \emph{sampling distribution} of $\mleu$ is a random vector denoted by $\sampdu \in \mathrm{R}^{m \cdot q}$.
+\end{definition}
+i.e., the distribution $\mfs$ (in which $\RV{W} \sim \pmf_{\rv}(w)$,
+
+
+The likelihood function with respect to $\mfs = \mfso$ is given by
+\begin{equation}
+    L(\sysparamvec \given \mfso) = \prod_{i=1}^{n} \pdf_{\rvcand, \sv, \RV{W}}(\cand_i, t_i, \Card{\cand_i} \given \vectomat{\sysparamvec})\,.
+\end{equation}
+
+
+
+
+Given a sample $\mfs = \mfso$, we could maximize the likelihood function given by \Cref{}, in which $\pmf_{\RV{W}}(\,\cdot\,)$ is given to be the empirical distribution function,
+\begin{equation}
+    \estimator{\pmf}_{\RV{W}}(w) = \frac{}{}\,.
+\end{equation}
+However, we have already derived the sampling distribution of $\sampd$, and we now show how to derive $\sampdu$ as a function of these.
+
+
+
+
+If $\RV{W}$ and $\sv$ are independent, the sampling distribution of $\mleu$ has a variance-covariance that is relatively straightforward to derive. And, of course, the maximum likelihood estimator of $\pmf_{\RV{W}}(w)$ is simply given by the empirical probability
+\begin{equation}
+    \estimator{\pmf}_{\RV{W}}(w \given \mfso) =
+    \frac { \sum_{i=1}^{n} \indicator{\Card{\cand_i} = w}}
+    { n }
+\end{equation}
+
+
+
+
+\chapter{Mean of maximum likelihood estimates}
+Consider the random vector given by
+\begin{equation}
+    \RV{\vec{Y_r^n}} = \frac{1}{r} \sum_{i=1}^{r} \sampdi{i}\,,
+\end{equation}
+where $\sampd$ is the sampling distribution of the maximum likelihood estimator $\mle$. By the Central Limit Theorem, as $r \to \infty$,
+\begin{equation}
+\label{eq:clt_y_rn}
+    \RV{\vec{Y_r^n}} \xrightarrow{d} \mvn\left(\expectation\left[\sampd\right], \frac{1}{r} \var\left[\sampd\right]\right)\,.
+\end{equation}
+As $n \to \infty$,
+\begin{equation}
+    \RV{\vec{Y_r^n}} \xrightarrow{d} \mvn\left(\tparam\sysparamvec, \frac{1}{r n}\infomatrx^{-1}(\tparam\sysparamvec) \right)\,.
+\end{equation}
+\begin{proof}
+By \Cref{}, the asymptotic sampling distribution of $\mle$ is unbiased, thus
+\begin{equation}
+\label{eq:proof_y_r_n_expect}
+    \expectation\left[\sampd\right] = \tparam\sysparamvec\,.
+\end{equation}
+By \Cref{}, the variance-covariance of the asymptotic sampling distribution of $\mle$ is given by
+\begin{equation}
+\label{eq:proof_y_r_n_var}
+    \var\left[\sampd\right] = \frac{1}{n} \infomatrx^{-1}\left(\tparam\sysparamvec\right)\,.
+\end{equation}
+Substituting \Cref{eq:proof_y_r_n_expect,eq:proof_y_r_n_var} into \Cref{eq:clt_y_rn} yields
+\begin{equation}
+    \RV{\vec{Y_r^n}} \xrightarrow{d} \mvn\left(\tparam\sysparamvec, \frac{1}{r n}\infomatrx^{-1}(\tparam\sysparamvec) \right)\,.
+\end{equation}
+\end{proof}
+This demonstrates the additive property of the information matrix, i.e., the inverse of
+\begin{equation}
+    \frac{1}{r n} \infomatrx^{-1}\left(\tparam\sysparamvec\right)
+\end{equation}
+is given by
+\begin{equation}
+    r n \infomatrx\left(\tparam\sysparamvec\right)\,.
+\end{equation}
+Thus, $r$ samples of masked system failure times of size $n$ are collectively $r$ times more informative about $\tparam\sysparamvec$ than a single sample of masked system failure times. This is trivial result because we could just combine the $r$ samples of size $n$ into a single sample of size $r n$.
+
+However, if $r$ maximum likelihood estimates are available about $\tparam\sysparamvec$, the sample average $\bar{\mle}$ may be used to generate a more reliable asymptotically unbiased estimator with an easily computable sampling distribution.
+
+
+
+\subsection{Conditional sampling distributions}
+If some of the true parameter values are known, then by the property of the normal distribution, normals are closed under conditioning. If $\estimator\sysparamvec_n \in \mathbb{R}^{q \cdot m}$ is partitioned as
+\begin{equation}
+    \estimator\sysparamvec_n =
+        \begin{bmatrix}
+            \estimator\sysparamvec_{1}\\
+            \estimator\sysparamvec_{2}
+        \end{bmatrix}
+\end{equation}
+with dimensions $a$ and $q \cdot m - a$ then
+\begin{equation}
+{\boldsymbol {\mu }}={\begin{bmatrix}{\boldsymbol {\mu }}_{1}\\{\boldsymbol {\mu }}_{2}\end{bmatrix}}{\text{ with sizes }}{\begin{bmatrix}q\times 1\\(N-q)\times 1\end{bmatrix}}} 
+\boldsymbol\mu
+=
+    \begin{bmatrix}
+         \boldsymbol\mu_1 \\
+         \boldsymbol\mu_2
+    \end{bmatrix}
+\text{ with sizes }\begin{bmatrix} q \times 1 \\ (N-q) \times 1 \end{bmatrix}
+{\displaystyle {\boldsymbol {\Sigma }}={\begin{bmatrix}{\boldsymbol {\Sigma }}_{11}&{\boldsymbol {\Sigma }}_{12}\\{\boldsymbol {\Sigma }}_{21}&{\boldsymbol {\Sigma }}_{22}\end{bmatrix}}{\text{ with sizes }}{\begin{bmatrix}q\times q&q\times (N-q)\\(N-q)\times q&(N-q)\times (N-q)\end{bmatrix}}} 
+\boldsymbol\Sigma
+    =
+    \begin{bmatrix}
+     \boldsymbol\Sigma_{11} & \boldsymbol\Sigma_{12} \\
+     \boldsymbol\Sigma_{21} & \boldsymbol\Sigma_{22}
+    \end{bmatrix}
+\end{equation}
+\text{ with sizes }\begin{bmatrix} q \times q & q \times (N-q) \\ (N-q) \times q & (N-q) \times (N-q) \end{bmatrix}
+then the distribution of $\estimator\sysparamvec_1$ conditional on x2 = a is multivariate normal (x1 | x2 = a) ~ \mathrm{N}(u, \Sigma)$ where
+
+{\displaystyle {\bar {\boldsymbol {\mu }}}={\boldsymbol {\mu }}_{1}+{\boldsymbol {\Sigma }}_{12}{\boldsymbol {\Sigma }}_{22}^{-1}\left(\mathbf {a} -{\boldsymbol {\mu }}_{2}\right)} 
+\bar{\boldsymbol\mu}
+=
+\boldsymbol\mu_1 + \boldsymbol\Sigma_{12} \boldsymbol\Sigma_{22}^{-1}
+\left(
+ \mathbf{a} - \boldsymbol\mu_2
+\right)
+and covariance matrix
+
+{\displaystyle {\overline {\boldsymbol {\Sigma }}}={\boldsymbol {\Sigma }}_{11}-{\boldsymbol {\Sigma }}_{12}{\boldsymbol {\Sigma }}_{22}^{-1}{\boldsymbol {\Sigma }}_{21}.} 
+\overline{\boldsymbol\Sigma}
+=
+\boldsymbol\Sigma_{11} - \boldsymbol\Sigma_{12} \boldsymbol\Sigma_{22}^{-1} \boldsymbol\Sigma_{21}. 
+[13]
+This matrix is the Schur complement of Σ22 in Σ. This means that to calculate the conditional covariance matrix, one inverts the overall covariance matrix, drops the rows and columns corresponding to the variables being conditioned upon, and then inverts back to get the conditional covariance matrix. Here {\displaystyle {\boldsymbol {\Sigma }}_{22}^{-1}} \boldsymbol\Sigma_{22}^{-1} is the generalized inverse of {\displaystyle {\boldsymbol {\Sigma }}_{22}} \boldsymbol\Sigma_{22}.
+
+Note that knowing that x2 = a alters the variance, though the new variance does not depend on the specific value of a; perhaps more surprisingly, the mean is shifted by {\displaystyle {\boldsymbol {\Sigma }}_{12}{\boldsymbol {\Sigma }}_{22}^{-1}\left(\mathbf {a} -{\boldsymbol {\mu }}_{2}\right)} \boldsymbol\Sigma_{12} \boldsymbol\Sigma_{22}^{-1} \left(\mathbf{a} - \boldsymbol\mu_2 \right); compare this with the situation of not knowing the value of a, in which case x1 would have distribution {\displaystyle {\mathcal {N}}_{q}\left({\boldsymbol {\mu }}_{1},{\boldsymbol {\Sigma }}_{11}\right)} \mathcal{N}_q \left(\boldsymbol\mu_1, \boldsymbol\Sigma_{11} \right).
+
+An interesting fact derived in order to prove this result, is that the random vectors {\displaystyle \mathbf {x} _{2}} \mathbf {x} _{2} and {\displaystyle \mathbf {y} _{1}=\mathbf {x} _{1}-{\boldsymbol {\Sigma }}_{12}{\boldsymbol {\Sigma }}_{22}^{-1}\mathbf {x} _{2}} \mathbf{y}_1=\mathbf{x}_1-\boldsymbol\Sigma_{12}\boldsymbol\Sigma_{22}^{-1}\mathbf{x}_2 are independent.
+
+The matrix Σ12Σ22−1 is known as the matrix of regression coefficients.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Given an i.i.d. sample of $r$ maximum likelihood estimates, denoted by $\mlei{1}, \ldots, \mlei{r}$, we may conduct a hypothesis test to compute the probability that the sample was generated by a multivariate normal with a mean $\tparam{\vec\lambda}$ and a covariance matrix $\frac{1}{n} \infomatrx^{-1}\left(\tparam{\vec\lambda}\right)$.
+
+The null hypothesis is
+\begin{equation}
+    H_0 \colon \covmatrixn = \frac{1}{n} \infomatrx^{-1}(\tparam{\vec\lambda}) \text{ and } \vec\lambda = \tparam{\vec\lambda}\,.
+\end{equation}
+and the alternative hypothesis is
+\begin{equation}
+    H_a \colon \covmatrixn \neq \frac{1}{n} \infomatrx^{-1}(\tparam{\vec\lambda}) \text{ or } \vec\lambda \neq \tparam{\vec\lambda}\,.
+\end{equation}
+
+Let
+\begin{equation}
+    \matrx{B} = (r-1)\matrx{S}
+\end{equation}
+and
+\begin{equation}
+    \Lambda = \left\vert \frac{\mathrm{e}^m n \matrx{B} \infomatrx\left(\tparam{\vec\lambda}\right)}{r^m} \right\vert^{r / 2}
+        \exp
+        \left(
+            -\frac{n}{2} \left[
+                \trace\left(
+                \matrx{B} \infomatrx(\tparam{\vec\lambda})\right) +
+                r (\vec{\overline{\estimator\lambda}_n} - \tparam{\vec\lambda})^\intercal
+                \infomatrx(\tparam{\vec\lambda})
+                (\vec{\overline{\estimator\lambda}_n} - \tparam{\vec\lambda})
+            \right]
+        \right)
+\end{equation}
+where $\vec{\overline{\estimator\lambda}_n}$ and $\matrx{S}$ are respectively the mean and sample covariance matrix of the $r$ maximum likelihood estimates.
+
+The test statistic is given by
+\begin{equation}
+    \RV{T} = -2 \ln \Lambda\,.
+\end{equation}
+and thus the distribution under the null hypothesis is Chi-squared with $m(m+1)/2$ degrees of freedom,
+\begin{equation}
+    \RV{T} \sim \chi_{m(m + 1)/2}^2
+\end{equation}
+\end{document}
+
+
+
+
+
+
+
+
+
+%The above confidence interval is an isolated claim about the \jth component of $\tparam\sysparamvec$. It is not a joint claim about all the components. An estimator of the simultaneous confidence intervals for all $m \cdot q$ components of $\tparam\sysparamvec$ is given by the following.
+%\begin{definition}
+%\label{def:sim_conf_interval}
+%A set of $m \cdot q$ asymptotic simultaneous confidence intervals for all $m \cdot q$ components of %$\tparam\sysparamvec$ jointly holds with probability $1 - \alpha$ and is given by
+%\begin{alignat*}{4}
+%    \estimator\paramv_1 &- \sqrt{\chi_{m \cdot q}^2(1-\alpha)} \;&&<\;\tparam\paramv_1\;&&<\;\estimator\paramv_1 %&&+ \sqrt{\chi_{m \cdot q}^2(1-\alpha) \cdot \estimator{\covmatrixel}_{1 1}}\,,\\
+%    \estimator\paramv_2 &- \sqrt{\chi_{m \cdot q}^2(1-\alpha)} \;&&<\;\tparam\paramv_2\;&&<\;\estimator\paramv_2 %&&+ \sqrt{\chi_{m \cdot q}^2(1-\alpha) \cdot \estimator{\covmatrixel}_{2 2}}\,,\\
+%    & && \qquad \vdots\\
+%    \estimator\paramv_{m \cdot q} &- \sqrt{\chi_{m \cdot q}^2(1-\alpha)} \;&&<\; \tparam\paramv_{m \cdot q}\;&&<\; %\estimator\paramv_{m \cdot q} &&+ \sqrt{\chi_{m \cdot q}^2(1-\alpha) \cdot \estimator{\covmatrixel}_{m\cdot q \; %m\cdot q}}\,,
+%\end{alignat*}
+%where $\chi_{m \cdot q}^2(1 - \alpha)$ is the $1 - \alpha$ quantile of the chi-square distribution with $m \cdot q$ %degrees of freedom, $\estimator\paramv_j$ is the \jth component of $\mle$, $\tparam\paramv_j$ is the \jth component %of $\tparam\sysparamvec$, and $\estimator{\covmatrixel}_{j j}$ is the \jth diagonal element of $\scovmatrix{n}$.
+%\end{definition}
