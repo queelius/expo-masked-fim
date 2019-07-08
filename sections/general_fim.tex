@@ -13,6 +13,47 @@ By \cref{def:vtopr}, $\tparam\sysparam$ has an equivalent representation denoted
 We use matrix and vector representations interchangeably.
 \end{notation}
 
+
+
+
+
+The likelihood of observing a particular realization, $\mfsw = \mfso$, is given by the following definition.
+\begin{definition}
+	\label{def:msft_joint_pdf}
+	A random sample of $n$ masked system failure times conditioned on candidate sets of cardinality $w$ has a joint probability density given by
+	\begin{equation}
+	\label{eq:msft_joint_pdf}
+	\pdf_{\mfsw}\left(\mfso \given w, \tparam{\sysparam}\right) =
+	\prod_{i=1}^{n} \spdf(t_i \given \tparam\sysparam) \cdot \pmf_{\rvcand \given \sv, \RV{W}}\left(\cand_i \given t_i, w, \tparam\sysparam\right)\,,
+	\end{equation}
+	where $\spdf(\cdot \given \tparam\sysparam)$ is the marginal density given by \cref{thm:series_pdf_function} and $\pmf_{\rvcand \given \sv, \RV{W}}(\cdot \given t, w,, \tparam\sysparam)$ is the conditional probability mass given by \cref{def:general_cond_cand_probability}.
+\end{definition}
+
+The generative model of $\mfsw$, which directly follows from \cref{eq:msft_joint_pdf}, is given by \cref{alg:Fn_generator}.
+\begin{algorithm}[h]
+	\DontPrintSemicolon
+	\KwResult{a realization of a masked system failure time with $w$ candidates.}
+	\KwIn{\\
+		$\qquad\tparam\sysparam$, the true parameter value.\\
+		$\qquad w$, the cardinality of the candidate sets.}
+	\KwOut{\\
+		$\qquad \mfo$, a realization of $\rvcand, \sv$ conditioned on $\RV{W} = w$.}
+	\BlankLine
+	\SetKwProg{func}{Model}{}{}
+	\func{\genSampleFn{$w, \tparam\sysparam$}}
+	{
+		draw a system lifetime $t \sim \spdf(\;\cdot \given \sysparam)$\;
+		draw a candidate set $\cand \sim \pmf_{\rvcand \given \sv, \RV{W}}(\; \cdot \given t, w, \sysparam)$\;
+		$\mfo \gets \Pair{t}{\cand}$\;
+		\KwRet{$\mfo$}
+	}
+	\caption{Generative model of a masked system failure time with $w$ candidates.}
+	\label{alg:Fn_generator}
+\end{algorithm}
+
+
+
+
 The subsequent material makes a few assumptions, denoted \emph{regularity conditions}, given by the following.
 \begin{assumption}
 \label{def:reg_cond}

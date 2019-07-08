@@ -118,83 +118,23 @@ By these definitions, it follows that
     \cv_j \sim \pdf_j\!\left(\; \cdot \given \tparam\sysparam_j\right)\,.
 \end{equation}
 
-\section{Candidate selection models}
+\section{Masked component failures}
 By \cref{thm:series_system_lifetime}, if a system failure occurs at time $\ti$, then one of the components failed at time $\ti$ (only a single component can cause a system failure since two or more continuous random variables cannot realize the same value).
 \begin{definition}
-\label{def:comp_cause}
+	\label{def:comp_cause}
 	The discrete random variable indicating the component responsible for a system failure is denoted by $\RV{K}$ with a sample space $\Set{K} = \{1,\ldots,m\}$. That is, $\RV{K} = j$ indicates that $\cv_j < \cv_k$ for $k \in \SetDiff[\Set{K}][\{ j \}]$.
 \end{definition}
 
-We may not be certain which component caused a system failure, but may be able to narrow the component cause to some \emph{subset}.
+We may not be certain about which component caused a system failure, but we may be able to narrow the component cause to some \emph{subset}.
 The set of all component sets is given by the power set of $\Set{K}$, denoted by $\PS{\Set{K}}$.
-The uncertain component sets are given by the following definition.
+The candidate failure sets are given by the following definition.
 \begin{definition}
-\label{def:random_candidate_set}
-	Let $\rvcand$ denote the random set of components that are considered to be likely causes of a system failure. The sample space of $\rvcand$ is 
-	$\PS{\Set{K}}$.
+	\label{def:random_candidate_set}
+	Let $\rvcand$ denote the random set of components that are considered to be probable causes of a system failure.
+	The sample space of $\rvcand$ is $\PS{\Set{K}}$.
 \end{definition}
+We derive two generative models for candidate failure sets in \cref{sec:candidate_sel}.
 
-The series system consists of $m$ components with random lifetimes $\cv_1,\ldots,\cv_m$.
-These components are \emph{unobservable} causes of the system failure.
-However, we suppose there is some process $A$ that has some knowledge about the components and which generates a set of candidate component causes, as depicted in \cref{fig:true_model}.
-\begin{figure}
-	\label{fig:true_model}
-	\caption{Graphical model of random variables}
-	\begin{center}
-		\input{img/graph_model.tex}
-	\end{center}
-\end{figure}
-
-We consider two ways failed component candidate sets may be constructed.
-Suppose candidate sets are of cardinality $w$.
-The first way candidate sets are generated is \emph{optimal} since we simply draw from the component lifetimes and include the $w$ components with the smallest lifetimes in the set. The probability that a component in a set $\Set{A} \in \PS{\Set{K}}$ is the cause of a system failure follows from the definition of $\RV{K}$, i.e., $\Prob{\RV{K} \in \Set{A}}$.
-
-The second way is perhaps more realistic in that it is \emph{certain} that one of the components in the candidate set is in a failed state (and is thus the cause of the system failure), e.g., a diagnostician was able to isolate the problem to some subset of the system.
-However, the $w-1$ non-failed componets in the candidate set are \emph{randomly} selected from the remaining $m-1$ components, which is probably overly pessimistic.
-These two approaches generate a range, from useful but pessimistic to unreasonably \emph{optimal}. For now, we provide notation for the \emph{random component sets} and treat the two approaches separately in \cref{sec:opt,sec:pess}.
-
-
-The \emph{cardinality} of a component set could theoretically convey 
-information about the system. As a simplification, we make the following 
-assumption.
-\begin{assumption}
-\label{asm:indep_W_S}
-The cardinality of the random set $\rvcand$, denoted by the discrete random variable
-\begin{equation}
-\RV{W} = \Card{\rvcand}\,,
-\end{equation}
-is independent of the random system lifetime $\sv$ and the random component 
-cause $\rvcand$ and therefore does not carry information about the true 
-parameter index $\tparam\sysparam$.
-\end{assumption}
-
-The indicator function and the $k$-subset functions are needed for subsequent material and are given by the following definitions.
-\begin{definition}[Indicator function]
-	Given a subset $\Set{A}$ of a set $\Set{B}$, the indicator function $\SetIndicator{\Set{A}} \colon \Set{B} \mapsto \{0,1\}$
-	is equal to $1$ if $x \in \Set{A}$ and $0$ otherwise.
-\end{definition}
-
-\begin{definition}
-	The subsets of $\Set{A}$ that are of cardinality $k$ is defined as
-	\begin{equation}
-	\left[\Set{A}\right]^k \coloneqq \SetBuilder{\Set{X} \in \Set{A}}{\Card{\Set{A}} = k}\,,
-	\end{equation}
-	which has a cardinality
-	\begin{equation}
-	\binom{\Card{\Set{A}}}{k}\,.
-	\end{equation}
-\end{definition}
-
-We are primarily interested in the distribution of candidate sets on the condition that they have a specified cardinality.
-\begin{definition}
-	The random variable $\rvcand$ conditioned on $\RV{W} = w$ has a sample space given by
-	\begin{equation}
-	\candsw{w} = \left[\PS{\RV{K}}\right]^w\,.
-	\end{equation}
-\end{definition}
-The reason why a candidate set of cardinality $w$ is generated is outside the scope of the statistical model and where necessary, the relative frequency in a sample is used.
-
-\section{Masked system failure times}
 \begin{definition}
 A \emph{masked system failure time} consists of a system failure time $\ti$ and a corresponding set of components $\cand$.
 \end{definition}
@@ -210,13 +150,12 @@ A random sample of $n$ \emph{masked system failure times}, denoted by
 \begin{equation}
 \mfs = \left( \Pair{\sv_1}{\rvcand_1},\ldots,\Pair{\sv_n}{\rvcand_n}\right)\,,
 \end{equation}
-consists of $n$ independent and identically jointly distributed pairs of system failure times and candidate sets.
+consists of $n$ independent and identically jointly distributed pairs of system failure times and component sets.
 \end{assumption}
 
 \begin{assumption}
 The only information we have about the system and its true parameter index 
-$\tparam\sysparam$ is given by observing a random sample of $n$ masked system 
-failure times,
+$\tparam\sysparam$ is given by observing a random sample of $n$ masked component failures,
 \begin{equation}
     \left(
     	\Pair{\sv_1=\ti_1}{\rvcand_1=\Set{C}[1]}, \ldots, 
@@ -226,39 +165,5 @@ failure times,
 \end{assumption}
 
 Given the assumed model, the object of statistical interest is the (unknown) true parameter index $\tparam\sysparam$.
-Provided an estimate of $\tparam\sysparam$, any characteristic that is a function of $\tparam\sysparam$ can be estimated as a result, thus the primary objective is to use the \emph{information} in a sample of $n$ masked system failure times to estimate $\tparam\sysparam$ with some quantifiable uncertainty.
-
-The likelihood of observing a particular realization, $\mfsw = \mfso$, is given by the following definition.
-\begin{definition}
-	\label{def:msft_joint_pdf}
-	A random sample of $n$ masked system failure times conditioned on candidate sets of cardinality $w$ has a joint probability density given by
-	\begin{equation}
-	\label{eq:msft_joint_pdf}
-	\pdf_{\mfsw}\left(\mfso \given w, \tparam{\sysparam}\right) =
-	\prod_{i=1}^{n} \spdf(t_i \given \tparam\sysparam) \cdot \pmf_{\rvcand \given \sv, \RV{W}}\left(\cand_i \given t_i, w, \tparam\sysparam\right)\,,
-	\end{equation}
-	where $\spdf(\cdot \given \tparam\sysparam)$ is the marginal density given by \cref{thm:series_pdf_function} and $\pmf_{\rvcand \given \sv, \RV{W}}(\cdot \given t, w,, \tparam\sysparam)$ is the conditional probability mass given by \cref{def:general_cond_cand_probability}.
-\end{definition}
-
-The generative model of $\mfsw$, which directly follows from \cref{eq:msft_joint_pdf}, is given by \cref{alg:Fn_generator}.
-\begin{algorithm}[h]
-	\DontPrintSemicolon
-	\KwResult{a realization of a masked system failure time with $w$ candidates.}
-	\KwIn{\\
-		$\qquad\tparam\sysparam$, the true parameter value.\\
-		$\qquad w$, the cardinality of the candidate sets.}
-	\KwOut{\\
-		$\qquad \mfo$, a realization of $\rvcand, \sv$ conditioned on $\RV{W} = w$.}
-	\BlankLine
-	\SetKwProg{func}{Model}{}{}
-	\func{\genSampleFn{$w, \tparam\sysparam$}}
-	{
-		draw a system lifetime $t \sim \spdf(\;\cdot \given \sysparam)$\;
-		draw a candidate set $\cand \sim \pmf_{\rvcand \given \sv, \RV{W}}(\; \cdot \given t, w, \sysparam)$\;
-		$\mfo \gets \Pair{t}{\cand}$\;
-		\KwRet{$\mfo$}
-	}
-	\caption{Generative model of a masked system failure time with $w$ candidates.}
-	\label{alg:Fn_generator}
-\end{algorithm}
+Provided an estimate of $\tparam\sysparam$, any characteristic that is a function of $\tparam\sysparam$ can be estimated as a result, thus the primary objective is to use the \emph{information} in a sample of $n$ masked component failures to estimate $\tparam\sysparam$ with some quantifiable uncertainty.
 \end{document}

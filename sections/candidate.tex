@@ -1,0 +1,237 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Candidate selection models}
+\label{sec:cand_sel}
+The series system consists of $m$ components with random lifetimes $\cv_1,\ldots,\cv_m$.
+These random variables are \emph{unobservable} and thus, for instance, we cannot know with certainty from a sample of masked system failures which component is the cause of the system failure.
+However, we suppose there is some process $A$ that has some knowledge about the components and which generates a set of candidate component causes, as depicted in \cref{fig:true_model}.
+\begin{figure}
+	\label{fig:true_model}
+	\caption{Graphical model of random variables}
+	\begin{center}
+		\input{img/graph_model.tex}
+	\end{center}
+\end{figure}
+
+
+We consider two ways failed component candidate sets may be constructed.
+Suppose candidate sets are of cardinality $w$.
+The first way candidate sets are generated is \emph{optimal} since we simply draw from the component lifetimes and include the $w$ components with the smallest lifetimes in the set. The probability that a component in a set $\Set{A} \in \PS{\Set{K}}$ is the cause of a system failure follows from the definition of $\RV{K}$, i.e., $\Prob{\RV{K} \in \Set{A}}$.
+
+The second way is perhaps more realistic in that it is \emph{certain} that one of the components in the candidate set is in a failed state (and is thus the cause of the system failure), e.g., a diagnostician was able to isolate the problem to some subset of the system.
+However, the $w-1$ non-failed componets in the candidate set are \emph{randomly} selected from the remaining $m-1$ components, which is probably overly pessimistic.
+These two approaches generate a range, from useful but pessimistic to unreasonably \emph{optimal}. For now, we provide notation for the \emph{random component sets} and treat the two approaches separately in \cref{sec:opt,sec:pess}.
+
+
+The \emph{cardinality} of a component set could theoretically convey 
+information about the system. As a simplification, we make the following 
+assumption.
+\begin{assumption}
+	\label{asm:indep_W_S}
+	The cardinality of the random set $\rvcand$, denoted by the discrete random variable
+	\begin{equation}
+	\RV{W} = \Card{\rvcand}\,,
+	\end{equation}
+	is independent of the random system lifetime $\sv$ and the random component 
+	cause $\rvcand$ and therefore does not carry information about the true 
+	parameter index $\tparam\sysparam$.
+\end{assumption}
+
+The indicator function and the $k$-subset functions are needed for subsequent material and are given by the following definitions.
+\begin{definition}[Indicator function]
+	Given a subset $\Set{A}$ of a set $\Set{B}$, the indicator function $\SetIndicator{\Set{A}} \colon \Set{B} \mapsto \{0,1\}$
+	is equal to $1$ if $x \in \Set{A}$ and $0$ otherwise.
+\end{definition}
+
+\begin{definition}
+	The subsets of $\Set{A}$ that are of cardinality $k$ is defined as
+	\begin{equation}
+	\left[\Set{A}\right]^k \coloneqq \SetBuilder{\Set{X} \in \Set{A}}{\Card{\Set{A}} = k}\,,
+	\end{equation}
+	which has a cardinality
+	\begin{equation}
+	\binom{\Card{\Set{A}}}{k}\,.
+	\end{equation}
+\end{definition}
+
+We are primarily interested in the distribution of candidate sets on the condition that they have a specified cardinality.
+\begin{definition}
+	The random variable $\rvcand$ conditioned on $\RV{W} = w$ has a sample space given by
+	\begin{equation}
+	\candsw{w} = \left[\PS{\RV{K}}\right]^w\,.
+	\end{equation}
+\end{definition}
+
+According to \cref{def:random_candidate_set}, the random candidate set $\rvcand$ is a subset of components that are in some way considered to be a plausible cause of system failure.
+By \cref{asm:indep_W_S}, the distribution of $\RV{W}$ is not dependent on the true parameter index $\tparam\sysparam$.
+\begin{definition}
+\label{def:pmf_w}
+The probability that $\RV{W} = \Card{\rvcand} = w$ is given by the probability mass function $\pmf_{\RV{W}}\left(w\right)$.
+\end{definition}
+Any inferences about the parametric model will be \emph{independent} of $\RV{W}$ except in the sense that conditioned on larger candidate sets generates estimators with greater variance.
+If a sample of masked system failure times has variable sized candidate sets, we are free to use any parameter-free estimator of the probability mass function of $\RV{W}$, e.g., the empirical distribution as described in \cref{appendix:generalized_general_joint_likelihood_cand}.
+
+By \cref{asm:indep_W_S}, the random lifetime $\sv$ and the cardinality of the random candidate set $\RV{W} = \Card{\rvcand}$ are independent, thus by the axioms of probability the joint density of $\rvcand$, $\sv$, and $\RV{W}$ is given by
+\begin{equation}
+\label{eq:general_joint_w_cand_likelihood}
+\pdf_{\rvcand, \sv, \RV{W}}(\cand, t, w \given \tparam\sysparam) = \pmf_{\rvcand \given \sv, \RV{W}}(\cand \given t, w, \tparam\sysparam) \pmf_{\RV{W}}(w) \spdf(t \given \tparam\sysparam)\,.
+\end{equation}
+If it is given that $\RV{W} = w$, by the axioms of probability
+\begin{equation}
+\label{eq:general_joint_cond_w_cand_likelihood}
+\jointpdf(\cand, t \given w, \tparam\sysparam) =
+\pmf_{\rvcand \given \sv, \RV{W}}(\cand \given t, w, \tparam\sysparam) \spdf(t \given \tparam\sysparam)\,.
+\end{equation}
+
+
+\section{Failed $\alpha$-masked candidate sets}
+We consider failed candidate sets given by the following definition.
+\begin{definition}
+The $\alpha$-mask is a failed candidate set in which the probability the failed component is included in the set is $\alpha \cdot 100 \%$.
+\end{definition}
+
+The $\alpha$-mask has a conditional probability distribution given by the following theorem.
+\begin{theorem}
+The $\alpha$-mask $\rvcand_\alpha$ has a conditional probability distribution given by
+\begin{equation}
+\pdf_{\rvcand_\alpha \given \RV{K}, \RV{W}}(\cand \given k, w, \alpha) = \frac{\alpha}{\binom{m-1}{w-1}} \SetIndicator{\cand}(k) + \frac{1-\alpha}{\binom{m-1}{w}} \SetIndicator{\SetComplement[\cand]}(k)\,.
+\end{equation}
+\end{theorem}
+\begin{proof}
+	Proof here.
+	
+	We uniformly choose among sets satisfying the criteria.
+\end{proof}
+
+
+The joint distribution is given by
+\begin{equation}
+	\pdf_{\rvcand,\RV{K},\sv \given \RV{W}}(\cand,k,t \given w, \alpha) = \pdf_{\rvcand \given \RV{K}, \RV{W}}(\cand \given k, w, \alpha) \pdf_{\RV{K},\sv}(k,t \given \tparam\sysparam) \,.
+\end{equation}
+However, given only a masked failure set, $\RV{K}$ is \emph{unobservable}, and so we \emph{marginalize} over $\RV{K}$.
+\begin{theorem}
+\begin{equation}
+\pdf_{\rvcand,\sv \given \RV{W}}(\cand,t \given w, \tparam\sysparam) = \sum_{k=1}^{m} \pdf_{\rvcand,\RV{K},\sv \given \RV{W}}(\cand,k,t \given w, \alpha)\,.
+\end{equation}
+\end{theorem}
+%which results in
+%\begin{equation}
+%\pdf_{\rvcand,\sv \given \RV{W}}(\cand,t \given w, \tparam\sysparam) = \srv_{\sv}(t\given \tparam\sysparam) \sum_{k=1}^{m}
+%	\haz_k(t \given \tparam\sysparam)
+%	\left[
+%		\frac{\alpha}{\binom{m-1}{w-1}} \SetIndicator{\cand}(k) + \frac{1-\alpha}{\binom{m-1}{w}} \SetIndicator{\SetComplement[\cand]}(k)	
+%	\right] \SetIndicator{\candsw{w}}(\cand)\,.
+%\end{equation}
+
+\section{\emph{Optimal} failed candidate sets}
+\label{sec:opt}
+Optimal candidate sets are generated by drawing a candidate set $\cand$ of cardinality $w$ with a probability proportional to $\Prob{\RV{K} \in \cand}$.
+However, the total probability over $\candsw{w}$ does not sum to unity since component sets are not disjoint events with respect to the sample space of $\RV{K}$.
+We consider another random element (random set) in which the sample space is defined by the outcomes in $\candsw{w}$.
+
+
+
+The joint probability density of $\rvcand$ and $\sv$ conditioned on 
+$\RV{W} = w$ is given by the following theorem.
+\begin{theorem}
+\label{thm:general_joint_likelihood_cand}
+The joint probability density of $\rvcand$ and $\sv$ conditioned on $\RV{W} = 
+w$ is given by
+\begin{equation}
+\label{eq:general_joint_likelihood_cand}
+    \jointpdf(\cand, t \given w, \tparam\sysparam) = \eta
+        \srv_{\sv}\left(t \given \tparam\sysparam\right)
+        \sum_{k \in \cand} \haz_k\left(t \given \tparam\sysparam\right)
+        \SetIndicator{\candsw{w}}(\cand)\,.
+\end{equation}
+where $\eta$ is the normalizing constant that makes the joint probability density function integrate\footnote{Integration refers to both summations and integrations.} to unity over the sample space $\candsw{w} \times \left(0,\infty\right)$.
+\end{theorem}
+\begin{proof}
+Given a candidate set $\cand \in \candsw{w}$, the event $E$ we wish to compute the likelihood of is given by
+\begin{equation}
+    E = \bigcup_{j \in \cand} \left ( \RV{K} = j \cap \sv = t \right )\,.
+\end{equation}
+We would like to compute the likelihood $L(E)$. The likelihood that $\RV{K} = j$ and $\sv = t$ is given by the probability density function
+\begin{equation*}
+    \pdf_{\RV{K}, \sv}\left(k, t\given \tparam\sysparam\right) = \haz_k\left(t \given \tparam{\sysparam}_k\right) \srv_{\sv}\left(t \given \tparam\sysparam\right)\,.
+    \tag{\ref{eq:k_s_haz} revisited}
+\end{equation*}
+Performing this substitution yields
+\begin{equation}
+    L(E) = \bigcup_{j \in \cand} \haz_j\left(t \given \tparam{\sysparam}_j\right) \srv_{\sv}\left(t \given \tparam\sysparam\right)\,.
+\end{equation}
+Since the events $\RV{K} = j, \sv = t$ for $j \in \cand$ are mutually exclusive, the likelihood is given by
+\begin{equation}
+    L(E) = \sum_{j \in \cand} \haz_j\left(t \given \tparam{\sysparam}_j\right) \srv_{\sv}\left(t \given \tparam\sysparam\right)\,.
+\end{equation}
+Since outcomes in the sample space $\candsw{w}$ are not atomic with respect to 
+the sample space of $\RV{K} \in \Set{K}$, we multiply by a normalizing constant 
+$\eta$ to make it a proper joint probability density function.
+\end{proof}
+
+The normalizing constant $\eta$ indicated in \cref{eq:general_joint_likelihood_cand} is given by the following theorem.
+\begin{theorem}
+The normalizing constant $\eta$ that makes the joint probability density $\jointpdf(\cand, t \given w, \tparam\sysparam)$ integrate to unity over the sample space $\candsw{w} \times \left(0,\infty\right)$ is given by
+\begin{equation}
+    \eta = \frac{1}{\binom{m-1}{w-1}}\,.
+\end{equation}
+\end{theorem}
+\begin{proof}
+Integrating over the sample space $\candsw{w} \times \left(0,\infty\right)$ must be equal to unity. That is,
+\begin{equation}
+    \eta \sum_{\cand \in \candsw{w}} \int_{0}^{\infty} \jointpdf(\cand, t \given \tparam\sysparam) \dif t = 1\,.
+\end{equation}
+Substituting the joint probability density with the definition given by \cref{eq:general_joint_likelihood_cand} results in
+\begin{equation}
+    \eta \sum_{\cand \in \candsw{w}} \int_{0}^{\infty} \left[ \sum_{j \in \cand} \pdf_{\RV{K}, \sv}(j, t \given \tparam\sysparam) \right] \dif t = 1\,.
+\end{equation}
+We can switch the summation over $\candsw{w}$ and the integration over $t$ without changing the equation, resulting in
+\begin{equation}
+    \eta \sum_{\cand \in \candsw{w}} \sum_{j \in \cand} \left[ \int_{0}^{\infty} \pdf_{\RV{K}, \sv}(j, t \given \tparam\sysparam) \mathrm{d}t \right] = 1\,.
+\end{equation}
+By the axioms of probability, the inner integral is the marginal probability mass function of $\RV{K}$. Performing this substitution results in
+\begin{equation}
+    \eta \sum_{\cand \in \candsw{w}} \sum_{j \in \cand} \pmf_{\RV{K}}(j \given \tparam\sysparam) = 1\,.
+\end{equation}
+When constructing a candidate set of cardinality $w$, suppose we restrict our attention to only those sets in which component $r$ is present. Then, we have $w-1$ additional components to choose from of the $m-1$ remaining. There are $\binom{m-1}{w-1}$ such choices possible, thus component $r$ is present in $\binom{m-1}{w-1}$ of the sets. Consequently, each component has $\binom{m-1}{w-1}$ occurrences. Performing this substitution results in
+\begin{equation}
+    \label{eq:proof_joint_like_marginal}
+    \eta \binom{m-1}{w-1} \sum_{j=1}^{m} \pmf_{\RV{K}}(j \given \tparam{\sysparam}) = 1\,.
+\end{equation}
+Observe that $\sum_{j=1}^{m} \pmf_{\RV{K}}(j \given \tparam{\sysparam})$ must be equal to unity since we are summing over the entire sample space of $\RV{K}$. Performing this substitution and solving for $\eta$ yields
+\begin{equation}
+    \eta = \frac{1}{\binom{m-1}{w-1}}\,.
+\end{equation}
+\end{proof}
+
+\begin{corollary}
+\label{def:general_cond_cand_probability}
+The conditional probability mass function $\pmf_{\rvcand \given \sv, \RV{W}}(\cand \given t, w, \tparam\sysparam)$ maps each candidate set $\cand$ to the probability that the given candidate set contains the component responsible for the system failure at time $t$. By the axioms of probability,
+\begin{equation}
+\label{eq:general_cond_cand_probability}
+    \pmf_{\rvcand \given \sv, \RV{W}}(\cand \given t, w, \tparam\sysparam) = \frac
+    {
+        \sum_{j \in \cand} \haz_j\left(t \given \tparam\sysparam_j\right)
+    }
+    {
+        \haz_{\sv}\left(t \given \tparam\sysparam\right)
+    } \SetIndicator{\candsw{w}}(\cand)\,,
+\end{equation}
+where $\haz_{\sv}$ and $\haz_j$ are the failure rate functions of the system 
+and the \jth component respectively.
+\end{corollary}
+\begin{proof}
+By the axioms of probability,
+\begin{equation}
+    \pmf_{\rvcand \given \sv, \RV{W}}(\cand \given t, w, \tparam\sysparam) = \frac
+    {
+        \jointpdf(\cand, t \given w, \tparam\sysparam)
+    }
+    {
+        \spdf(t \given \tparam\sysparam)
+    }\,,
+\end{equation}
+where $\jointpdf(\; \cdot \given \tparam\sysparam)$ is the joint probability density function given by \cref{thm:general_joint_likelihood_cand}. Making this substitution immediately yields the result.
+\end{proof}
+
+\end{document}
