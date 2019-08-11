@@ -126,10 +126,10 @@ The variance-covariance is given by the following definition.
 A random vector $\RV{\vec{X}} \in \mathbb{R}^{p}$ has a variance-covariance given by
 \begin{equation}
 \label{eq:covariance_matrix_op}
-    \var\!\left(\RV{\vec{X}}\right) = \expectation
+    \var\!\left[\RV{\vec{X}}\right] = \expectation
     \left [
         \left(\RV{\vec{X}} - \expectation[\RV{\vec{X}}] \right)
-        \left(\RV{\vec{X}} - \expectation[\RV{\vec{X}}] \right)^\intercal
+        \left(\RV{\vec{X}} - \expectation[\RV{\vec{X}}] \right)^\Transpose
     \right ]\,,
 \end{equation}
 which is a $p$-by-$p$ semi-positive definite matrix.

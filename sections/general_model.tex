@@ -37,10 +37,9 @@ The uncertain lifetime of the system is given by the following definition.
     The lifetime of the system is given by the random variable
     \begin{equation}
     \label{eq:series_system_lifetime}
-    \sv = \min{\!\left(\cv_1\,, \ldots\,, \cv_m\right)} \in \left(0, 
-    \infty\right)\,,
+    \sv = \min{\!\left(\cv_1\,, \ldots\,, \cv_m\right)}
     \end{equation}
-    where $\cv_1\,, \ldots\,, \cv_m$ are the component lifetimes.
+    with a sample space $\left(0, \infty\right)$, where $\cv_1\,, \ldots\,, \cv_m$ are the component lifetimes.
 \end{theorem}
 \begin{proof}
     A series system fails whenever any component fails, therefore its lifetime 
@@ -178,7 +177,9 @@ The indicator function and the $k$-subset functions are needed for subsequent ma
 	\end{equation}
 \end{definition}
 
-We are primarily interested in the distribution of candidate sets on the condition that they have a specified cardinality.
+The \emph{probability space} of this probabilistic model is given by the triple $\left((0,\infty) \times \PS{\Set{K}}, \Set{B} \times \PowerSet\left(\PS{\Set{K}}\right), \operatorname{P}\right)$ where $\Set{B}$ is the \emph{Borel space}, the set of half-open intervals, and $\operatorname{P}$ is the probability measure.
+
+The distribution of candidate sets conditioned on a specific cardinality is given by the following definition.
 \begin{definition}
 	The random candidate set $\rvcand$ conditioned on $\RV{W} = w$ has a sample space given by
 	\begin{equation}
@@ -190,7 +191,7 @@ By \cref{asm:indep_W_S}, the distribution of $\RV{W}$ is not dependent on the tr
 \label{def:pmf_w}
 	The probability that $\RV{W} = \Card{\rvcand} = w$ is given by the probability mass function $\pmf_{\RV{W}}\left(w\right)$.
 \end{definition}
-Any inferences about the parametric model will be \emph{independent} of $\RV{W}$ except in the sense that conditioned on larger candidate sets generates estimators with greater variance.
+Any inferences about the parametric model will be \emph{independent} of $\RV{W}$ except in the sense that conditioning on larger candidate sets generates estimators with greater variance.
 
 \begin{figure}
 	\label{fig:gen_model_simple}
@@ -199,7 +200,7 @@ Any inferences about the parametric model will be \emph{independent} of $\RV{W}$
 		\input{img/graph_model_simplified.tex}
 	\end{center}
 \end{figure}
-If a sample of masked system failures has variable sized candidate sets, we are free to use any parameter-free estimator of the probability mass function of $\RV{W}$, e.g., the empirical distribution as described in \cref{appendix:generalized_general_joint_likelihood_cand}.
+In general, a sample of masked system failures may have variable sized candidate sets. In \cref{dummyref}, we derive the sampling distribution of the maximum likelihood estimator of this kind of sample using the inverse-variance weighted mean.
 
 The \emph{primary} data point is the \emph{masked system failure} as given by the following definition.
 \begin{definition}
