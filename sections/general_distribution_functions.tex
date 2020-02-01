@@ -278,29 +278,55 @@ The $\alpha$-candidate sets have a conditional probability distribution given by
 	\end{equation}
 \end{proof}
 
-The joint probability density function of $\rvcand$ and $\sv$ is given by the following theorem.
+\begin{remark}
+The $\alpha$-candidate set model is somewhat naive since $\pdf_{\rvcand \given \RV{K}, \RV{W}}(\Set{A} \given k, w, \alpha) = \pdf_{\rvcand \given \RV{K}, \RV{W}}(\Set{B} \given k, w, \alpha)$ if $\SetIndicator{\Set{A}}(k) = \SetIndicator{\Set{B}}(k)$, e.g., $\alpha$-candidate sets that include the failed component are equally likely to be chosen.
+A more informative generative model may preferentially generate candidate sets whose components are about to fail as well.
+\end{remark}
+
+The random variable $\RV{K}$ is \emph{latent}, or unobservable.
+In a masked system failure sample, the only observable is the candidate set and the system failure time.
+The joint probability density function of $\rvcand$ and $\sv$ conditioned on $\RV{W}$ is given by the following theorem.
 \begin{theorem}
+The conditional joint probability density function of random variable $\rvcand$ and random system lifetime $\sv$ given $\RV{W} = w$ is given by
 	\begin{equation}
-	\pdf_{\rvcand,\sv \given \RV{W}}(\cand,t \given w, \alpha, \tparam\sysparam) = \sum_{k=1}^{m} \pdf_{\rvcand,\RV{K},\sv \given \RV{W}}(\cand,k,t \given w, \alpha)
+	\pdf_{\rvcand,\sv \given \RV{W}}(\cand,t \given w, \alpha, \tparam\sysparam) =
+		\sum_{k=1}^{m} \pdf_{\rvcand \given \RV{K}, \RV{W}}(\cand \given k, w, \alpha) \pdf_{\RV{K},\sv}(k,t \given \tparam\sysparam)
 	\end{equation}
 	with a sample space $\candsw{w} \times (0,\infty)$.
 \end{theorem}
 \begin{proof}
-	The joint distribution is given by
-	\begin{equation}
-	\pdf_{\rvcand,\RV{K},\sv \given \RV{W}}(\cand,k,t \given w, \alpha) = \pdf_{\rvcand \given \RV{K}, \RV{W}}(\cand \given k, w, \alpha) \pdf_{\RV{K},\sv}(k,t \given \tparam\sysparam) \,.
-	\end{equation}
-	However, given only a masked failure set, $\RV{K}$ is \emph{unobservable}, and so we \emph{marginalize} over $\RV{K}$.
-\end{proof}
-%which results in
-%\begin{equation}
-%\pdf_{\rvcand,\sv \given \RV{W}}(\cand,t \given w, \tparam\sysparam) = \srv_{\sv}(t\given \tparam\sysparam) \sum_{k=1}^{m}
-%	\haz_k(t \given \tparam\sysparam)
-%	\left[
-%		\frac{\alpha}{\binom{m-1}{w-1}} \SetIndicator{\cand}(k) + \frac{1-\alpha}{\binom{m-1}{w}} \SetIndicator{\SetComplement[\cand]}(k)	
-%	\right] \SetIndicator{\candsw{w}}(\cand)\,.
-%\end{equation}
+By the laws of probability, the joint distribution of $\rvcand$, $\RV{K}$ and $\sv$ conditioned on $\RV{W} = w$ is given by
+\begin{equation}
+	\pdf_{\rvcand,\RV{K},\sv \given \RV{W}}(\cand,k,t \given w, \alpha, \tparam\sysparam) = \pdf_{\rvcand \given \RV{K}, \RV{W}}(\cand \given k, w, \alpha, \tparam\sysparam) \pdf_{\RV{K},\sv \given \RV{W}}(k,t \given w,\tparam\sysparam)\,.
+\end{equation}
+However, $\RV{K}$ and $\sv$ are independent of $\RV{W}$ and $\rvcand$ conditioned on $\RV{K}$ and $\RV{W}$ is independent of $\tparam\sysparam$, so we simplify the joint probability density function to
+\begin{equation}
+\pdf_{\rvcand,\RV{K},\sv \given \RV{W}}(\cand,k,t \given w, \alpha) = \pdf_{\rvcand \given \RV{K}, \RV{W}}(\cand \given k, w, \alpha) \pdf_{\RV{K},\sv}(k,t \given \tparam\sysparam)\,.
+\end{equation}
 
+The marginal joint distribution of $\rvcand$ and $\sv$ given $\RV{W}$ is calculated by summing the joint probability distribution over $\RV{K}$ which has a sample space $\{1,\ldots,m\}$.
+\end{proof}
+
+The \emph{optimal} case is provided by the $1$-masked candidate set as given by the following corollary.
+\begin{corollary}
+	\label{thm:general_joint_likelihood_cand}
+	The joint probability density of $\rvcand$ and $\sv$ conditioned on $\RV{W} = w$ and $\alpha=1$ is given by
+	\begin{equation}
+	\label{eq:general_joint_likelihood_cand}
+	\jointpdf(\cand, t \given w, \alpha=1,\tparam\sysparam) = \frac{\srv_{\sv}(t \given \tparam\sysparam)}{\binom{m-1}{w-1}}	
+	\sum_{k \in \cand} \haz_k\!\left(t \given \tparam\sysparam\right)
+	\end{equation}
+	with a sample space $\candsw{w} \times (0,\infty)$.
+\end{corollary}
+
+Suppose the candidate sets are chosen \emph{randomly}, which is equivalent to the $\frac{w}{m}$-masked candidate set model.
+We claim without proof the joint probability $\jointpdf(\cand, t \given w, \alpha=\frac{w}{m},\tparam\sysparam)$ is proportional to $\spdf(t \given \tparam\sysparam)$ and therefore, as intuition suggests, candidate sets that are randomly chosen carry no information about the true parameter index.
+Therefore, the set of informative $\alpha$-masked candidate set models for estimating $\tparam\sysparam$ is indexed by the interval $\frac{w}{m} < \alpha \leq 1$.
+
+Conversely, suppose we have an \emph{adversarial} diagnostician who generates $\alpha$-masked candidate sets where $\alpha < \frac{w}{m}$.
+Then, the random candidate sets serve as \emph{misinformation}.
+If it is known or estimated that the candidate sets are misinforming, then we may estimate the answer to a related but different question, ''What is not the value of $\tparam\sysparam$?''
+Granted, this is not nearly as informative, but the only case in which no information is conveyed is given by randomly generating the candidate sets.
 
 By \cref{asm:indep_W_S}, the random lifetime $\sv$ and the cardinality of the random candidate set $\RV{W} = \Card{\rvcand}$ are independent, thus by the axioms of probability the joint density of $\rvcand$, $\sv$, and $\RV{W}$ is given by
 \begin{equation}
@@ -312,20 +338,6 @@ If it is given that $\RV{W} = w$, by the axioms of probability
 \jointpdf(\cand, t \given w, \tparam\sysparam) =
 \pmf_{\rvcand \given \sv, \RV{W}}(\cand \given t, w, \tparam\sysparam) \spdf(t \given \tparam\sysparam)\,.
 \end{equation}
-
-
-
-The \emph{optimal} mask is provided by an $\alpha=1.0$ masked candidate set as given by the following corollary.
-\begin{corollary}
-	\label{thm:general_joint_likelihood_cand}
-	The joint probability density of $\rvcand$ and $\sv$ conditioned on $\RV{W} = w$ and $\alpha=1.0$ is given by
-	\begin{equation}
-	\label{eq:general_joint_likelihood_cand}
-	\jointpdf(\cand, t \given w, \alpha=1.0,\tparam\sysparam) = \frac{\srv_{\sv}(t \given \tparam\sysparam)}{\binom{m-1}{w-1}}	
-	\sum_{k \in \cand} \haz_k\left(t \given \tparam\sysparam\right)
-	\end{equation}
-	with a sample space $\candsw{w} \times (0,\infty)$.
-\end{corollary}
 
 
 \begin{corollary}
