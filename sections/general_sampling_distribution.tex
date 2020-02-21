@@ -11,15 +11,15 @@ A particular realization of the estimator is denoted by $\pointest$, i.e., $\sam
 
 The sampling distribution of $\pointest$ has a variance-covariance given by $\var\left(\sampdpt\right)$ (see \cref{eq:covariance_matrix_op}) and a bias given by the following definition.
 \begin{definition}
-The bias of a point estimator $\sampdpt = \pointest$ is given by
+The bias of a point estimator $\sampdpt$ is given by
 \begin{equation}
     \bias\left(\sampdpt\right) = \expectation\left[\sampdpt\right] - \tparam\sysparamvec\,.
 \end{equation}
 \end{definition}
 We are often faced with a trade-off between bias and variance. A measure of estimator accuracy that is a function of both the bias and the variance is the mean squared error as given by the following definition.
-\begin{definition}[MSE]
+\begin{definition}
 \label{def:mse}
-The mean squared error of the sampling distribution of $\pointest$ is given by
+The mean squared error (MSE) of the sampling distribution of $\pointest$ is given by
 \begin{equation}
 \label{eq:mse}
 \mse \left( \sampdpt \right) = \expectation \left [
@@ -43,7 +43,9 @@ The mean squared error of the sampling distribution of $\pointest$ as given by \
 where $\trace\left(\matrx{A}\right)$ computes the sum of the diagonal elements of square matrix $\matrx{A}$.
 \end{postulate}
 
-\emph{Fisher information} reduces the uncertainty about $\tparam\sysparamvec$. The \emph{minimum-variance unbiased estimator} (UMVUE) has a lower-bound given by the inverse of the \emph{Fisher information matrix}, denoted the \emph{Cram\'{e}r-Rao lower-bound}. The minimum variance obtainable from a random sample of $n$ masked system failure times drawn from $\mfs$ is given by
+\emph{Fisher information} reduces the uncertainty about $\tparam\sysparamvec$.
+The \emph{minimum-variance unbiased estimator} (UMVUE) has a lower-bound given by the inverse of the \emph{Fisher information matrix}, denoted the \emph{Cram\'{e}r-Rao lower-bound}.
+The minimum variance obtainable from a random sample of $n$ masked system failure times drawn from $\mfs$ is given by
 \begin{equation}
 \label{eq:crlb}
     \matrx{CRLB_n} = \frac{1}{n} \infomatrx^{-1}\left(\tparam\sysparamvec 
@@ -52,7 +54,7 @@ where $\trace\left(\matrx{A}\right)$ computes the sum of the diagonal elements o
 By \cref{eq:mse_bias_var}, if $\pointest$ is an unbiased estimator of $\tparam\sysparamvec$, then the mean squared error is given by
 \begin{equation}
 \label{eq:mse_unbiased}
-\mse \left( \sampdpt \right) = \trace \left( \var\left(\sampdpt\right) \right)\,.
+\mse(\sampdpt) = \trace\!\left( \var\left(\sampdpt\right) \right)\,.
 \end{equation}
 
 By \cref{eq:mse_unbiased,eq:crlb}, the mean squared error of any unbiased point 
@@ -61,19 +63,19 @@ information is given by a random sample $\mfs$ has a lower-bound given by the
 trace of $\matrx{CRLB_n}$,
 \begin{equation}
 \label{eq:mse_lower_bound_total}
-\mse\left(\RV{Y}\right) \geq \trace\left(\matrx{CRLB_n}\right)\,.
+\mse(\sampdpt) \geq \trace\!\left(\matrx{CRLB_n}\right)\,.
 \end{equation}
 
 \section{Maximum likelihood estimator given $w$ candidates}
-Suppose the only information about the true parameter index $\tparam\sysparamvec$ is given by a sample of $n$ masked system failure times in which only those system failures with $w$ candidates are observed. The maximum likelihood estimator based on this conditional sample is given in the following definition.
+Suppose the only information about the true parameter index $\tparam\sysparamvec$ is given by a sample of $n$ masked system failure times in which only those system failures with $w$ candidates are observed.
+The maximum likelihood estimator based on this conditional sample is given in the following definition.
 \begin{definition}
 \label{def:general_mle}
-A parameter index $\mle$ that maximizes the \emph{likelihood} of observing 
-$\mfsw = \mfso$ (see \cref{def:msfs}) is a maximum likelihood estimator of 
-$\tparam\sysparamvec$. That is,
+A parameter index $\mle$ that maximizes the \emph{likelihood} of observing some realization of $\mfs$ given $\RV{W} = w$ (see \cref{def:msfs}) is a maximum likelihood estimator of $\tparam\sysparamvec$.
+That is,
 \begin{equation}
 \label{eq:general_mle}
-\mle = \argmax_{\sysparamvec \in \vec\Omega} \likelihood(\sysparamvec \given w, \mfso)\,,
+\mle = \argmax_{\sysparamvec \in \vec\Omega} \likelihood_n(\sysparamvec \Given w, \alpha)\,,
 \end{equation}
 where $\vec\Omega$ is the feasible parameter space of the parametric family.
 \end{definition}
@@ -106,13 +108,13 @@ Rather, the maximum likelihood estimator will generate an estimate that makes th
 The logarithm is a monotonically increasing function, thus the parameter value $\mle$ that maximizes $\likelihood$ also maximizes the log-likelihood $\ell$ (see \cref{def:general_log_like}), i.e.,
 \begin{equation}
 \label{eq:general_mle}
-\mle = \argmax_{\sysparamvec \in \vec\Omega} \ell(\sysparamvec \given w, \mfso)\,.
+\mle = \argmax_{\sysparamvec \in \vec\Omega} \ell(\sysparamvec \Given w, \mfso)\,.
 \end{equation}
 
 According to Bickel~\cite{bickel}, if the parameter support $\vec\Omega$ of the parametric family is open, the log-likelihood $\ell$ is differentiable with respect to $\sysparamvec$, and $\mle$ exists, then $\mle$ must be a stationary point of $\ell$ as given by
 \begin{equation}
 \label{eq:score_zero}
-\score\left(\mle \given w, \mfso\right) = \vec{0}\,,
+\score\left(\mle \Given w, \mfso\right) = \vec{0}\,,
 \end{equation}
 where $\score$ is the score function given by \cref{eq:score}. In cases where there are no closed-form solutions to \cref{eq:score_zero}, iterative methods may be used as described in \cref{appendix:numerical_solution}.
 
@@ -122,7 +124,7 @@ The \emph{sampling distribution} of $\mle$ is a random vector denoted by $\sampd
 \end{definition}
 
 \sloppy
-The generative model for the maximum likelihood estimator, $\genSampleMLE(w \given \cdot\;)$, is described by \cref{alg:samp_d_gen_model}. This generative model depends on \genSampleFn, the generative model for the \emph{masked system failure time} as described by \cref{alg:Fn_generator}. Note that in \cref{alg:samp_d_gen_model}, \cref{alg:samp_d_gen_model_argmax} may be approximated with \findmle, a function that numerically solves the stationary points of the maximum likelihood equations as described by \cref{alg:mle_search}.
+The generative model for the maximum likelihood estimator, $\genSampleMLE(w \Given \cdot\;)$, is described by \cref{alg:samp_d_gen_model}. This generative model depends on \genSampleFn, the generative model for the \emph{masked system failure time} as described by \cref{alg:Fn_generator}. Note that in \cref{alg:samp_d_gen_model}, \cref{alg:samp_d_gen_model_argmax} may be approximated with \findmle, a function that numerically solves the stationary points of the maximum likelihood equations as described by \cref{alg:mle_search}.
 
 \fussy
 \begin{algorithm}[H]
@@ -144,7 +146,7 @@ The generative model for the maximum likelihood estimator, $\genSampleMLE(w \giv
         $\mf \gets \genSampleFn\left(w, \tparam\sysparamvec\right)$\;
         $\mfso \gets \mfso \cup \{ \mf \}$\;
     }
-    $\mle \gets \argmax_{\sysparamvec \in \Omega} \ell\left(\sysparamvec \given w, \mfso\right)$\;\label{alg:samp_d_gen_model_argmax}
+    $\mle \gets \argmax_{\sysparamvec \in \Omega} \ell\left(\sysparamvec \Given w, \mfso\right)$\;\label{alg:samp_d_gen_model_argmax}
     \KwRet{$\mle$}
 }
 \caption{Generative model of the maximum likelihood estimator conditioned on $w$ candidates}
@@ -179,19 +181,19 @@ By \cref{eq:consistent,eq:covariance_matrix_op}, the variance-covariance of the 
 \begin{postulate}
 The variance-covariance of the asymptotic sampling distribution of $\mle$ obtains the \emph{Cram\'{e}r-Rao lower-bound} for point estimators that are strictly a function of $n$ masked system failure times in which candidate sets are of cardinality $w$. We denote this variance-covariance by
 \begin{equation}
-    \cov\!\left(\tparam\sysparamvec \given w\right) \equiv \frac{1}{n} \infomatrx^{-1}\!\left(\tparam\sysparamvec\given w\right)\,.
+    \cov(\tparam\sysparamvec \Given w, \alpha) \equiv \frac{1}{n} \infomatrx^{-1}(\tparam\sysparamvec\Given w, \alpha)\,.
 \end{equation}
 \end{postulate}
 
 The asymptotic sampling distribution of $\mle$ is normally distributed.
 \begin{postulate}
 \label{def:converge_in_dist}
-    As $n \to \infty$, the sampling distribution of $\mle$ converges in distribution to a multivariate normal distribution with a mean $\tparam\sysparamvec$ and a variance-covariance $\cov(\tparam\sysparamvec \given w)$, written
+    As $n \to \infty$, the sampling distribution of $\mle$ converges in distribution to a multivariate normal distribution with a mean $\tparam\sysparamvec$ and a variance-covariance $\cov(\tparam\sysparamvec \Given w, \alpha)$, written
     \begin{equation}
     \label{eq:converge_in_dist}
         \sampd \xrightarrow{d} \mvn\!
             \left(
-                \tparam\sysparamvec, \cov\!\left(\tparam\sysparamvec \given w\right)
+                \tparam\sysparamvec, \cov(\tparam\sysparamvec \Given w, \alpha)
             \right)\,.
     \end{equation}
 \end{postulate}
@@ -202,7 +204,7 @@ By \cref{eq:mse_unbiased,eq:crlb,eq:consistent,eq:inverse_info}, the asymptotic 
 \label{eq:mse_mle_trace}
 \mse \left( \sampd \right) =
     \frac{1}{n} \trace \left (
-        \infomatrx^{-1} \bigl(\tparam\sysparamvec \given w\bigr)
+        \infomatrx^{-1} \bigl(\tparam\sysparamvec \Given w, \alpha\bigr)
     \right) = \trace\left(\rm{CRLB}_{n\,w}\right)\,.
 \end{equation}
 
@@ -210,51 +212,88 @@ By \cref{eq:mse_unbiased,eq:crlb,eq:consistent,eq:inverse_info}, the asymptotic 
 Look up Slverty's theorem to justify the next paragraph.
 \end{remark}
 \sloppy
-To estimate the sampling distribution of $\mle$, we may assume the sample size is sufficiently large such that the asymptotic distribution becomes a reasonable approximation. Since $\sampd \xrightarrow{P} \tparam\sysparamvec$ and $\sampd \xrightarrow{d} \mvn\left(\tparam\sysparamvec, \cov\left(\tparam\sysparamvec \given w\right)\right)$, it follows that
+To estimate the sampling distribution of $\mle$, we may assume the sample size is sufficiently large such that the asymptotic distribution becomes a reasonable approximation. Since $\sampd \xrightarrow{P} \tparam\sysparamvec$ and $\sampd \xrightarrow{d} \mvn\left(\tparam\sysparamvec, \cov(\tparam\sysparamvec \Given w, \alpha)\right)$, it follows that
 \begin{equation}
-\sampd \xrightarrow{d} \mvn\left(\mle, \cov\left(\mle \given w\right)\right)\,.
+\sampd \xrightarrow{d} \mvn\left(\mle, \cov(\mle \Given w, \alpha)\right)\,.
 \end{equation}
 
+
+
+TODO: talk about $\RV{A} = \alpha$. We don't really want to think about modeling it, only saying that it is given in a sample. Say, for instance, the masked system failure time also has a label for how accurate they determine the candidate set to be, i.e., $\alpha$-candidate set model where $\alpha$ can vary over the sample. Group by $w$ and $\alpha$, compute the information matrix, then combine them as described in this section to get the final estimator.
+
 \fussy
-Thus, we can approximate $\tparam\sysparamvec$ and $\infomatrx\left(\tparam\sysparamvec \given w\right)$ and obtain the following result. The proof of this theorem is beyond the scope of this paper.
+Thus, we can approximate $\tparam\sysparamvec$ and $\infomatrx(\tparam\sysparamvec \Given w, \alpha)$ and obtain the following result. The proof of this theorem is beyond the scope of this paper.
 \begin{theorem}
 \label{thm:approx_normal}
-For sufficiently large sample size $n$, the sampling distribution of $\mle$ is approximately normally distributed with a mean $\mle$ and a variance-covariance matrix $\cov\left(\mle \given w\right)$, written
+For sufficiently large sample size $n$, the sampling distribution of $\mle$ is approximately normally distributed with a mean $\mle$ and a variance-covariance matrix $\cov(\mle \Given w, \alpha)$, written
 \begin{equation}
 \label{eq:asymptotic_normality}
-    \sampd \stackrel{\text{approx.}}{\sim} \mvn\left(\mle, \cov\left(\mle \given w\right)\right)\,.
+    \sampd \stackrel{\text{approx.}}{\sim} \mvn\left(\mle, \cov(\mle \Given w, \alpha)\right)\,.
 \end{equation}
 \end{theorem}
 
 \section{Maximum likelihood estimator}
 \label{sec:full_samp_dist}
-Consider an i.i.d. sample of $r$ asymptotically unbiased estimates of $\tparam\sysparamvec$ denoted by $\bar{\vec\theta}^{(i)}$ which have sampling distributions with variance-covariances given respectively by $\matrx{\Sigma}^{(i)}$ for $i=1,\,\ldots\,,r$. The maximum likelihood estimator of $\tparam\sysparamvec$ given these point estimates is the inverse-variance weighted mean and is given by
+A \emph{masked system failure time} in which the cardinality of the candidate set is distributed according to $\RV{W}$, as described by \cref{dummyref}, has 
+a Fisher information matrix given by the following theorem.
+\begin{theorem}
+	The \emph{Fisher information} matrix of true parameter index $\tparam\sysparamvec$ with respect to a realization of jointly distributed random system lifetime $\sv$ and candidate set $\rvcand$ is given by
+	\begin{equation}
+	\infomatrx(\tparam\sysparamvec) = \kern-1em
+	\sum_{\Tuple{w,\alpha} \in \Set{W} \times \Set{A}} \kern-1em \pmf_{\RV{W},\RV{A}}(w,\alpha) \infomatrx(\tparam\sysparamvec \Given w, \alpha)\,,
+	\end{equation}
+	where $\pmf_{\RV{W}, \RV{A}}$ is the joint distribution of $\RV{W}$ and $\RV{A}$ with a support $\Set{W} \times \Set{A}$.
+\end{theorem}
+\begin{proof}
+Suppose we have a random sample of $n$ masked system failure times.
+By \cref{dummyref}, the expected number of sample points that have $w$ $\alpha$-masked candidate sets is given by
+\begin{equation}
+	q \coloneqq n \cdot \pmf_{\RV{W},\RV{A}}(w,\alpha)\,.
+\end{equation}
+Thus, by the additive property of \emph{Fisher information} given by \cref{post:info_add}, the information matrix of $\tparam\sysparam$ conditioned on $q$ such observations is given by
+\begin{equation}
+	\infomatrx_{\matrx{q}}(\tparam\sysparamvec \Given w, \alpha) = n \cdot \pmf_{\RV{W},\RV{A}}(w,\alpha) \infomatrx(\tparam\sysparamvec \Given w, \alpha)\,.
+\end{equation}
+When we sum over the entire support of $\RV{W}$ and $\RV{A}$, we arrive at the \emph{information matrix} of $\tparam\sysparam$ conditioned on $n$ masked candidate sets as given by
+\begin{equation}
+	\infomatrx_{\matrx{n}}(\tparam\sysparamvec) = \kern-1em
+	\sum_{\Tuple{w,\alpha} \in \Set{W} \times \Set{A}} \kern-1em n \cdot \pmf_{\RV{W},\RV{A}}(w,\alpha) \infomatrx(\tparam\sysparamvec \Given w, \alpha)\,.
+\end{equation}
+When we set $n$ to $1$, we get the result
+\begin{equation}
+	\infomatrx(\tparam\sysparamvec) = \kern-1em
+	\sum_{\Tuple{w,\alpha} \in \Set{W} \times \Set{A}} \kern-1em \pmf_{\RV{W},\RV{A}}(w,\alpha) \infomatrx(\tparam\sysparamvec \Given w, \alpha)\,.
+\end{equation}
+\end{proof}
+
+Consider an i.i.d. sample of $r$ asymptotically unbiased estimates of $\tparam\sysparamvec$ denoted by $\bar{\vec\theta}^{(i)}$ which have sampling distributions with variance-covariances given respectively by $\matrx{\Sigma}^{(i)}$ for $i=1,\,\ldots\,,r$.
+The maximum likelihood estimator of $\tparam\sysparamvec$ given these point estimates is the inverse-variance weighted mean and is given by
 \begin{equation}
     \hat{\vec\theta} = \left( \sum_{i=1}^{r} \matrx{A_i} \right)^{-1}
     \left( \sum_{i=1}^{r} \matrx{A_i} \bar{\vec\theta}^{(i)} \right)\,,
 \end{equation}
 where $\matrx{A_i}$ is the inverse of $\matrx{\Sigma}^{(i)}$.
 
-Suppose that the estimates are given by the maximum likelihood estimator 
-described in \cref{dummyref}. The maximum likelihood estimator given these 
-estimates has a sampling distribution given by the following definition.
+Suppose that the estimates are given by the maximum likelihood estimator described in \cref{dummyref}.
+The maximum likelihood estimator given these estimates has a sampling distribution given by the following definition.
 \begin{definition}
-Let $\mfs$ be a random sample of $n$ masked system failure times in which $n_i$ realizations have $w_i$ candidates for $i = 1,\,\ldots\,,r$. The maximum likelihood estimator given by
+Let $\mfs$ be a random sample of $n$ masked system failure times in which $n_i$ realizations have $w_i$ $\alpha_i$-masked candidate sets for $i = 1,\ldots,r$.
+The maximum likelihood estimator given by
 \begin{equation}
-    \mleu = \hat{\vec\theta} = \left( \sum_{i=1}^{r} \matrx{A_i} \right)^{-1}
-    \left( \sum_{i=1}^{r} \matrx{A_i} \bar{\vec\theta}^{(i)} \right)\,,
+    \hat{\sysparamvec} = \left( \sum_{i=1}^{r} \matrx{A_i} \right)^{-1}
+    \left( \sum_{i=1}^{r} \matrx{A_i} \hat\sysparamvec^{(i)} \right)\,,
 \end{equation}
 has a sampling distribution given by
 \begin{equation}
     \sampdu = \left( \sum_{i=1}^{r} \matrx{A_i} \right)^{-1}
-    \left( \sum_{i=1}^{r} \matrx{A_i} \sampdir{n_i}{w_i}{i} \right)\,,
+    \left( \sum_{i=1}^{r} \matrx{A_i} \sampdir{n_i}{w_i,\alpha_i}{i}\right)\,,
 \end{equation}
-where $\sampdir{n_i}{w_i}{i}$ is the sampling distribution of $\mleir{n_i}{w_i}$ for $i=1,\ldots,r$ and
+where $\sampdir{n_i}{w_i,\alpha_i}{i}$ is the sampling distribution of $\mleir{n_i}{w_i,\alpha_i}$ for $i=1,\ldots,r$ and
 \begin{equation}
 \label{eq:mat_A_info}
-    \matrx{A_i} = n_i \infomatrx\left(\tparam\sysparamvec \given w_i \right)
+    \matrx{A_i} = n_i \infomatrx(\tparam\sysparamvec \Given w_i, \alpha_i)
 \end{equation}
-is the information matrix for $\tparam\sysparamvec$ with respect to $\mfswn{n_i}{w_i}$.
+is the information matrix for $\tparam\sysparamvec$ with respect to $\mfswn{n_i}{w_i,\alpha_i}$.
 \end{definition}
 
 
@@ -265,10 +304,10 @@ The random vector $\sampdu$ is an asymptotically unbiased estimator of $\tparam\
 The expectation of $\sampdu$ is given by
 \begin{align}
     \expectation\left[\sampdu\right]
-    &= \expectation\left[\left( \sum_{i=1}^{r} \matrx{A_i} \right)^{-1} \left( \sum_{i=1}^{r} \matrx{A_i} \sampdir{n_i}{w_i}{i} \right)\right]\\
+    &= \expectation\left[\left( \sum_{i=1}^{r} \matrx{A_i} \right)^{-1} \left( \sum_{i=1}^{r} \matrx{A_i} \sampdir{n_i}{w_i,\alpha_i}{i} \right)\right]\\
     &=  \left( \sum_{i=1}^{r} \matrx{A_i} \right)^{-1}
             \left( \sum_{i=1}^{r} \matrx{A_i}
-            \expectation\left[\sampdir{n_i}{w_i}{i}\right]\right)\\    
+            \expectation\left[\sampdir{n_i}{w_i,\alpha_i}{i}\right]\right)\\    
     &= \left( \sum_{i=1}^{r} \matrx{A_i} \right)^{-1} \left(\sum_{i=1}^{r} \matrx{A_i} \right) \tparam\sysparamvec\\
     &= \tparam\sysparamvec\,.
 \end{align}
@@ -279,7 +318,7 @@ The expectation of $\sampdu$ is given by
 The variance-covariance of $\sampdu$ is given by
 \begin{equation}
 \label{eq:var_samp_d_full}
-    \var\left[\sampdu\right] = \left( \sum_{i=1}^{r} n_i \infomatrx\left(\tparam\sysparamvec \given w_i \right) \right)^{-1}\,.
+    \var\left[\sampdu\right] = \left( \sum_{i=1}^{r} n_i \infomatrx(\tparam\sysparamvec \Given w_i, \alpha_i) \right)^{-1}\,.
 \end{equation}
 \end{theorem}
 \begin{proof}
@@ -291,18 +330,18 @@ Let
 The variance-covariance of $\sampdu$ is given by
 \begin{align}
     \var\left[\sampdu\right]
-        &= \var\left[\matrx{B} \left( \sum_{i=1}^{r} \matrx{A_i} \sampdir{n_i}{w_i}{i} \right)\right]\\
-        &= \matrx{B} \var\left[\sum_{i=1}^{r} \matrx{A_i} \sampdir{n_i}{w_i}{i} 
+        &= \var\left[\matrx{B} \left( \sum_{i=1}^{r} \matrx{A_i} \sampdir{n_i}{w_i,\alpha_i}{i} \right)\right]\\
+        &= \matrx{B} \var\left[\sum_{i=1}^{r} \matrx{A_i} \sampdir{n_i}{w_i,\alpha_i}{i} 
         \right] \matrx{B^{\Transpose}}\\
         &= \matrx{B} \left(\sum_{i=1}^{r} \var\left[\matrx{A_i} 
-        \sampdir{n_i}{w_i}{i} \right]\right) \matrx{B^{\Transpose}}\\
+        \sampdir{n_i}{w_i,\alpha_i}{i} \right]\right) \matrx{B^{\Transpose}}\\
         &= \matrx{B} \left(\sum_{i=1}^{r} \matrx{A_i} \var\left[ 
-        \sampdir{n_i}{w_i}{i} \right] \matrx{A_i^{\Transpose}} \right) 
+        \sampdir{n_i}{w_i,\alpha_i}{i} \right] \matrx{A_i^{\Transpose}} \right) 
         \matrx{B^{\Transpose}}\,.
 \end{align}
-By \cref{eq:inverse_info}, the variance-covariance of $\sampdir{n_i}{w_i}{i}$ is given by
+By \cref{eq:inverse_info}, the variance-covariance of $\sampdir{n_i}{w_i,\alpha_i}{i}$ is given by
 \begin{equation}
-    \frac{1}{n_i} \infomatrx^{-1}\left(\tparam\sysparamvec \given w_i \right)\,.
+    \frac{1}{n_i} \infomatrx^{-1}(\tparam\sysparamvec \Given w_i, \alpha_i)\,.
 \end{equation}
 By \cref{eq:mat_A_info}, this is equivalent to $\matrx{A_i^{-1}}$. Performing this substitution results in
 \begin{align}
@@ -326,11 +365,11 @@ By \cref{eq:proof_of_var_samp_d_full_mat_B}, $\matrx{B}$ is given by
 \end{equation}
 and by \cref{eq:mat_A_info}, $\matrx{A_i}$ is given by
 \begin{equation}
-    n_i \infomatrx\left(\tparam\sysparamvec \given w_i \right)\,.
+    n_i \infomatrx(\tparam\sysparamvec \Given w_i, \alpha_i)\,.
 \end{equation}
 Performing these substitution results in
 \begin{equation}
-    \var\left[\sampdu\right] = \left( \sum_{i=1}^{r} n_i \infomatrx\left(\tparam\sysparamvec \given w_i \right) \right)^{-1}\,.
+    \var\left[\sampdu\right] = \left( \sum_{i=1}^{r} n_i \infomatrx(\tparam\sysparamvec \Given w_i, \alpha_i) \right)^{-1}\,.
 \end{equation}
 \end{proof}
 
@@ -342,7 +381,7 @@ A linear combination of multivariate normal distributions is a multivariate norm
 As $n \to \infty$, the sampling distribution of $\mleu$ converges in distribution to a multivariate normal with a mean $\tparam\sysparamvec$ and a variance-covariance given by \cref{eq:var_samp_d_full}, written
 \begin{equation}
 \label{eq:converge_in_dist_weighted}
-    \sampdu \xrightarrow{d} \mvn\left(\tparam\sysparamvec, \left(\sum_{i=1}^{r} n_i \infomatrx\left(\tparam\sysparamvec \given w_i \right)\right)^{-1}\right)\,.
+    \sampdu \xrightarrow{d} \mvn\left(\tparam\sysparamvec, \left(\sum_{i=1}^{r} n_i \infomatrx\left(\tparam\sysparamvec \Given w_i \right)\right)^{-1}\right)\,.
 \end{equation}
 \end{postulate}
 
@@ -358,8 +397,9 @@ The generative model for $\sampdu$ is given by \cref{alg:samp_du_gen_model}.
     \BlankLine
     \SetKwProg{func}{Model}{}{}
     \func{$\genSampleMLE${$(\tparam\sysparam)$}}{
-        draw candidate cardinality $w \sim \pmf_{\RV{W}}(\, \cdot \,)$\;
-        $\mleu \gets \genSampleMLE(\tparam\sysparam, w)$\;
+        draw $\alpha \sim \pmf_{\RV{A}}(\, \cdot \,)$\;        
+        draw candidate cardinality $w \sim \pmf_{\RV{W} \Given \RV{A}}(\, \Given \alpha \,)$\;
+        $\mleu \gets \genSampleMLE(\tparam\sysparam, w,\alpha)$\;
         \KwRet{$\mleu$}
     }
 \caption{Generative model of maximum likelihood estimator}

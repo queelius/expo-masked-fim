@@ -12,13 +12,13 @@ $\cv_j \sim \text{EXP}(\tparam{\lambda}_j)$. The random variable $\cv_j$ has
 reliability, density, and failure rate functions given respectively by
 \begin{align}
     \label{eq:expo_reliability}
-    \srv_j(t \given \tparam\lambda_j) &=
+    \srv_j(t \Given \tparam\lambda_j) &=
         \exp(-\tparam\lambda_j \cdot t)\,,\\
     \label{eq:expo_pdf}
-    \pdf_j(t \given \tparam\lambda_j) &=
+    \pdf_j(t \Given \tparam\lambda_j) &=
         \tparam\lambda_j \exp(-\tparam\lambda_j \cdot t)\,,\\
     \label{eq:expo_haz}
-    \haz_j(\cdot \given \tparam\lambda_j) &=
+    \haz_j(\cdot \Given \tparam\lambda_j) &=
         \tparam{\lambda}_j\,,
 \end{align}
 where $t > 0$ and $\tparam{\lambda}_j > 0$.
@@ -44,13 +44,13 @@ where $\tparam{\lambda}_j$ is the failure rate of the \jth component. That is,
 \begin{proof}
 By \cref{thm:series_reliability_function},
 \begin{equation}
-    \srv_{\sv}(t \given \tparam{\vec\lambda}) = \prod_{j=1}^{m} \srv_j(t \given 
+    \srv_{\sv}(t \Given \tparam{\vec\lambda}) = \prod_{j=1}^{m} \srv_j(t \Given 
     \tparam\lambda_j)\,.
 \end{equation}
 Plugging in the component reliability functions as given by 
 \cref{eq:expo_reliability} results in
 \begin{equation}
-    \srv_{\sv}(t \given \tparam{\vec\lambda}) = \prod_{j=1}^{m} 
+    \srv_{\sv}(t \Given \tparam{\vec\lambda}) = \prod_{j=1}^{m} 
     \exp(-\tparam\lambda_j \cdot t) =
     \exp \left(-\left [ \sum_{j=1}^{m}{\tparam\lambda_j} \right ] t\right)\,.
 \end{equation}
@@ -63,14 +63,14 @@ By \cref{thm:expo_series_family}, the system has a probability density,
 failure rate, and reliability functions given respectively by
 \begin{align}
 \label{eq:expo_sys_pdf}
-\spdf(t \given \tparam{\vec\lambda}) &=
+\spdf(t \Given \tparam{\vec\lambda}) &=
     \left ( \sum_{j=1}^{m} {\tparam{\lambda}_j} \right ) \exp
     \left(-\left [ \sum_{j=1}^{m}{\tparam{\lambda_j}} \right ] t\right)\,,\\
 \label{eq:expo_sys_failure_rate}
-\haz_{\sv}(\cdot \given \tparam{\vec\lambda}) &=
+\haz_{\sv}(\cdot \Given \tparam{\vec\lambda}) &=
     \sum_{j=1}^{m}{\tparam\lambda_j}\,,\\
 \label{eq:sys_expo_reliability_function}
-\srv_{\sv} \left(t \given \tparam{\vec\lambda} \right) &=
+\srv_{\sv} \left(t \Given \tparam{\vec\lambda} \right) &=
     \exp \left(-\left [ \sum_{j=1}^{m}{\tparam\lambda_j} \right ] t\right)
 \end{align}
 where $t > 0$ and $\tparam{\lambda}_j > 0$.
@@ -78,63 +78,63 @@ where $t > 0$ and $\tparam{\lambda}_j > 0$.
 The conditional probability that component $k$ is the cause of a system failure at time $t$ is given by
 \begin{equation}
 \label{eq:expo_prob_K_given_S}
-    \pmf_{\RV{K} \given \sv}(k \given t, \tparam{\vec\lambda}) = \pmf_{\RV{K}}(k \given \tparam{\vec\lambda}) =
+    \pmf_{\RV{K} \Given \sv}(k \Given t, \tparam{\vec\lambda}) = \pmf_{\RV{K}}(k \Given \tparam{\vec\lambda}) =
         \frac{\tparam{\lambda}_k}{\sum_{p=1}^{m} 
         \tparam{\lambda}_p}\SetIndicator{\Set{K}}(k)\,.
 \end{equation}
 \begin{proof}
 By \cref{thm:series_failure_rate_function},
 \begin{equation}
-\pmf_{\RV{K} \given \sv}(k \given t, \tparam{\vec\lambda}) = \frac
-    {\haz_k(t \given \tparam{\vec\lambda}_k)}
-    {\haz_{\sv}(t \given \tparam{\vec\lambda})}\,.
+\pmf_{\RV{K} \Given \sv}(k \Given t, \tparam{\vec\lambda}) = \frac
+    {\haz_k(t \Given \tparam{\vec\lambda}_k)}
+    {\haz_{\sv}(t \Given \tparam{\vec\lambda})}\,.
 \end{equation}
 Plug in the failure rate of component $k$ and the failure rate of the system given by \cref{eq:expo_sys_failure_rate,eq:expo_haz}.
 \end{proof}
 Due to the constant failure rates of the components, $\RV{K}$ and $\sv$ are independent. The joint density of $\RV{K}$ and $\sv$ is given by
 \begin{equation}
 \label{eq:expo_joint_k_s}
-\pdf_{\RV{K}, \sv}(k, t \given \tparam{\vec\lambda}) =
+\pdf_{\RV{K}, \sv}(k, t \Given \tparam{\vec\lambda}) =
     \tparam{\lambda}_k \exp \left(-\left [ \sum_{j=1}^{m}{\tparam{\lambda_j}} \right ] t\right)
     \SetIndicator{\Set{K} \times \RealSet^{+}}(k,t)
 \end{equation}
 \begin{proof}
 By definition,
 \begin{equation}
-\pdf_{\RV{K}, \sv}(k, t \given \tparam{\vec\lambda}) =
-    \pmf_{\RV{K} \given \sv}(k \given t, \tparam{\vec\lambda}) \spdf(t \given \tparam{\vec\lambda})\,.
+\pdf_{\RV{K}, \sv}(k, t \Given \tparam{\vec\lambda}) =
+    \pmf_{\RV{K} \Given \sv}(k \Given t, \tparam{\vec\lambda}) \spdf(t \Given \tparam{\vec\lambda})\,.
 \end{equation}
 Plug in the conditional probability and the marginal probability given by \cref{eq:expo_prob_K_given_S,eq:expo_sys_pdf}.
 \end{proof}
 
-The conditional joint density of $\rvcand$ and $\sv$ given $\RV{W} = w$ is given by
+The conditional joint density of $\rvcand$ and $\sv$ given $\RV{W}$ is given by
 \begin{equation}
-    \jointpdf(\cand, t \given w, \tparam{\vec\lambda}) = \frac{\SetIndicator{t > 0} \SetIndicator{\Card{\cand} = w}}{\binom{m-1}{w-1}} \left ( \sum_{j \in \cand} \lambda_j \right ) \exp \left [ - \left ( \sum_{j=1}^{m} \lambda_j \right ) t \right ]\,,
+    \jointpdf(\cand, t \Given w, \tparam{\vec\lambda}) = \frac{\SetIndicator{\RealSet_{>0} \times \candsw{w}}(t,\cand)}{\binom{m-1}{w-1}} \left ( \sum_{j \in \cand} \lambda_j \right ) \exp \left [ - \left ( \sum_{j=1}^{m} \lambda_j \right ) t \right ]\,,
 \end{equation}
 whose proof follows from \cref{thm:general_joint_likelihood_cand}.
 
 The conditional probability that a component in $\rvcand$ is the cause of a system failure given that $\sv = t$ and $\RV{W} = w$ is given by
 \begin{equation}
 \label{eq:expo_cand_given_s}
-    \pmf_{\rvcand \given \sv, \RV{W}}(\cand \given t, w, \tparam{\vec\lambda}) =
+    \pmf_{\rvcand \Given \sv, \RV{W}}(\cand \Given t, w, \tparam{\vec\lambda}) =
         \frac{ \sum_{j \in \cand} \tparam{\lambda}_j }
-            { \binom{m-1}{w-1} \sum_{p=1}^{m} \tparam{\lambda}_p } \SetIndicator{\RealSet_{+} \times \candsw{w}}(t,\Card{\cand})\,.
+            { \binom{m-1}{w-1} \sum_{p=1}^{m} \tparam{\lambda}_p } \SetIndicator{\RealSet_{>0} \times \candsw{w}}(t,\cand)\,.
 \end{equation}
 whose proof follows from \cref{def:general_cond_cand_probability}.
 
-Note that the marginal distribution of $\rvcand \given \RV{W} = w$ is given by
+Note that the marginal distribution of $\rvcand$ given $\RV{W}$ is given by
 \begin{equation}
 \label{eq:expo_cand_given_s}
-     \pmf_{\rvcand \given \RV{W}}\left(\cand \given w, \tparam{\vec\lambda}\right) =
+     \pmf_{\rvcand \Given \RV{W}}\!\left(\cand \Given w, \tparam{\vec\lambda}\right) =
         \frac{ \sum_{j \in \cand} \tparam{\lambda}_j }
-            { \binom{m-1}{w-1} \sum_{p=1}^{m} \tparam{\lambda}_p } \SetIndicator{\candsw{w}}(\Card{\cand})\,,
+            { \binom{m-1}{w-1} \sum_{p=1}^{m} \tparam{\lambda}_p } \SetIndicator{\candsw{w}}(\cand)\,,
 \end{equation}
 \begin{proof}
 The marginal is given by
 \begin{align}
-     \pmf_{\rvcand \given \RV{W}}(\cand \given w, \tparam{\vec\lambda})
-        &= \int_{-\infty}^{\infty} \jointpdf\left(\cand, t \given w, \tparam{\vec\lambda}\right) \dif t\\
-        &= \int_{0}^{\infty} \mathsmaller{\frac{\SetIndicator{\RealSet_{+} \times \candsw{w}}(t,\Card{\cand})}{\binom{m-1}{w-1}}
+     \pmf_{\rvcand \Given \RV{W}}(\cand \Given w, \tparam{\vec\lambda})
+        &= \int_{-\infty}^{\infty} \jointpdf\left(\cand, t \Given w, \tparam{\vec\lambda}\right) \dif t\\
+        &= \int_{0}^{\infty} \mathsmaller{\frac{\SetIndicator{\RealSet_{+} \times \candsw{w}}(t,\cand)}{\binom{m-1}{w-1}}
         	\left ( \sum_{j \in \cand} \lambda_j \right ) \exp \left [ - \left ( \sum_{j=1}^{m} \lambda_j \right ) t \right ] \dif t}\\
         &= \mathsmaller{\frac{ \SetIndicator{\candsw{w}(\cand)}}{\binom{m-1}{w-1}}} \sum_{j \in \cand} \lambda_j \int_{0}^{\infty} \mathsmaller{ \exp \left [ - \left ( \sum_{j=1}^{m} \lambda_j \right ) t \right ] \dif t}\,.
 \end{align}
@@ -144,54 +144,20 @@ Multiplying the integrand by
 \end{equation}
 results in
 \begin{align}
-     \pmf_{\rvcand \given \RV{W}}(\cand \given w, \tparam{\vec\lambda})
-        &= \mathsmaller{\frac{ \SetIndicator{\candsw{w}(\Card{\cand})} }{\binom{m-1}{w-1}} \frac{\sum_{j \in \cand} \lambda_j}{\sum_{j=1}^{m} \lambda_j}} \int_{0}^{\infty} \mathsmaller{ \left ( \sum_{j=1}^{m} \lambda_j \right) \exp \left [ - \left ( \sum_{j=1}^{m} \lambda_j \right ) t \right ] \dif t}\\
-        &= \mathsmaller{\frac{ \SetIndicator{\candsw{w}(\Card{\cand})} }{\binom{m-1}{w-1}} \frac{\sum_{j \in \cand} \lambda_j}{\sum_{j=1}^{m} \lambda_j}} \int_{0}^{\infty} \spdf\left(t \given \vec{\tparam\lambda}\right) \dif t\\
-        &= \mathsmaller{\frac{ \SetIndicator{\candsw{w}(\Card{\cand})}}{\binom{m-1}{w-1}} \frac{\sum_{j \in \cand} \lambda_j}{\sum_{j=1}^{m} \lambda_j}}\,.
+     \pmf_{\rvcand \Given \RV{W}}(\cand \Given w, \tparam{\vec\lambda})
+        &= \mathsmaller{\frac{ \SetIndicator{\candsw{w}(\cand)} }{\binom{m-1}{w-1}} \frac{\sum_{j \in \cand} \lambda_j}{\sum_{j=1}^{m} \lambda_j}} \int_{0}^{\infty} \mathsmaller{ \left ( \sum_{j=1}^{m} \lambda_j \right) \exp \left [ - \left ( \sum_{j=1}^{m} \lambda_j \right ) t \right ] \dif t}\\
+        &= \mathsmaller{\frac{ \SetIndicator{\candsw{w}(\cand)} }{\binom{m-1}{w-1}} \frac{\sum_{j \in \cand} \lambda_j}{\sum_{j=1}^{m} \lambda_j}} \int_{0}^{\infty} \spdf\left(t \Given \vec{\tparam\lambda}\right) \dif t\\
+        &= \mathsmaller{\frac{ \SetIndicator{\candsw{w}(\cand)}}{\binom{m-1}{w-1}} \frac{\sum_{j \in \cand} \lambda_j}{\sum_{j=1}^{m} \lambda_j}}\,.
 \end{align}
 \end{proof}
-The marginal distribution of $\rvcand \given \RV{W} = w$ given by 
-\cref{dummyref} is the same as the joint distribution of $\rvcand, \sv \given 
-\RV{W} = w$ given by \cref{eq:expo_cand_given_s}. Thus, $\rvcand$ and $\sv$ are 
-conditionally independent given $\RV{W} = w$.
+The marginal distribution of $\rvcand \Given \RV{W} = w$ given by \cref{dummyref} is the same as the joint distribution of $\rvcand$ and $\sv$ given 
+$\RV{W}$ given by \cref{eq:expo_cand_given_s}.
+Thus, $\rvcand$ and $\sv$ are conditionally independent given $\RV{W}$.
 
 \section{Maximum entropy distribution}
-The larger the variance of the estimator, the larger a sample necessary to 
-obtain an estimate with a given mean squared error.
+The larger the variance of the estimator, the larger a sample necessary to obtain an estimate with a given mean squared error.
 
-\emph{Entropy} is a fundamental measure of uncertainty. If a diagnostician 
-could ask ``yes'' or ``no'' questions about the component 
-cause of failure, an \emph{expected lower-bound} on the number of 
-questions required to determine which component caused the failure is given by
-\begin{equation}
-\entropy(\RV{K}) = -\sum_{k \in \Set{K}} \pmf_{\RV{K}}(k) \log_2 
-\pmf_{\RV{K}}(k)\,.
-\end{equation}
-This is known as the \emph{entropy} of the discrete random variable $\RV{K}$, 
-which quantifies the amount of uncertainty about which value $\RV{K}$ will 
-realize.
-
-The greater the entropy, the greater the number of questions the diagnostician needs on average to determine the component cause of failure.
-Each component may have a different distribution of lifetimes, and thus knowing when a system failure occurs may \emph{reduce} the uncertainty about the component cause of failure,
-\begin{equation}
-\entropy(\RV{K} \given \sv) \leq \entropy(\RV{K})\,.
-\end{equation}
-If $\RV{K}$ and $\sv$ are \emph{statistically independent}, then
-\begin{equation}
-\entropy(\RV{K} \given \sv) = \entropy(\RV{K})\,,
-\end{equation}
-that is, observing the system failure time does not reduce the uncertainty.
-The joint entropy of $\RV{K}$ and $\sv$ is given by
-\begin{equation}
-\entropy(\RV{K}, \sv) = -\sum_{k \in \Set{K}} 
-\pdf_{\RV{K},\sv}(k,t) \log_2 \pdf_{\RV{K},\sv}(k,t)\,,
-\end{equation}
-which is equivalent to
-\begin{equation}
-\entropy(\RV{K} \given \sv) + \entropy(\sv)\,.
-\end{equation}
-
-Given that $\entropy(\RV{K} \given \sv) \leq \entropy(\RV{K})$, a maximum entropy distribution has the form
+Given that $\entropy(\RV{K} \Given \sv) \leq \entropy(\RV{K})$, a maximum entropy distribution has the form
 \begin{equation}
 \entropy(\RV{K}, \sv) = \entropy(\RV{K}) + \entropy(\sv)\,,
 \end{equation}
@@ -226,18 +192,18 @@ The entropy of $\Pair{\sv}{\RV{K}}$ has very little to do determining the \emph{
 According to \cref{def:general_mle}, the maximum likelihood estimator of $\tparam{\vec\lambda}$ is the value that maximizes the log-likelihood on a given masked system failure time sample, denoted $\mfs$. The likelihood function is given by
 \begin{equation}
 \label{eq:expo_like}
-\likelihood(\vec\lambda \given \mfs) \propto
+\likelihood(\vec\lambda \Given \mfs) \propto
     \exp \left [ - \left ( \sum_{j=1}^{m} \lambda_j \right ) \left ( \sum_{i=1}^{n} t_i \right ) \right ]
     \left [ \prod_{i=1}^{n} \left ( \sum_{j \in \cand_i} \lambda_j \right ) \right ]\,,
 \end{equation}
 whose proof follows from \cref{def:likelihood_func}. Therefore, the log-likelihood function $\ell$ is given by
 \begin{equation}
-    \ell(\vec{\lambda} \given \mfs) = \text{const} + \sum_{i=1}^{n} \ln \left [ \sum_{j \in \cand_i} \lambda_j \right ] - \left [ \sum_{i=1}^{n} t_i \right ] \left [ \sum_{j=1}^{m} \lambda_j \right ]\,.
+    \ell(\vec{\lambda} \Given \mfs) = \text{const} + \sum_{i=1}^{n} \ln \left [ \sum_{j \in \cand_i} \lambda_j \right ] - \left [ \sum_{i=1}^{n} t_i \right ] \left [ \sum_{j=1}^{m} \lambda_j \right ]\,.
 \end{equation}
 Thus, maximum likelihood estimator of $\tparam{\vec\lambda}$ is given by
 \begin{equation}
 \label{eq:expo_sys_mle}
-    \expomle = \argmax_{\vec\lambda > \vec{0}} \ell(\vec\lambda \given \mfs)\,.
+    \expomle = \argmax_{\vec\lambda > \vec{0}} \ell(\vec\lambda \Given \mfs)\,.
 \end{equation}
 The solution to \cref{eq:expo_sys_mle} must be a stationary point, i.e., a point at which the score function is zero. The \jth component of the score function is given by
 \begin{equation}
@@ -282,10 +248,10 @@ By \cref{eq:info_matrix_el}, the $(j,k)$-th element of the information matrix is
         \eval
         {
             \md{}{2}{\lambda_i}{}{\lambda_j}{}
-            \ln \jointpdf \left(\cand, t \given w, \vectomat{\vec\lambda} \right)
+            \ln \jointpdf \left(\cand, t \Given w, \vectomat{\vec\lambda} \right)
         }_{\vec\lambda=\tparam{\vec\lambda}} 
         \cdot\\
-        & \qquad \qquad \qquad \qquad \jointpdf \left(\cand, t \given w, \vectomat{\tparam{\vec\lambda}} \right) \dif t\,,
+        & \qquad \qquad \qquad \qquad \jointpdf \left(\cand, t \Given w, \vectomat{\tparam{\vec\lambda}} \right) \dif t\,,
 \end{split}
 \end{equation}
 In the above equation, the second-order partial derivative of the log of the joint density is equivalent to the partial derivative with respect to the \kth parameter of the \jth component of the score, given by \cref{eq:score_expo_j}, conditioned on a masked system failure time sample of size $1$, denoted by $\mfs_1$. This mixed second-order partial derivative is given by
@@ -331,7 +297,7 @@ Pulling the $\left(\sum_{p=1}^{m} \tparam\lambda_p\right)^{-1}$ constant out of 
     \frac{1}{\sum_{p=1}^{m} \tparam\lambda_p} \int_{0}^{\infty}
     \left ( \sum_{p=1}^{m} \tparam\lambda_p \right ) \exp \left ( - \left [ \sum_{p=1}^{m} \tparam\lambda_p \right ] t \right ) \dif t
     &= \frac{1}{\sum_{p=1}^{m} \tparam\lambda_p} \int_{0}^{\infty}
-    \spdf(t \given \tparam{\vec\lambda}) \dif t\\
+    \spdf(t \Given \tparam{\vec\lambda}) \dif t\\
 \label{eq:proof_expo_info_4}
     &= \frac{1}{\sum_{p=1}^{m} \tparam\lambda_p}\,.
 \end{align}
@@ -356,9 +322,9 @@ and another statistic, denoted by $\cntsymb$, is a dictionary of candidate set-f
 \begin{equation}
     \cntsymb_{\vec{k}} = \sum_{i=1}^{n} \SetIndicator{\vec{k}}(\cand_i)\,.
 \end{equation}
-Given a sample $\mfso$, the likelihood $\likelihood(\vec\lambda \given \mfso)$ described by \cref{eq:expo_like} is the same as the likelihood given by
+Given a sample $\mfso$, the likelihood $\likelihood(\vec\lambda \Given \mfso)$ described by \cref{eq:expo_like} is the same as the likelihood given by
 \begin{equation}
-\likelihood(\vec\lambda \given \bar t, \cntsymb) =
+\likelihood(\vec\lambda \Given \bar t, \cntsymb) =
     \exp \left( -n \bar{t} \sum_{j=1}^{m} \lambda_j \right)
     \prod_{\cand \in \candsw{w}} \left ( \sum_{j \in \cand} \lambda_j \right )^{\cntsymb_{\cand}}\,,
 \end{equation}
@@ -366,13 +332,13 @@ where $\candsw{w}$ is the set of all candidate sets of cardinality $w$.
 \begin{proof}
 The likelihood function $\likelihood$ with respect to a sample of $n$ masked system failure times is given by
 \begin{equation*}
-\likelihood(\vec\lambda \given \mfso) \propto
+\likelihood(\vec\lambda \Given \mfso) \propto
     \exp \left [ - \left ( \sum_{j=1}^{m} \lambda_j \right ) \left ( \sum_{i=1}^{n} t_i \right ) \right ]
     \left [ \prod_{i=1}^{n} \left ( \sum_{j \in \cand_i} \lambda_j \right ) \right ]\tag{\ref{eq:expo_like} revisited}\,.
 \end{equation*}
 Substituting $\sum_{i=1}^{n} \ti_i$ in the above equation with the equivalent expression $n \bar{t}$ results in
 \begin{equation}
-\likelihood(\vec\lambda \given \mfs) \propto
+\likelihood(\vec\lambda \Given \mfs) \propto
     \exp \left [ - n \bar{t} \sum_{j=1}^{m} \lambda_j \right ]
     \underbrace{
         \left [ \prod_{i=1}^{n} \left ( \sum_{j \in \cand_i} \lambda_j \right ) \right ]
@@ -384,7 +350,7 @@ In the above equation, each unique set $\left(\lambda_{j_1} + \cdots + \lambda_{
 \end{equation}
 where $\cand$ is over all unique candidate sets of cardinality $w$. The result of this substitution is given by
 \begin{equation}
-\likelihood(\vec\lambda \given \bar{t}, \cntsymb) =
+\likelihood(\vec\lambda \Given \bar{t}, \cntsymb) =
     \exp \left ( -n \bar{t} \sum_{j=1}^{m} \lambda_j \right )
     \prod_{\cand \in \candsw{w}} \left ( \sum_{j \in \cand} \lambda_j \right )^{\cntsymb_{\cand}}\,.
 \end{equation}
@@ -417,7 +383,7 @@ No additional information is needed to compute the likelihood of $\vec\lambda$ w
 
 The log-likelihood $\ell$ is given by
 \begin{equation}
-\ell(\sysparamvec \given \bar t, \vec\cntsymb, w) =
+\ell(\sysparamvec \Given \bar t, \vec\cntsymb, w) =
     -n \bar t \left ( \sum_{j=1}^{m} \lambda_j \right ) +
     \sum_{\cand \in \candsw{w}} \cntsymb_{\cand} \ln
         \left ( \sum_{j \in \cand} \lambda_j \right )\,.
@@ -450,18 +416,18 @@ given by
 \section{Case study: 3-out-of-3 system}
 The $3$-out-of-$3$ system's lifetime distribution functions are given by
 \begin{align}
-    \srv_{\sv}(t \given \tparam{\vec\lambda}) &=
+    \srv_{\sv}(t \Given \tparam{\vec\lambda}) &=
         \exp
         \left [
             -(\tparam{\lambda}_1 + \tparam{\lambda}_2 + \tparam{\lambda}_3) t
         \right ]\,,\\
-    \spdf(t \given \tparam{\vec\lambda}) &=
+    \spdf(t \Given \tparam{\vec\lambda}) &=
         (\tparam{\lambda}_1 + \tparam{\lambda}_2 + \tparam{\lambda}_3)
         \exp
         \left [
             -(\tparam{\lambda}_1 + \tparam{\lambda}_2 + \tparam{\lambda}_3) t
         \right ]\,,\\
-    \haz_{\sv}(t \given \tparam{\vec\lambda}) &= \tparam{\lambda}_1 + \tparam{\lambda}_2 + \tparam{\lambda}_3\,,
+    \haz_{\sv}(t \Given \tparam{\vec\lambda}) &= \tparam{\lambda}_1 + \tparam{\lambda}_2 + \tparam{\lambda}_3\,,
 \end{align}
 where $t > 0$, $\tparam\lambda_1 > 0$, $\tparam\lambda_2 > 0$, and $\tparam\lambda_3 > 0$.
 
@@ -472,13 +438,13 @@ candidates, $\RV{W} = \Card{\rvcand} = 2$, the likelihood function is
 given by
 \begin{equation}
 \begin{split}
-    \likelihood(\vec\lambda \given \bar{t}, \cntsymb) &= (\lambda_1 + \lambda_2)^{\cnt{1,2}} (\lambda_1 + \lambda_3)^{\cnt{1,3}} (\lambda_2 + \lambda_3)^{\cnt{2,3}} \exp\left(-n \bar{t} \left(\lambda_1 + \lambda_2 + \lambda_3\right)\right)
+    \likelihood(\vec\lambda \Given \bar{t}, \cntsymb) &= (\lambda_1 + \lambda_2)^{\cnt{1,2}} (\lambda_1 + \lambda_3)^{\cnt{1,3}} (\lambda_2 + \lambda_3)^{\cnt{2,3}} \exp\left(-n \bar{t} \left(\lambda_1 + \lambda_2 + \lambda_3\right)\right)
 \end{split}
 \end{equation}
 and the log-likelihood function is given by
 \begin{equation}
 \begin{split}
-    \ell(\vec\lambda \given \bar{t}, \cntsymb) &= \cnt{1,2} \ln(\lambda_1 + \lambda_2) + \cnt{1,3} \ln(\lambda_1 + \lambda_3) + \\
+    \ell(\vec\lambda \Given \bar{t}, \cntsymb) &= \cnt{1,2} \ln(\lambda_1 + \lambda_2) + \cnt{1,3} \ln(\lambda_1 + \lambda_3) + \\
         & \qquad \qquad \cnt{2,3} \ln(\lambda_2 + \lambda_3) - n \bar{t} (\lambda_1 + \lambda_2 + \lambda_3)\,.
 \end{split}
 \end{equation}
@@ -550,11 +516,11 @@ Consequently, each time we observe a particular $\sampdexpo = \expomle$, we draw
 \subsubsection{Component sets of size one}
 If we condition on samples in which each observation consists of one candidate, $\RV{W} = \Card{\rvcand} = 1$, the likelihood function is given by
 \begin{equation}
-    \likelihood(\vec\lambda \given \bar{t}, \cntsymb) = \lambda_1^{\cnt{1}} \lambda_2^{\cnt{2}} \lambda_3^{\cnt{3}} \exp\left(-n \bar{t} \left(\lambda_1 + \lambda_2 + \lambda_3\right)\right)
+    \likelihood(\vec\lambda \Given \bar{t}, \cntsymb) = \lambda_1^{\cnt{1}} \lambda_2^{\cnt{2}} \lambda_3^{\cnt{3}} \exp\left(-n \bar{t} \left(\lambda_1 + \lambda_2 + \lambda_3\right)\right)
 \end{equation}
 and the log-likelihood function is given by
 \begin{equation}
-    \ell(\vec\lambda \given \bar{t}, \cntsymb) = \cnt{1} \ln\lambda_1 + \cnt{2} \ln\lambda_2 + \cnt{3} \ln\lambda_3 - n \bar{t}\left(\lambda_1 + \lambda_2 + \lambda_3\right)\,.
+    \ell(\vec\lambda \Given \bar{t}, \cntsymb) = \cnt{1} \ln\lambda_1 + \cnt{2} \ln\lambda_2 + \cnt{3} \ln\lambda_3 - n \bar{t}\left(\lambda_1 + \lambda_2 + \lambda_3\right)\,.
 \end{equation}
 The maximum likelihood estimator is given by
 \begin{equation}

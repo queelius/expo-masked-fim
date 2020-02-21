@@ -2,29 +2,27 @@
 \begin{document}
 \chapter{Probabilistic model}
 \label{sec:general_series_system}
-A probabilistic model is specified by equations involving random variables which make assumptions about how observable data about the system is generated. In what follows, we describe our model and observable data.
+%A probabilistic model is specified by equations involving random variables which make assumptions about how observable data about the system is generated. In %what follows, we describe our model and observable data.
 
-Define set.
+A probabilistic model describes how observable data about the system is generated.
+In what follows, we describe our model and observable data.
 
-
+A \emph{set} is an unordered collection of distinct elements.
+The set of all subsets of a set is called the \emph{powerset}.
+The powerset of $\Set{X}$ is denoted by $\PS{\Set{X}}$.
 An interval in $\PS{\RealSet}$ is a set of all the real numbers lying between two indicated real numbers, e.g.,
 \begin{equation}
 	(a,b] \coloneqq \SetBuilder{x \in \RealSet}{x \geq a \land x \leq b} \in \PS{\RealSet}\,.
 \end{equation}
 
-
-
 \begin{definition}
-	Probability space.
-	
-	$(\Omega, \Fun{P})$
-	
-	$\Fun{P} \colon \PS{\Omega} \mapsto [0,1]$
+A probability space $(\Omega, \FancySet{F}, \Fun{P})$, where $\Fun{P} \colon \PS{\Omega} \mapsto [0,1]$ is the probability set function, $\Omega$ is the \emph{sample space}, and $\FancySet{F}$ is the set of measurable events (subsets of $\Omega$).
 \end{definition}
+
 
 A random variable is a measurable function defined on a probability space.
 \begin{definition}
-Given a probability space $(\Omega, \Fun{P})$, a random variable $\RV{X}$ is a function of type $\Omega \mapsto \Codom(\RV{X})$.
+Given a probability space $(\Omega, \FancySet{F}, \Fun{P})$, a random variable $\RV{X}$ is a function of type $\Omega \mapsto \Codom(\RV{X})$.
 \end{definition}
 The range (or image) of $\RV{X}$ is also called the space of $\RV{X}$.
 
@@ -40,21 +38,19 @@ The \jth component is initially in a non-failed state and permanently enters a f
 Components have uncertain lifetimes as given by the following definition.
 \begin{definition}
 The lifetime of the \jth component is given by the continuous random variable 
-$\cv_j \in \left(0\,,\infty\right)$ for $j=1\,,\ldots\,,m$.
+$\cv_j \in \left(0\,,\infty\right)$ for $j=1,\ldots,m$.
 \end{definition}
 We make the following assumption about the joint distribution of the component lifetimes.
 \begin{assumption}
 \label{asm:indep}
-The random variables $\cv_1\,, \ldots\,, \cv_m$ are mutually independent.
+The random variables $\cv_1,\ldots,\cv_m$ are mutually independent.
 \end{assumption}
 
 The system is a series system.
 \begin{assumption}
-    The system is in a non-failed state if all $m$ components are in a 
-    non-failed state, otherwise the system is in a failed state.
+    The system is in a non-failed state if all $m$ components are in a non-failed state, otherwise the system is in a failed state.
 \end{assumption}
-A system in which at least $k$ of the components must be in a non-failed state 
-for the system to be in a non-failed system is denoted a $k$-out-of-$m$ system, 
+A system in which at least $k$ of the components must be in a non-failed state for the system to be in a non-failed system is denoted a $k$-out-of-$m$ system, 
 thus a series system is an $m$-out-of-$m$ system.
 
 The uncertain lifetime of the system is given by the following definition.
@@ -63,13 +59,12 @@ The uncertain lifetime of the system is given by the following definition.
     The lifetime of the system is given by the random variable
     \begin{equation}
     \label{eq:series_system_lifetime}
-    \sv = \min{\!\left(\cv_1\,, \ldots\,, \cv_m\right)}
+    \sv = \min{\!\left(\cv_1,\ldots,\cv_m\right)}
     \end{equation}
-    with a sample space $\left(0, \infty\right)$, where $\cv_1\,, \ldots\,, \cv_m$ are the component lifetimes.
+    with a sample space $\left(0, \infty\right)$, where $\cv_1,\ldots,\cv_m$ are the component lifetimes.
 \end{theorem}
 \begin{proof}
-    A series system fails whenever any component fails, therefore its lifetime 
-    is equal to the lifetime of the component with the minimum lifetime.
+    A series system fails whenever any component fails, therefore its lifetime is equal to the lifetime of the component with the minimum lifetime.
 \end{proof}
 
 \section{Probability distribution functions and parametric families}
@@ -225,9 +220,9 @@ where $\Set{B}$ is the \emph{Borel space}, the set of half-open intervals, and $
 
 \begin{figure}
 	\label{fig:gen_model_simple}
-	\caption{Graphical model of random variables where $\sv = \min\{\cv_1,\cv_2\ldots,\cv_m\}$, $\rvcand$ is a random $\alpha$-candidate set, $\RV{K}$ is the random component failure, and $\RV{W}$ is the cardinality of random candidate sets.}
+	\caption{Graphical model of random variables where $\sv = \min\{\cv_1,\cv_2\ldots,\cv_m\}$, $\rvcand$ is a random $\alpha$-masked candidate set of cardinality $w$, $\RV{K}$ is the random component failure, $\RV{W}$ is the cardinality of random candidate sets, and $\RV{A}$ is the random $\alpha$.}
 	\begin{center}
-		\input{img/graph_model_simplified.tex}
+		\input{img/graph_model_alpha.tex}
 	\end{center}
 \end{figure}
 In general, a sample of masked system failures may have variable sized candidate sets. In \cref{dummyref}, we derive the sampling distribution of the maximum likelihood estimator of this kind of sample using the inverse-variance weighted mean.
