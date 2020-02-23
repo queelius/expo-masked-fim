@@ -66,12 +66,12 @@ trace of $\matrx{CRLB_n}$,
 \mse(\sampdpt) \geq \trace\!\left(\matrx{CRLB_n}\right)\,.
 \end{equation}
 
-\section{Maximum likelihood estimator given $w$ candidates}
-Suppose the only information about the true parameter index $\tparam\sysparamvec$ is given by a sample of $n$ masked system failure times in which only those system failures with $w$ candidates are observed.
+\section{Maximum likelihood estimator for $\alpha$-masked system failure times each consisting of $w$ components}
+Suppose the only information about the true parameter index $\tparam\sysparamvec$ is given by a sample of $n$ $\alpha$-masked system failure times in which only those system failures with $w$ components with accuracy $\alpha$ are observed.
 The maximum likelihood estimator based on this conditional sample is given in the following definition.
 \begin{definition}
 \label{def:general_mle}
-A parameter index $\mle$ that maximizes the \emph{likelihood} of observing some realization of $\mfs$ given $\RV{W} = w$ (see \cref{def:msfs}) is a maximum likelihood estimator of $\tparam\sysparamvec$.
+A parameter index $\mle$ that maximizes the \emph{likelihood} of observing some realization of $\mfs$ given $\RV{W} = w$ and $\RV{A}$ (see \cref{def:msfs}) is a maximum likelihood estimator of $\tparam\sysparamvec$.
 That is,
 \begin{equation}
 \label{eq:general_mle}
@@ -234,38 +234,6 @@ For sufficiently large sample size $n$, the sampling distribution of $\mle$ is a
 
 \section{Maximum likelihood estimator}
 \label{sec:full_samp_dist}
-A \emph{masked system failure time} in which the cardinality of the candidate set is distributed according to $\RV{W}$, as described by \cref{dummyref}, has 
-a Fisher information matrix given by the following theorem.
-\begin{theorem}
-	The \emph{Fisher information} matrix of true parameter index $\tparam\sysparamvec$ with respect to a realization of jointly distributed random system lifetime $\sv$ and candidate set $\rvcand$ is given by
-	\begin{equation}
-	\infomatrx(\tparam\sysparamvec) = \kern-1em
-	\sum_{\Tuple{w,\alpha} \in \Set{W} \times \Set{A}} \kern-1em \pmf_{\RV{W},\RV{A}}(w,\alpha) \infomatrx(\tparam\sysparamvec \Given w, \alpha)\,,
-	\end{equation}
-	where $\pmf_{\RV{W}, \RV{A}}$ is the joint distribution of $\RV{W}$ and $\RV{A}$ with a support $\Set{W} \times \Set{A}$.
-\end{theorem}
-\begin{proof}
-Suppose we have a random sample of $n$ masked system failure times.
-By \cref{dummyref}, the expected number of sample points that have $w$ $\alpha$-masked candidate sets is given by
-\begin{equation}
-	q \coloneqq n \cdot \pmf_{\RV{W},\RV{A}}(w,\alpha)\,.
-\end{equation}
-Thus, by the additive property of \emph{Fisher information} given by \cref{post:info_add}, the information matrix of $\tparam\sysparam$ conditioned on $q$ such observations is given by
-\begin{equation}
-	\infomatrx_{\matrx{q}}(\tparam\sysparamvec \Given w, \alpha) = n \cdot \pmf_{\RV{W},\RV{A}}(w,\alpha) \infomatrx(\tparam\sysparamvec \Given w, \alpha)\,.
-\end{equation}
-When we sum over the entire support of $\RV{W}$ and $\RV{A}$, we arrive at the \emph{information matrix} of $\tparam\sysparam$ conditioned on $n$ masked candidate sets as given by
-\begin{equation}
-	\infomatrx_{\matrx{n}}(\tparam\sysparamvec) = \kern-1em
-	\sum_{\Tuple{w,\alpha} \in \Set{W} \times \Set{A}} \kern-1em n \cdot \pmf_{\RV{W},\RV{A}}(w,\alpha) \infomatrx(\tparam\sysparamvec \Given w, \alpha)\,.
-\end{equation}
-When we set $n$ to $1$, we get the result
-\begin{equation}
-	\infomatrx(\tparam\sysparamvec) = \kern-1em
-	\sum_{\Tuple{w,\alpha} \in \Set{W} \times \Set{A}} \kern-1em \pmf_{\RV{W},\RV{A}}(w,\alpha) \infomatrx(\tparam\sysparamvec \Given w, \alpha)\,.
-\end{equation}
-\end{proof}
-
 Consider an i.i.d. sample of $r$ asymptotically unbiased estimates of $\tparam\sysparamvec$ denoted by $\bar{\vec\theta}^{(i)}$ which have sampling distributions with variance-covariances given respectively by $\matrx{\Sigma}^{(i)}$ for $i=1,\,\ldots\,,r$.
 The maximum likelihood estimator of $\tparam\sysparamvec$ given these point estimates is the inverse-variance weighted mean and is given by
 \begin{equation}
@@ -277,7 +245,7 @@ where $\matrx{A_i}$ is the inverse of $\matrx{\Sigma}^{(i)}$.
 Suppose that the estimates are given by the maximum likelihood estimator described in \cref{dummyref}.
 The maximum likelihood estimator given these estimates has a sampling distribution given by the following definition.
 \begin{definition}
-Let $\mfs$ be a random sample of $n$ masked system failure times in which $n_i$ realizations have $w_i$ $\alpha_i$-masked candidate sets for $i = 1,\ldots,r$.
+Let $\mfs$ be a random sample of $n$ masked system failure times in which $n_i$ realizations have $w_i$ $\alpha_i$-masked component failures for $i = 1,\ldots,r$.
 The maximum likelihood estimator given by
 \begin{equation}
     \hat{\sysparamvec} = \left( \sum_{i=1}^{r} \matrx{A_i} \right)^{-1}
@@ -373,7 +341,7 @@ Performing these substitution results in
 \end{equation}
 \end{proof}
 
-The weighted estimator asymptotically achieves the Cram\'{e}r-Rao lower-bound as given by \cref{eq:crlb} thus it is the asymptotic UMVUE estimator of $\tparam\sysparamvec$ given a random sample of masked system failure times in which $n_i$ realizations have $w_i$ candidates for $i=1,\ldots,r$.
+The weighted estimator asymptotically achieves the Cram\'{e}r-Rao lower-bound as given by \cref{eq:crlb} thus it is the asymptotic UMVUE estimator of $\tparam\sysparamvec$ given a random sample of masked samples failures in which $n_i$ realizations have $w_i$ $\alpha_i$-masked component failures for $i=1,\ldots,r$.
 
 A linear combination of multivariate normal distributions is a multivariate normal distribution, thus the asymptotic sampling distribution of $\mleu$ is normally distributed.
 \begin{postulate}
@@ -397,8 +365,8 @@ The generative model for $\sampdu$ is given by \cref{alg:samp_du_gen_model}.
     \BlankLine
     \SetKwProg{func}{Model}{}{}
     \func{$\genSampleMLE${$(\tparam\sysparam)$}}{
-        draw $\alpha \sim \pmf_{\RV{A}}(\, \cdot \,)$\;        
-        draw candidate cardinality $w \sim \pmf_{\RV{W} \Given \RV{A}}(\, \Given \alpha \,)$\;
+        draw accuracy $\alpha \sim \pmf_{\RV{A}}(\, \cdot \,)$\;        
+        draw $\alpha$-masked failure cardinality $w \sim \pmf_{\RV{W} \Given \RV{A}}(\,\cdot\, \Given \alpha \,)$\;
         $\mleu \gets \genSampleMLE(\tparam\sysparam, w,\alpha)$\;
         \KwRet{$\mleu$}
     }
@@ -406,57 +374,6 @@ The generative model for $\sampdu$ is given by \cref{alg:samp_du_gen_model}.
 \label{alg:samp_du_gen_model}
 \end{algorithm}
 
-\subsection{Bootstrap of sample covariance}
-Another estimator of the variance-covariance of $\sampdu$ is given by the sample covariance.
-\begin{definition}
-Given a sample of $r$ maximum likelihood estimates, $\mleui{1}, \ldots, \mleui{r}$, the maximum likelihood estimator of the variance-covariance of the sampling distribution of $\mleu$ is given by the sample covariance,
-\begin{align}
-\label{eq:sample_var_sampd}
-\estimator{\var}\left[\sampdu\right] = \frac{1}{r}
-    \sum_{i=1}^{r}
-    \left(\mleui{i} - \tparam\sysparamvec\right) \cdot
-    \left(\mleui{i} - \tparam\sysparamvec\right)^{\intercal}\,.
-\end{align}
-\end{definition}
-The sample covariance depends upon a random sample of maximum likelihood estimates, and thus the sample covariance is a random matrix. However, by the property that maximum likelihood estimators converge in probability to the true value,
-\begin{equation}
-    \estimator\var\left[\sampdu\right] \xrightarrow{P} \var\left[\sampdu\right]\,,
-\end{equation}
-it follows that
-\begin{equation}
-\sampdu \xrightarrow{d} \mvn\left(\tparam\sysparamvec, \estimator\var\left[\sampdu\right]\right)\,.
-\end{equation}
-If only one maximum likelihood estimate is realized, $\sampdu = \mleu$, then 
-the sample covariance given by \cref{eq:sample_var_sampdu} cannot be computed. 
-In the \emph{parametric Bootstrap}, the sample covariance is approximated by 
-using $\mleu$ as an estimate of $\tparam\sysparamvec$ in the generative model 
-described by \cref{dummyref}, i.e.,
-\begin{equation}
-    \mleui{1}, \ldots, \mleui{r} \gets \genSampleMLE\left(\mleu\right)\,,
-\end{equation}
-and the sample covariance of these approximate maximum likelihood estimates is an asymptotically unbiased estimator of $\var\left[\sampdu\right]$.
-
-\begin{algorithm}
-    \DontPrintSemicolon
-    \KwIn{\\
-        $\qquad \mleu$, an estimate of $\tparam\sysparamvec$.
-    }
-    \KwOut{\\
-        $\qquad$sample covariance of a bootstrapped sample of maximum likelihood estimates.
-    }
-    \BlankLine
-    \SetKwProg{func}{Model}{}{}
-    \func{BoostrapCovariance}{$(\mleu)$}
-    {
-        \For{$i=1$ to $r$}
-        {
-            $\mleui{i} \gets \genSampleMLE(\mleu)$\;
-        }
-        \KwRet{sample covariance of $\mleui{1},\,\ldots\,,\mleui{r}$}
-    }
-\caption{Sample covariance of a bootstrapped sample of maximum likelihood estimates.}
-\label{alg:samp_du_gen_model}
-\end{algorithm}
 
 
 

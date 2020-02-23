@@ -113,6 +113,62 @@ where the expectation is now over the true marginal joint distribution of $\rvca
 \end{equation}
 \qed
 
+
+\chapter{Proof of corollary~\ref{cor:K_given_S_indep_W_A_C}}
+\label{app:K_given_S_indep_W_A_C}
+\Cref{cor:K_given_S_indep_W_A_C} on \cpageref{cor:K_given_S_indep_W_A_C} asserts that $\RV{K}$ given $\sv$ is conditionally independent of $\rvcand$, $\RV{W}$, and $\RV{A}$.
+
+\begin{proof}
+	By the laws of probability,
+	\begin{equation}
+	\pmf_{\RV{K} \Given \rvcand, \sv, \RV{W}, \RV{A}}(k \Given \cand, t, w, \alpha, \tparam\sysparam) =
+	\frac{\pdf_{\RV{K}, \rvcand, \sv \Given \RV{W}, \RV{A}}(k, \cand, t \Given w, \alpha, \tparam\sysparam)}
+	{\pdf_{\rvcand,\sv \Given \RV{W},\RV{A}}(\cand,t \Given w, \alpha, \tparam\sysparam)}
+	\end{equation}
+	which may be rewritten as
+	\begin{equation}
+	\pmf_{\RV{K} \Given \rvcand, \sv, \RV{W}, \RV{A}}(k \Given \cand, t, w, \alpha, \tparam\sysparam) =
+	\frac{\pmf_{\rvcand \Given \RV{K}, \sv, \RV{W}, \RV{A}}(\cand \Given k, t, w, \alpha, \tparam\sysparam) \pdf_{\RV{K},\sv \Given \RV{W},\RV{A}}(k,t \Given w,\alpha, \tparam\sysparam)}
+	{\pdf_{\rvcand,\sv \Given \RV{W},\RV{A}}(\cand,t \Given w, \alpha, \tparam\sysparam)}\,.
+	\end{equation}
+	By \cref{asm:indep_W_S,asm:indep_C_given_K_S}, we may simplify the above equation to
+	\begin{equation}
+	\pmf_{\RV{K} \Given \rvcand, \sv, \RV{W}, \RV{A}}(k \Given \cand, t, w, \alpha, \tparam\sysparam) =
+	\frac{\pmf_{\rvcand \Given \RV{K}, \RV{W}, \RV{A}}(k \Given \cand, w, \alpha) \pdf_{\RV{K},\sv}(k,t \Given \tparam\sysparam)}
+	{\pdf_{\rvcand,\sv \Given \RV{W},\RV{A}}(\cand,t \Given w, \alpha, \tparam\sysparam)}\,.
+	\end{equation}	
+	By \cref{eq:rvcand_given_k_w_a,eq:k_s_haz}, the above equation may be rewritten as
+	\begin{equation}
+	\mathsmaller{
+		\pmf_{\RV{K} \Given \rvcand, \sv, \RV{W}, \RV{A}}(k \Given \cand, t, w, \alpha, \tparam\sysparam) =
+		\frac{
+			\frac{\srv_{\sv}(t \Given \tparam\sysparam)}{\binom{m-1}{w}}	
+			\left((1-\alpha) \haz_{\sv}(t \Given \tparam\sysparam) - (1-\alpha\frac{m}{w}) \sum_{j \in \cand} \haz_j(t \Given \tparam\sysparam_j)\right)
+			\haz_k(t \Given \tparam{\sysparam}_k)
+		}
+		{
+			\frac{
+				\srv_{\sv}(t \Given \tparam\sysparam)}{\binom{m-1}{w}}
+			\left(
+			(1-\alpha) \haz_{\sv}(t \Given \tparam\sysparam) - \left(1-\alpha \frac{m}{w}\right) \sum_{k \in \cand} \haz_k(t \Given \tparam\sysparam_k)
+			\right) \haz_{\sv}(t \Given \tparam\sysparam)
+	}}\,.
+	\end{equation}
+	The above equation may be simplified to
+	\begin{equation}
+	\pmf_{\RV{K} \Given \rvcand, \sv, \RV{W}, \RV{A}}(k \Given \cand, t, w, \alpha, \tparam\sysparam) =
+	\frac
+	{
+		\haz_k(t \Given \tparam{\sysparam}_k)
+	}
+	{
+		\haz_{\sv}(t \Given \tparam\sysparam)
+	}
+	\end{equation}
+	which is the same as $\pmf_{\RV{K} \Given \sv}(k \Given t, \tparam\sysparam)$ and thus $\RV{K}$ given $\sv$ is conditionally independent of $\rvcand$, $\RV{W}$, and $\RV{A}$.
+\end{proof}
+
+
 \chapter{Numerical solutions to the MLE}
 \label{appendix:numerical_solution}
 The function $\ell(\sysparamvec \given w, \mfso)$ is the log-likelihood with respect to $\sysparamvec \in \Omega$ where $\Omega \subset \mathbb{R}^{m \cdot q}$. This function has a surface in an $(m \cdot q+1)$ dimensional space, where a particular point on this surface represents the log-likelihood of observing $\mfso$ with respect to $\sysparamvec$. By \cref{def:general_mle}, $\mle$ is the point on this surface that is at a maximum,
@@ -183,42 +239,43 @@ is desired, e.g., using \emph{Golden Section} line search to find an approximate
 \end{equation}
 signifying a stationary point has been reached.
 
-\chapter{Generic joint distribution}
+\chapter{General joint distribution}
 \label{appendix:generalized_general_joint_likelihood_cand}
-We assume the distribution of $\RV{W}$ does not carry information about the true parameter index $\tparam\sysparamvec$. By the axioms of probability, the joint distribution of $\rvcand$, $\sv$, and $\RV{W}$ is given by
+By the axioms of probability, the joint distribution of $\rvcand$, $\sv$, $\RV{W}$, and $\RV{A}$ may be decomposed into the chain
 \begin{equation}
 \begin{split}
-\pdf_{\rvcand, \sv, \RV{W}}(\cand, t, w \given \tparam\sysparamvec) &=\\ &\!\!\!\!\!\!\pmf_{\rvcand \given \sv, \RV{W}}(\cand \given t, w, \tparam\sysparamvec) \pmf_{\RV{W} \given \sv}(w \given t) \spdf(t \given \tparam\sysparamvec)\,.
+\pdf_{\rvcand, \sv, \RV{W}, \RV{A}}(\cand, t, w, \alpha \Given \tparam\sysparamvec) &=\\ &\!\!\!\!\!\!\pmf_{\rvcand \Given \sv, \RV{W}, \RV{A}}(\cand \Given t, w, \alpha, \tparam\sysparamvec) \pmf_{\RV{W}, \RV{A} \Given \sv}(w, \alpha \Given t, \tparam\sysparam) \spdf(t \Given \tparam\sysparam)\,.
 \end{split}
 \end{equation}
 
-Since $\RV{W}$ carries no information about the true parameter index $\tparam\sysparamvec$, the maximum likelihood estimate $\mleu$ is independent of the distribution of $\RV{W}$.
+If we remove \cref{asm:?}, the distribution of $\RV{W}$ and $\RV{A}$ may be dependent on $\sv$ but we still they do not carry information about the true parameter index $\tparam\sysparamvec$, thus we may rewrite the above equation as
+\begin{equation}
+\pdf_{\rvcand, \sv, \RV{W}, \RV{A}}(\cand, t, w, \alpha \Given \tparam\sysparamvec) = \pmf_{\rvcand \Given \sv, \RV{W}, \RV{A}}(\cand \Given t, w, \alpha, \tparam\sysparamvec) \pmf_{\RV{W}, \RV{A} \Given \sv}(w, \alpha \Given t) \spdf(t \Given \tparam\sysparamvec)\,.
+\end{equation}
+
+Since $\RV{W}$ and $\RV{A}$ carry no information about the true parameter index $\tparam\sysparamvec$, the maximum likelihood estimate $\mleu$ is independent of the distribution of $\RV{W}$ and $\RV{A}$.
 \begin{proof}
 \begin{equation}
 \begin{split}
     \mleu &= \argmax_{\sysparamvec}
-        \ell(\sysparamvec \given \mfso)\\
+        \ell_n(\sysparamvec)\\
         &= \argmax_{\sysparamvec} \Biggl[ \sum_{i=1}^{n}
-        \ln \pmf_{\rvcand \given \sv, \RV{W}}\left(\cand_i \given t_i, \Card{\cand_i}, \sysparamvec\right)\\
-        &\qquad+ \sum_{i=1}^{n} \ln \spdf\left(t_i \given \sysparamvec\right) + \underbrace{\sum_{i=1}^{n} \ln \pmf_{\RV{W} \given \sv}\left(\Card{\cand_i} \given t_i \right)}_{\text{constant}}\Biggr]\,,
+        \ln \pmf_{\rvcand \Given \sv, \RV{W}, \RV{A}}(\cand_i \Given t_i, w_i, \alpha_i, \sysparamvec)\\
+        &\qquad+ \sum_{i=1}^{n} \ln \spdf(t_i \Given \sysparamvec) + \underbrace{\sum_{i=1}^{n} \ln \pmf_{\RV{W}, \RV{A} \Given \sv}(w_i, \alpha_i \Given t_i)}_{\text{constant}}\Biggr]\,,
 \end{split}
 \end{equation}
-where the last term is constant with respect to $\sysparamvec$ and may be dropped from the maximum likelihood equation without changing the point that maximizes the likelihood.
+where $w_i = \Card{\cand_i}$ and the last term is constant with respect to $\sysparamvec$ and thus may be dropped from the maximum likelihood equation without changing the point that maximizes the likelihood.
 \end{proof}
 
-The sampling distribution of $\mleu$ is a function of $\mfs$ (as opposed to a particular realization), and since $\mfs$ is a function of $\RV{W}$ (the distribution of the cardinality of candidate sets), the sampling distribution of $\mleu$ is also a function of $\RV{W}$.
+The sampling distribution of $\mleu$ is a function of $\mfs$ (as opposed to a particular realization), and since $\mfs$ is a function of $\RV{W}$ and $\RV{A}$, the sampling distribution of $\mleu$ is also a function of $\RV{W}$ and $\RV{A}$.
 
 Given a statistical model, the asymptotic sampling distribution of the maximum likelihood estimator is nearly automatic. The most taxing (and uncertain) part is the \emph{model selection}. Since we may not have much confidence in any particular model of the joint distribution of $\RV{W}$ and $\sv$, the \emph{expected} information matrix is sketchy. In general, the \emph{observed} information matrix is preferred. The sampling distribution of $\mleu$ converges in distribution to a multivariate normal with a mean given by $\tparam\sysparamvec$ and a variance-covariance given by the inverse of the \emph{observed} information matrix, written
 \begin{equation}
-    \sampdu \xrightarrow{d} \mvn\left(\tparam\sysparamvec, \observedn^{-1}\left(\tparam\sysparamvec \given \mfs\right)\right)\,.
+    \sampdu \xrightarrow{d} \mvn\left(\tparam\sysparamvec, \matrx{J}_{\matrx{n}}^{-1}\!\left(\tparam\sysparamvec\right)\right)\,.
 \end{equation}
 
-If an accurate distribution of $\RV{W} \given \sv = \ti$ could be constructed such that it is dependent on $\tparam\sysparamvec$, then the distribution of $\RV{W}$ in a sample carries extra information about $\tparam\sysparamvec$. A plausible model of $\RV{W}$ would depend upon the entropy of $\RV{K} \given \sv = \ti$.
-
-
-
-
-
+If an accurate distribution of $\RV{W}$ and $\RV{A}$ given $\sv$ could be constructed such that it is dependent on $\tparam\sysparamvec$, then the distribution of $\RV{W}$ and $\RV{A}$ in a sample carries extra information about $\tparam\sysparamvec$.
+A plausible model may depend upon $\entropy(\RV{K} \Given \sv = t)$.
 
 \chapter{Sampling distribution of functions of parameters}
 \label{sec:app}
@@ -262,6 +319,59 @@ Thus,
 \begin{equation}
 \vecstat\left(\sampdu\right) \sim \mvn\left(\vecstat\left(\mleu\right), \estimator{\var}\left[\sampdu\right] \right)\,.
 \end{equation}
+
+
+\chapter{Bootstrap of sample covariance}
+Another estimator of the variance-covariance of $\sampdu$ is given by the sample covariance.
+\begin{definition}
+	Given a sample of $r$ maximum likelihood estimates, $\mleui{1}, \ldots, \mleui{r}$, the maximum likelihood estimator of the variance-covariance of the sampling distribution of $\mleu$ is given by the sample covariance,
+	\begin{align}
+	\label{eq:sample_var_sampd}
+	\estimator{\var}\left[\sampdu\right] = \frac{1}{r}
+	\sum_{i=1}^{r}
+	\left(\mleui{i} - \tparam\sysparamvec\right) \cdot
+	\left(\mleui{i} - \tparam\sysparamvec\right)^{\intercal}\,.
+	\end{align}
+\end{definition}
+The sample covariance depends upon a random sample of maximum likelihood estimates, and thus the sample covariance is a random matrix. However, by the property that maximum likelihood estimators converge in probability to the true value,
+\begin{equation}
+\estimator\var\left[\sampdu\right] \xrightarrow{P} \var\left[\sampdu\right]\,,
+\end{equation}
+it follows that
+\begin{equation}
+\sampdu \xrightarrow{d} \mvn\left(\tparam\sysparamvec, \estimator\var\left[\sampdu\right]\right)\,.
+\end{equation}
+If only one maximum likelihood estimate is realized, $\sampdu = \mleu$, then 
+the sample covariance given by \cref{eq:sample_var_sampdu} cannot be computed. 
+In the \emph{parametric Bootstrap}, the sample covariance is approximated by 
+using $\mleu$ as an estimate of $\tparam\sysparamvec$ in the generative model 
+described by \cref{dummyref}, i.e.,
+\begin{equation}
+\mleui{1}, \ldots, \mleui{r} \gets \genSampleMLE\left(\mleu\right)\,,
+\end{equation}
+and the sample covariance of these approximate maximum likelihood estimates is an asymptotically unbiased estimator of $\var\left[\sampdu\right]$.
+
+\begin{algorithm}
+	\DontPrintSemicolon
+	\KwIn{\\
+		$\qquad \mleu$, an estimate of $\tparam\sysparamvec$.
+	}
+	\KwOut{\\
+		$\qquad$sample covariance of a bootstrapped sample of maximum likelihood estimates.
+	}
+	\BlankLine
+	\SetKwProg{func}{Model}{}{}
+	\func{BoostrapCovariance}{$(\mleu)$}
+	{
+		\For{$i=1$ to $r$}
+		{
+			$\mleui{i} \gets \genSampleMLE(\mleu)$\;
+		}
+		\KwRet{sample covariance of $\mleui{1},\,\ldots\,,\mleui{r}$}
+	}
+	\caption{Sample covariance of a bootstrapped sample of maximum likelihood estimates.}
+	\label{alg:samp_du_gen_model}
+\end{algorithm}
 
 
 

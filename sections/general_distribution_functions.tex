@@ -243,18 +243,19 @@ The joint probability density function of random variable $\RV{K}$ and random sy
 \end{corollary}
 The proof of \cref{eq:k_s_haz} immediately follows from \cref{eq:general_joint_density,eq:general_cond_prob_failure_rate}.
 
-\section{Candidate $\alpha$-sets}
+\section{$\alpha$-masked component failures}
 \label{sec:cand_sel}
 The series system consists of $m$ components with random lifetimes $\cv_1,\ldots,\cv_m$.
-These random variables are \emph{unobservable} and thus, for instance, we cannot know with certainty from a sample of masked system failures which component failed.
+These random variables are \emph{latent} (unobservable) and thus, for instance, we cannot know with certainty from a sample of masked system failures which component failed.
 
 The $\alpha$-candidate sets have a conditional probability distribution given by the following theorem.
 \begin{theorem}
-	The random $\alpha$-candidate set $\rvcand$ conditioned on $\RV{W} = w$ and $\RV{K} = k$ has a probability distribution given by
-	\begin{equation}
-	\pdf_{\rvcand \Given \RV{K}, \RV{W}, \RV{A}}(\cand \Given k, w, \alpha) = \frac{\alpha}{\binom{m-1}{w-1}} \SetIndicator{\cand}(k) + \frac{1-\alpha}{\binom{m-1}{w}} \SetIndicator{\SetComplement[\cand]}(k)
-	\end{equation}
-	with a sample space $\candsw{w}$.
+The random $\alpha$-candidate set $\rvcand$ conditioned on $\RV{W}$, $\RV{K}$, and $\RV{A}$ has a probability distribution given by
+\begin{equation}
+\label{eq:rvcand_given_k_w_a}
+	\pmf_{\rvcand \Given \RV{K}, \RV{W}, \RV{A}}(\cand \Given k, w, \alpha) = \frac{\alpha}{\binom{m-1}{w-1}} \SetIndicator{\cand}(k) + \frac{1-\alpha}{\binom{m-1}{w}} \SetIndicator{\SetComplement[\cand]}(k)
+\end{equation}
+with a sample space $\candsw{w}$.
 \end{theorem}
 \begin{proof}
 	Suppose we condition on $\RV{K}=k$, i.e., the \kth-component failed.
@@ -278,25 +279,29 @@ The $\alpha$-candidate sets have a conditional probability distribution given by
 \end{proof}
 
 \begin{remark}
-The $\alpha$-candidate set model is somewhat naive since $\pdf_{\rvcand \Given \RV{K}, \RV{W}}(\Set{A} \Given k, w, \alpha) = \pdf_{\rvcand \Given \RV{K}, \RV{W}}(\Set{B} \Given k, w, \alpha)$ if $\SetIndicator{\Set{A}}(k) = \SetIndicator{\Set{B}}(k)$, e.g., $\alpha$-candidate sets that include the failed component are equally likely to be chosen.
-A more informative generative model may preferentially generate candidate sets whose components are about to fail as well.
+The $\alpha$-candidate set model is somewhat naive since if $\SetIndicator{\cand_1}(k) = \SetIndicator{\cand_2}(k)$ then
+\begin{equation}
+\pmf_{\rvcand \Given \RV{K}, \sv, \RV{W}, \RV{A}}(\cand_1 \Given k, t_1, w, \alpha) = \pmf_{\rvcand \Given \RV{K}, \sv, \RV{W}, \RV{A}}(\cand_2 \Given k, t_2, w, \alpha)\,.
+\end{equation}
+That is, $\alpha$-masked component failures that include the failed component are equally likely to be chosen and $\rvcand$ given $\RV{K}$ is conditionally independent of the system failure time $\sv$.
+A more informative generative model of masked component failures may preferentially include components that are more likely to fail at the given system failure time.
 \end{remark}
 
-The random variable $\RV{K}$ is \emph{latent}, or unobservable.
-In a masked system failure sample, the only observable is the candidate set and the system failure time.
-The joint probability density function of $\rvcand$ and $\sv$ conditioned on $\RV{W}$ is given by the following theorem.
+The random variable $\RV{K}$ is \emph{latent}.
+In a masked system failure sample, the only observable is the candidate set, the system failure time, and the expected accuracy $\alpha$ of the $\alpha$-masked candidate set.
+The joint probability density function of $\rvcand$ and $\sv$ conditioned on $\RV{W}$ and $\RV{A}$ is given by the following theorem.
 \begin{theorem}
 The conditional joint probability density function of random variable $\rvcand$ and random system lifetime $\sv$ given $\RV{W} = w$ is given by
 \begin{equation}
 \label{eq:joint_alpha}
 \pdf_{\rvcand,\sv \Given \RV{W}, \RV{A}}(\cand,t \Given w, \alpha, \tparam\sysparam) =
-	\sum_{k=1}^{m} \pdf_{\rvcand \Given \RV{K}, \RV{W}, \RV{A}}(\cand \Given k, w, \alpha) \pdf_{\RV{K},\sv}(k,t \Given \tparam\sysparam)
+	\sum_{k=1}^{m} \pmf_{\rvcand \Given \RV{K}, \RV{W}, \RV{A}}(\cand \Given k, w, \alpha) \pdf_{\RV{K},\sv}(k,t \Given \tparam\sysparam)
 \end{equation}
 with a sample space $\candsw{w} \times (0,\infty)$.
 \Cref{eq:joint_alpha} may be rewritten as
 \begin{equation}
 \label{eq:joint_alpha_2}
-\mathsmaller{\pdf_{\rvcand,\sv \Given \RV{W}}(\cand,t \Given w, \alpha, \tparam\sysparam) =
+\mathsmaller{\pdf_{\rvcand,\sv \Given \RV{W}, \RV{A}}(\cand,t \Given w, \alpha, \tparam\sysparam) =
 \frac{\srv_{\sv}(t \Given \tparam\sysparam)}{\binom{m-1}{w}}
 \left(
 	(1-\alpha) \haz_{\sv}(t \Given \tparam\sysparam) - \left(1-\alpha \frac{m}{w}\right) \sum_{k \in \cand} \haz_k(t \Given \tparam\sysparam_k)
@@ -304,13 +309,15 @@ with a sample space $\candsw{w} \times (0,\infty)$.
 \end{equation}
 \end{theorem}
 \begin{proof}
-By the laws of probability, the joint distribution of $\rvcand$, $\RV{K}$ and $\sv$ conditioned on $\RV{W} = w$ is given by
+By the laws of probability, the joint distribution of $\rvcand$, $\RV{K}$ and $\sv$ conditioned on $\RV{W}$ and $\RV{A}$ may be written as
 \begin{equation}
-	\pdf_{\rvcand,\RV{K},\sv \Given \RV{W}, \RV{A}}(\cand,k,t \Given w, \alpha, \tparam\sysparam) = \pdf_{\rvcand \Given \RV{K}, \RV{W}}(\cand \Given k, w, \alpha, \tparam\sysparam) \pdf_{\RV{K},\sv \Given \RV{W}}(k,t \Given w,\tparam\sysparam)\,.
+	\pdf_{\rvcand,\RV{K},\sv \Given \RV{W}, \RV{A}}(\cand,k,t \Given w, \alpha, \tparam\sysparam) = \pdf_{\rvcand \Given \RV{K}, \sv, \RV{W}, \RV{A}}(\cand \Given k, t, w, \alpha, \tparam\sysparam) \pdf_{\RV{K},\sv \Given \RV{W}, \RV{A}}(k,t \Given w, \alpha, \tparam\sysparam)\,.
 \end{equation}
-However, $\RV{K}$ and $\sv$ are independent of $\RV{W}$ and $\rvcand$ conditioned on $\RV{K}$ and $\RV{W}$ is independent of $\tparam\sysparam$, so we simplify the joint probability density function to
+
+We observe that $\rvcand$ conditioned on $\RV{K}$, $\RV{W}$, and $\RV{A}$ is independent of $\sv$ and the true parameter index $\tparam\sysparam$ and the joint distribution of $\sv$ and $\RV{K}$ is independent of $\RV{W}$ and $\RV{A}$.
+Thus, we simplify the joint probability density function to
 \begin{equation}
-\pdf_{\rvcand,\RV{K},\sv \Given \RV{W}, \RV{A}}(\cand,k,t \Given w, \alpha, \tparam\sysparam) = \pdf_{\rvcand \Given \RV{K}, \RV{W}}(\cand \Given k, w, \alpha) \pdf_{\RV{K},\sv}(k,t \Given \tparam\sysparam)\,.
+\pdf_{\rvcand,\RV{K},\sv \Given \RV{W}, \RV{A}}(\cand,k,t \Given w, \alpha, \tparam\sysparam) = \pmf_{\rvcand \Given \RV{K}, \RV{W}, \RV{A}}(\cand \Given k, w, \alpha) \pdf_{\RV{K},\sv}(k,t \Given \tparam\sysparam)\,.
 \end{equation}
 
 The marginal joint distribution of $\rvcand$ and $\sv$ given $\RV{W}$ is calculated by summing the joint probability distribution over $\RV{K}$ which has a sample space $\{1,\ldots,m\}$.
@@ -367,18 +374,12 @@ While not nearly as informative, the only case in which no information about $\t
 	The conditional probability mass function $\pmf_{\rvcand \Given \sv, \RV{W}, \RV{A}}$ maps each candidate set $\cand$ to the probability that the given candidate set contains the component responsible for the system failure at time $t$.
 	By the axioms of probability,
 	\begin{equation}
+	\begin{split}
 	\label{eq:general_cond_cand_probability_alpha}
 	\pmf_{\rvcand \Given \sv, \RV{W}, \RV{A}}(\cand \Given t, w, \alpha, \tparam\sysparam) =
-	\frac{\SetIndicator{\candsw{w}}(\cand)}{\binom{m-1}{w}}
-	\left(
-	1-\alpha -	
-	\frac
-	{
-		(1-\alpha \frac{m}{w}) \sum_{j \in \cand} \haz_j(t \Given \tparam\sysparam_j)
-	}
-	{
-		\haz_{\sv}(t \Given \tparam\sysparam)
-	}\right)\,,
+	\frac{(1-\alpha) \haz_{\sv}(t \Given \tparam\sysparam) - (1-\alpha\frac{m}{w}) \sum_{j \in \cand} \haz_j(t \Given \tparam\sysparam_j)}{\binom{m-1}{w} \haz_{\sv}(t \Given \tparam\sysparam)}
+	\SetIndicator{\candsw{w}}(\cand)\,,
+	\end{split}
 	\end{equation}
 	where $\haz_{\sv}$ and $\haz_j$ are the failure rate functions of the system 
 	and the \jth component respectively.
@@ -432,6 +433,13 @@ and the \jth component respectively.
 
 
 
-
+\begin{corollary}
+\label{cor:K_given_S_indep_W_A_C}
+The random component failure $\RV{K}$ given $\sv$ is conditionally independent of $\rvcand$, $\RV{W}$, and $\RV{A}$, i.e.,
+\begin{equation}
+	\pmf_{\RV{K} \Given \rvcand, \sv, \RV{W}, \RV{A}}(k \Given \cand, t, w, \alpha, \tparam\sysparam) = \pmf_{\RV{K} \Given \sv}(k \Given t, \tparam\sysparam)\,.
+\end{equation}
+\end{corollary}
+See \cref{app:K_given_S_indep_W_A_C} for a proof.
 
 \end{document}
