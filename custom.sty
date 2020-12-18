@@ -1,9 +1,31 @@
+
 \definecolor{lightgray}{RGB}{2, 2, 2}
 \usepgfplotslibrary{fillbetween}
 \pgfplotsset{compat=1.13}
 
 \RequirePackage{matrixnotation}
 \RequirePackage{setnotation}
+\RequirePackage{xparse}
+\RequirePackage{bm}
+\RequirePackage{bbm}
+\RequirePackage{amssymb}
+\RequirePackage{mathtools}
+\RequirePackage{algorithm2e}
+
+\NewDocumentCommand{\Fun}{m}{%
+    \funstyle{#1}
+}
+
+
+
+\NewDocumentCommand{\FunctionFamily}{mmo}{%                    
+    \IfNoValueTF{#3}                                           
+        {\operatorname{#1}\FuncArgs*{#2}}                      
+        {\operatorname{#1}_{#3}\mkern-1mu\FuncArgs*{#2}}       
+}                                                              
+                                                               
+
+
 
 \numberwithin{equation}{chapter}
 
@@ -16,7 +38,7 @@
 \DeclareMathOperator{\observed}{\matrx{\mathcal{J}}}
 \DeclareMathOperator{\observedn}{\matrx{\mathcal{J}_n}}
 \DeclareMathOperator{\orderfunc}{\pi}
-\DeclareMathOperator{\score}{\rm{s}}
+\DeclareMathOperator{\score}{\rm{s}}aa
 \DeclareMathOperator{\entropy}{H}
 \DeclareMathOperator{\info}{I}
 \DeclareMathOperator{\infi}{\rm{inf}}
@@ -117,4 +139,82 @@
 \SetKwFunction{proj}{project}
 \SetKwFunction{genSampleFn}{generate\_msft}
 \SetKwFunction{genSampleMLE}{generate\_mle}
+
+
+
+
+
+
+
+
+% probability notation
+
+
+\newcommand{\RV}[1]{\mathrm{#1}}
+
+\newcommand{\ProbFn}{\mathrm{P}}
+
+\newcommand{\Pdf}{\operatorname{f}}
+
+\NewDocumentCommand{\Prob}{mo}{%
+    \Bracket{\ProbFn}{#1}[#2]
+}
+
+\NewDocumentCommand{\Expect}{mo}{%
+    \Bracket{\mathrm{E}}{#1}[#2]
+}
+
+\NewDocumentCommand{\Var}{mo}{%
+    \Bracket{\mathrm{V}}{#1}[#2]
+}
+
+\NewDocumentCommand{\PDF}{mo}{%
+    \FunctionFamily{\Pdf}{#1}[#2]
+}
+
+\NewDocumentCommand{\CDF}{mo}{%
+    \FunctionFamily{F}{#1}[#2]
+}
+
+\NewDocumentCommand{\RDF}{mo}{%
+    \FunctionFamily{R}{#1}[#2]
+}
+
+\NewDocumentCommand{\Entropy}{mo}{%
+    \FunctionFamily{\mathcal{H}}{#1}[#2]
+}
+
+\NewDocumentCommand{\Likelihood}{mo}{%
+    \FunctionFamily{\mathcal{L}}{#1}[#2]
+}
+
+\NewDocumentCommand{\Bias}{mo}{%
+    \FunctionFamily{\mathrm{bias}}{#1}[#2]
+}
+
+\DeclareMathOperator{\MSE}{\mathrm{MSE}}
+
+\newcommand{\mvn}{\mathrm{MVN}}
+\newcommand{\unifdist}{\mathrm{UNIF}}
+\newcommand{\dudist}{\mathrm{DU}}
+\newcommand{\berdist}{\mathrm{BER}}
+\newcommand{\expdist}{\mathrm{EXP}}
+\newcommand{\geodist}{\mathrm{GEO}}
+\newcommand{\normdist}{\mathcal{N}}
+\newcommand{\bindist}{\mathrm{BIN}}
+\newcommand{\poidist}{\mathrm{POI}}
+\newcommand{\nbdist}{\mathrm{NB}}
+
+
+
+%\SetKwFunction{dudist}{DU}
+%\SetKwFunction{berdist}{BER}
+%\SetKwFunction{expdist}{EXP}
+%\SetKwFunction{geodist}{GEO}
+%\SetKwFunction{bindist}{BIN}
+
+\endinput
+
+
+
 

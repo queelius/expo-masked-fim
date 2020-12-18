@@ -5,15 +5,16 @@
 \label{sec:general_estimating_parameters:mle}
 By \cref{def:sysparametric,def:true_param}, the random system lifetime $\sv$ has a probability density function that is a member of the $\pfam$-family with a true parameter index $\tparam\sysparamvec$. Let some estimator of $\tparam\sysparamvec$ be a function of the information in a random sample of $n$ masked system failure times. The estimator is a function of a random sample, thus it has \emph{sampling distribution}, a random vector denoted by $\sampdpt$. That is,
 \begin{equation}
-\sampdpt = \operatorname{\vec{\psi}}\left(\mfs\right)\,.
+%\sampdpt = \operatorname{\vec{\psi}}\left(\mfs\right)\,.
+\sampdpt = \Fun{\vec{\psi}}(\mfs)\,.
 \end{equation}
 A particular realization of the estimator is denoted by $\pointest$, i.e., $\sampdpt = \pointest$. All else being equal, we prefer estimators which vary only \emph{slightly} from sample to sample with a \emph{central tendency} around $\tparam\sysparamvec$. That is, we prefer unbiased estimators in which each component has small variance.
 
-The sampling distribution of $\pointest$ has a variance-covariance given by $\Var\left(\sampdpt\right)$ (see \cref{eq:covariance_matrix_op}) and a bias given by the following definition.
+The sampling distribution of $\pointest$ has a variance-covariance given by $\Var{\sampdpt}$ (see \cref{eq:covariance_matrix_op}) and a bias given by the following definition.
 \begin{definition}
 The bias of a point estimator $\sampdpt$ is given by
 \begin{equation}
-    \bias\left(\sampdpt\right) = \expectation\left[\sampdpt\right] - \tparam\sysparamvec\,.
+    \bias{\sampdpt} = \Expect{\sampdpt} - \tparam\sysparamvec\,.
 \end{equation}
 \end{definition}
 We are often faced with a trade-off between bias and variance. A measure of estimator accuracy that is a function of both the bias and the variance is the mean squared error as given by the following definition.
@@ -22,14 +23,13 @@ We are often faced with a trade-off between bias and variance. A measure of esti
 The mean squared error (MSE) of the sampling distribution of $\pointest$ is given by
 \begin{equation}
 \label{eq:mse}
-\mse \left( \sampdpt \right) = \expectation \left [
+\mse \left( \sampdpt \right) = \Expect{
         \left (
             \sampdpt - \tparam\sysparamvec
         \right )^{\Transpose}
         \left (
             \sampdpt - \tparam\sysparamvec
-        \right )
-    \right ]\\
+        \right )}
 \end{equation}
 \end{definition}
 An equivalent way to compute the mean squared error is given by the following postulate.
@@ -37,7 +37,7 @@ An equivalent way to compute the mean squared error is given by the following po
 The mean squared error of the sampling distribution of $\pointest$ as given by \cref{def:mse} is equivalent to
 \begin{equation}
 \label{eq:mse_bias_var}
-\mse \left( \sampdpt \right) = \trace\left(\var \left ( \sampdpt \right )\right) +
+\mse \left( \sampdpt \right) = \trace\left(\Var{\sampdpt}\right) +
     \bias^2 \bigl(\sampdpt \bigr)\,,
 \end{equation}
 where $\trace\left(\matrx{A}\right)$ computes the sum of the diagonal elements of square matrix $\matrx{A}$.
@@ -54,7 +54,7 @@ The minimum variance obtainable from a random sample of $n$ masked system failur
 By \cref{eq:mse_bias_var}, if $\pointest$ is an unbiased estimator of $\tparam\sysparamvec$, then the mean squared error is given by
 \begin{equation}
 \label{eq:mse_unbiased}
-\mse(\sampdpt) = \trace\!\left( \var\left(\sampdpt\right) \right)\,.
+\mse(\sampdpt) = \trace\!\left( \Var{\sampdpt}\right)\,.
 \end{equation}
 
 By \cref{eq:mse_unbiased,eq:crlb}, the mean squared error of any unbiased point 
@@ -171,11 +171,9 @@ The asymptotic sampling distribution of $\mle$ is a consistent estimator of $\tp
 By \cref{eq:consistent,eq:covariance_matrix_op}, the variance-covariance of the asymptotic sampling distribution of $\mle$ is given by
 \begin{equation}
 \label{def:asym_covariance_matrix}
-    \var\!\left[\sampd\right] = \expectation
-    \left[
+    \Var{\sampd} = \Expect{
         \left(\sampd - \tparam\sysparamvec \right)
-        \left(\sampd - \tparam\sysparamvec \right)^{\Transpose}
-    \right]\,.
+        \left(\sampd - \tparam\sysparamvec \right)^{\Transpose}}\,.
 \end{equation}
 
 \begin{postulate}
@@ -271,11 +269,11 @@ The random vector $\sampdu$ is an asymptotically unbiased estimator of $\tparam\
 \begin{proof}
 The expectation of $\sampdu$ is given by
 \begin{align}
-    \expectation\left[\sampdu\right]
-    &= \expectation\left[\left( \sum_{i=1}^{r} \matrx{A_i} \right)^{-1} \left( \sum_{i=1}^{r} \matrx{A_i} \sampdir{n_i}{w_i,\alpha_i}{i} \right)\right]\\
+    \Expect{\sampdu}
+    &= \Expect{\left( \sum_{i=1}^{r} \matrx{A_i} \right)^{-1} \left( \sum_{i=1}^{r} \matrx{A_i} \sampdir{n_i}{w_i,\alpha_i}{i} \right)}\\
     &=  \left( \sum_{i=1}^{r} \matrx{A_i} \right)^{-1}
             \left( \sum_{i=1}^{r} \matrx{A_i}
-            \expectation\left[\sampdir{n_i}{w_i,\alpha_i}{i}\right]\right)\\    
+            \Expect{\sampdir{n_i}{w_i,\alpha_i}{i}}\right)\\    
     &= \left( \sum_{i=1}^{r} \matrx{A_i} \right)^{-1} \left(\sum_{i=1}^{r} \matrx{A_i} \right) \tparam\sysparamvec\\
     &= \tparam\sysparamvec\,.
 \end{align}
@@ -286,7 +284,7 @@ The expectation of $\sampdu$ is given by
 The variance-covariance of $\sampdu$ is given by
 \begin{equation}
 \label{eq:var_samp_d_full}
-    \var\left[\sampdu\right] = \left( \sum_{i=1}^{r} n_i \infomatrx(\tparam\sysparamvec \Given w_i, \alpha_i) \right)^{-1}\,.
+    \Var{\sampdu} = \left( \sum_{i=1}^{r} n_i \infomatrx(\tparam\sysparamvec \Given w_i, \alpha_i) \right)^{-1}\,.
 \end{equation}
 \end{theorem}
 \begin{proof}
@@ -297,14 +295,12 @@ Let
 \end{equation}
 The variance-covariance of $\sampdu$ is given by
 \begin{align}
-    \var\left[\sampdu\right]
-        &= \var\left[\matrx{B} \left( \sum_{i=1}^{r} \matrx{A_i} \sampdir{n_i}{w_i,\alpha_i}{i} \right)\right]\\
-        &= \matrx{B} \var\left[\sum_{i=1}^{r} \matrx{A_i} \sampdir{n_i}{w_i,\alpha_i}{i} 
-        \right] \matrx{B^{\Transpose}}\\
-        &= \matrx{B} \left(\sum_{i=1}^{r} \var\left[\matrx{A_i} 
-        \sampdir{n_i}{w_i,\alpha_i}{i} \right]\right) \matrx{B^{\Transpose}}\\
-        &= \matrx{B} \left(\sum_{i=1}^{r} \matrx{A_i} \var\left[ 
-        \sampdir{n_i}{w_i,\alpha_i}{i} \right] \matrx{A_i^{\Transpose}} \right) 
+    \Var{\sampdu}
+        &= \Var{\matrx{B} \left( \sum_{i=1}^{r} \matrx{A_i} \sampdir{n_i}{w_i,\alpha_i}{i} \right)}\\
+        &= \matrx{B} \Var{\sum_{i=1}^{r} \matrx{A_i} \sampdir{n_i}{w_i,\alpha_i}{i}} \matrx{B^{\Transpose}}\\
+        &= \matrx{B} \left(\sum_{i=1}^{r} \Var{\matrx{A_i} 
+        \sampdir{n_i}{w_i,\alpha_i}{i}}\right) \matrx{B^{\Transpose}}\\
+        &= \matrx{B} \left(\sum_{i=1}^{r} \matrx{A_i} \Var{\sampdir{n_i}{w_i,\alpha_i}{i}} \matrx{A_i^{\Transpose}} \right) 
         \matrx{B^{\Transpose}}\,.
 \end{align}
 By \cref{eq:inverse_info}, the variance-covariance of $\sampdir{n_i}{w_i,\alpha_i}{i}$ is given by
@@ -313,7 +309,7 @@ By \cref{eq:inverse_info}, the variance-covariance of $\sampdir{n_i}{w_i,\alpha_
 \end{equation}
 By \cref{eq:mat_A_info}, this is equivalent to $\matrx{A_i^{-1}}$. Performing this substitution results in
 \begin{align}
-    \var\left[\sampdu\right]
+    \Var{\sampdu}
         &= \matrx{B} \left(\sum_{i=1}^{r} \matrx{A_i} \matrx{A_i^{-1}} 
         \matrx{A_i^{\Transpose}} \right) \matrx{B^{\Transpose}}\\
         &= \matrx{B} \left(\sum_{i=1}^{r} \matrx{A_i^{\Transpose}}\right) 
@@ -322,7 +318,7 @@ By \cref{eq:mat_A_info}, this is equivalent to $\matrx{A_i^{-1}}$. Performing th
 The summation is equivalent to $\matrx{\left({B^{\Transpose}}\right)^{-1}}$. 
 Performing this substitution results in
 \begin{align}
-    \var\left[\sampdu\right]
+    \Var{\sampdu}
         &= \matrx{B} \matrx{\left(B^{\Transpose}\right)^{-1}} 
         \matrx{B^{\Transpose}}\\
         &= \matrx{B}
@@ -337,7 +333,7 @@ and by \cref{eq:mat_A_info}, $\matrx{A_i}$ is given by
 \end{equation}
 Performing these substitution results in
 \begin{equation}
-    \var\left[\sampdu\right] = \left( \sum_{i=1}^{r} n_i \infomatrx(\tparam\sysparamvec \Given w_i, \alpha_i) \right)^{-1}\,.
+    \Var{\sampdu} = \left( \sum_{i=1}^{r} n_i \infomatrx(\tparam\sysparamvec \Given w_i, \alpha_i) \right)^{-1}\,.
 \end{equation}
 \end{proof}
 
