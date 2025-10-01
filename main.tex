@@ -1,27 +1,12 @@
-\documentclass[
-    11pt,
-    extrafontsizes,
-    article,
-    oldfontcommands,
-    final,
-    oneside,
-    openany,
-    hidelinks]{memoir}
-\pagestyle{headings}
-
+\documentclass[12pt]{article}
 \usepackage[english]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage[activate={true,nocompatibility},final,tracking=true,kerning=true,
-spacing=true,factor=1100,stretch=10,shrink=10]{microtype}
-\microtypecontext{spacing=nonfrench}
-\usepackage{graphicx}
-
-\usepackage{commath}
+% \usepackage{commath}
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{amssymb}
-\usepackage{esvect}
+% \usepackage{esvect}
 \usepackage{graphicx}
 \usepackage[numbers]{natbib}
 \usepackage{bbm}
@@ -29,37 +14,71 @@ spacing=true,factor=1100,stretch=10,shrink=10]{microtype}
 \usepackage{etoolbox}
 \usepackage{pgfplots}
 \usepackage[linesnumbered,lined,ruled]{algorithm2e}
-\usepackage{subfiles}
 \usepackage{caption}
 \usepackage{hyperref}
-\usepackage{cleveref}
 \usepackage{mathdots}
 \usepackage{appendix}
-\usepackage{fancyhdr}
 
-\usepackage{custom_simplified}
+% Minimal notation macros (only those used in this document)
+% Random variables and probability
+\newcommand{\RV}[1]{\mathrm{#1}}
+\newcommand{\Prob}[1]{\mathrm{P}\{#1\}}
+\newcommand{\Expect}[1]{\mathrm{E}\{#1\}}
+
+% System-specific notation
+\newcommand{\cv}{\RV{T}}           % Component lifetime
+\newcommand{\sv}{\RV{S}}           % System lifetime
+\newcommand{\cand}{\RV{C}}         % Candidate set
+\newcommand{\rvcand}{\RV{C}}       % Candidate set random variable
+\newcommand{\ti}{\mathrm{t}}       % Observed time (lowercase)
+
+% Parameters
+\newcommand{\sysparam}{\Theta}
+\newcommand{\tparam}[1]{{#1}^{\star}}  % True parameter
+\newcommand{\estimator}[1]{\hat{#1}}   % MLE estimator
+
+% Exponential-specific
+\newcommand{\expomle}{\boldsymbol{\hat{\lambda}}_n}
+
+% Statistics and information
+\newcommand{\infomatrx}{\mathcal{I}}
+\newcommand{\likelihood}{\mathcal{L}}
+\newcommand{\mfs}{\mathbf{M}_n}
+\newcommand{\cntsymb}{\boldsymbol{\hat\omega}}
+\newcommand{\cnt}[1]{\cntsymb_{\{#1\}}}
+
+% Distribution functions
+\newcommand{\pdf}{f}
+\newcommand{\pmf}{p}
+\newcommand{\cdf}{F}
+\newcommand{\srv}{R}
+\newcommand{\haz}{h}
+\newcommand{\spdf}{\pdf_{\sv}}
+
+% Distribution names
+\newcommand{\expdist}{\mathrm{EXP}}
+\newcommand{\mvn}{\mathrm{MVN}}
+
+% Matrices and vectors
+\newcommand{\matrx}[1]{\mathbf{#1}}
+\renewcommand{\vec}[1]{\boldsymbol{#1}}
+
+% Operators
+\DeclareMathOperator{\MSE}{\mathrm{MSE}}
+\DeclareMathOperator{\trace}{tr}
+
+% Indicator function
+\newcommand{\SetIndicator}[1]{\mathbbm{1}_{#1}}
 
 % Define theorem environments
-\newtheorem{theorem}{Theorem}[chapter]
-\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{theorem}{Theorem}[section]
 \newtheorem{corollary}[theorem]{Corollary}
 \newtheorem{proposition}[theorem]{Proposition}
 \theoremstyle{definition}
 \newtheorem{definition}[theorem]{Definition}
 \newtheorem{assumption}[theorem]{Assumption}
-\newtheorem{example}[theorem]{Example}
-\theoremstyle{remark}
-\newtheorem{remark}[theorem]{Remark}
-\newtheorem{note}[theorem]{Note}
-
-\setcounter{secnumdepth}{2}
-\setcounter{tocdepth}{2}
 
 \graphicspath{{images/}{../images/},{../../images/}}
-
-\setlrmarginsandblock{1in}{1in}{*}
-\setulmarginsandblock{1in}{1in}{*}
-\checkandfixthelayout
 
 \hypersetup{
     pdftitle={Statistical Inference for Series Systems from Masked Failure Time Data: The Exponential Case},
@@ -91,7 +110,7 @@ We consider the problem of estimating component failure rates in series systems 
 
 \tableofcontents
 
-\chapter{Introduction}
+\section{Introduction}
 \label{sec:intro}
 
 Series systems are fundamental in reliability engineering: the system fails whenever any single component fails. In many practical situations, the exact cause of system failure cannot be determined with certainty, but can be narrowed to a subset of components. This partial information is known as \emph{masked} failure data. For example, a diagnostic system might isolate a failure to one of two circuit boards without determining which board actually failed.
@@ -117,7 +136,7 @@ Our main contributions are:
 
 Section~\ref{sec:model} introduces the probabilistic model for series systems with masked failures. Section~\ref{sec:general_fim} develops the likelihood and Fisher information for general parametric families. Section~\ref{sec:exponential} presents the main results for exponentially distributed components, including the MLE, information matrix, and sufficient statistics. Section~\ref{sec:three_component} provides detailed analysis of three-component systems. Section~\ref{sec:conclusion} concludes with discussion.
 
-\chapter{Probabilistic Model}
+\section{Probabilistic Model}
 \label{sec:model}
 
 \section{Series System Lifetime}
@@ -184,7 +203,7 @@ Our data consists of a random sample of $n$ independent masked system failure ti
 \end{equation}
 where we condition on fixed cardinality $w$ for simplicity.
 
-\chapter{Likelihood and Fisher Information}
+\section{Likelihood and Fisher Information}
 \label{sec:general_fim}
 
 \section{Likelihood Function}
@@ -226,7 +245,7 @@ For a sample of $n$ observations, the information is additive:
 \infomatrx_n(\tparam{\sysparam} | w) = n \cdot \infomatrx(\tparam{\sysparam} | w)
 \end{equation}
 
-\chapter{Exponentially Distributed Component Lifetimes}
+\section{Exponentially Distributed Component Lifetimes}
 \label{sec:exponential}
 
 \section{Exponential Parametric Functions}
@@ -374,7 +393,7 @@ An asymptotic $(1-\alpha) \times 100\%$ confidence interval for $\tparam{\lambda
 \end{equation}
 where $z_{1-\alpha/2}$ is the $(1-\alpha/2)$-quantile of the standard normal distribution.
 
-\chapter{Three-Component Systems}
+\section{Three-Component Systems}
 \label{sec:three_component}
 
 We provide detailed analysis for systems with $m=3$ components, which admits several closed-form results.
@@ -487,7 +506,7 @@ The sample variance-covariance from the 10000 MLEs is:
 
 The close agreement confirms the asymptotic approximation is accurate for $n=1000$.
 
-\chapter{Conclusion}
+\section{Conclusion}
 \label{sec:conclusion}
 
 We have developed a comprehensive framework for statistical inference in series systems with exponentially distributed component lifetimes when failure data is masked. The exponential case admits closed-form expressions for the maximum likelihood estimator, Fisher information matrix, and sufficient statistics.
@@ -515,7 +534,7 @@ The exponential case provides a foundation for understanding masked system data.
 
 \begin{appendices}
 
-\chapter{Numerical Solution Methods}
+\section{Numerical Solution Methods}
 
 For cases without closed-form solutions, the MLE must be computed numerically. The Newton-Raphson algorithm is effective:
 
