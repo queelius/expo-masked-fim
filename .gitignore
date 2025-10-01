@@ -1,32 +1,38 @@
-# ignore all . files and . folders. note: .*/ ignores only .folders
-.*
-# except do not ignore .gitignore. note: may omit if .gitignore is explicitly
-# tracked
-!/.gitignore
-
-/build* 
-*.log
-*.out
-*.fls
-*.idx
-*.pyg
-*.fdb_latexmk
+# LaTeX auxiliary files
 *.aux
 *.bbl
-*.ind
-*.nlo
-/_minted*
-main.synctex.gz
 *.blg
-*.ilg
+*.fls
+*.fdb_latexmk
+*.log
+*.out
 *.toc
 *.lof
 *.lot
+*.idx
+*.ilg
+*.ind
+*.nlo
+*.ist
 *.acn
 *.acr
 *.alg
 *.glg
 *.glo
 *.gls
-*.ist
 *.loa
+*.synctex.gz
+*.nls
+
+# Build directories
+/build*/
+/_minted*/
+
+# Editor/IDE files
+.*
+!/.gitignore
+!/.gitmodules
+
+# OS files
+.DS_Store
+Thumbs.db

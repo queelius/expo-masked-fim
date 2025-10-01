@@ -1,0 +1,3351 @@
+\documentclass[
+    11pt,
+    extrafontsizes,
+    article,
+    oldfontcommands,
+    final,
+    oneside,
+    openany,
+    hidelinks]{memoir}
+\pagestyle{headings}
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[activate={true,nocompatibility},final,tracking=true,kerning=true,
+spacing=true,factor=1100,stretch=10,shrink=10]{microtype}
+\microtypecontext{spacing=nonfrench}
+\usepackage{graphicx}
+
+%code\usepackage{nomencl}
+%\makenomenclature
+\usepackage{commath}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{esvect}
+\usepackage{graphicx}
+\usepackage[numbers]{natbib}
+\usepackage{bbm}
+\usepackage{mathtools}
+\usepackage{etoolbox}
+\usepackage{pgfplots}
+\usepackage[linesnumbered,lined,ruled]{algorithm2e}
+\usepackage{subfiles}
+\usepackage{caption}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{mathdots}
+\usepackage{appendix}
+\usepackage{fancyhdr}
+
+\usepackage[fancy]{setnotation}
+\usepackage{relationnotation}
+\usepackage{envnotation}
+\usepackage{matrixnotation}
+\usepackage{probabilitynotation}
+\usepackage{custom}
+
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{2}
+
+\graphicspath{{images/}{../images/},{../../images/}}
+
+\setlrmarginsandblock{1in}{1in}{*}
+\setulmarginsandblock{1in}{1in}{*}
+\checkandfixthelayout 
+
+\hypersetup{
+    %bookmarks=true,                             % show bookmarks bar?
+    pdftitle={Estimating the sampling distribution of the maximum likelihood 
+    estimator of the parameters of a series system given a sample of masked 
+    system failure times},  % title
+    pdfauthor={Alexander Towell},               % author
+    pdfsubject={statistical inference},                    % subject of the 
+    %document
+    pdfkeywords={maximum likelihood estimation,
+        information matrix,
+        covariance matrix,
+        multivariate normal,
+        sampling distribution,
+        statistical models,
+        statistical inference,
+        parameter estimation,
+        parametric bootstrap,
+        entropy,
+        maximum entropy distribution,
+        series systems,
+        m-out-of-m system,
+        exponential distribution,
+        masked system failure time},           % keywords
+    colorlinks=true,                            % false: boxed links; true: 
+    %colored links
+    linkcolor=blue,                             % color of internal links
+    citecolor=green,                            % color of links to bibliography
+    filecolor=magenta,                          % color of file links
+    urlcolor=green                              % color of external links
+}
+
+
+
+%\include{nom}
+
+\title{Estimating the sampling distribution of the maximum likelihood estimator of the parameters of a series system given a sample of masked system failures}
+\author{Alexander Towell\\\texttt{atowell@siue.edu}}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+First, the \emph{parametric family} of an abstract \emph{series system} is derived. Then, the \emph{asymptotic sampling distribution} (\emph{multivariate normal}) of a \emph{maximum likelihood estimator} of the true parameter is derived conditioned on the \emph{information} given by a random sample of \emph{masked system failure times}. The asymptotic sampling distributions of statistics that are functions of the parameter follow as a result. Finally, these results are applied to series systems in which component lifetimes are \emph{exponentially} distributed, which lead to closed formulas on a set of \emph{minimally sufficient statistics}.
+\end{abstract}
+
+\tableofcontents
+%\listoffigures
+%\listofalgorithms
+%\printnomenclature
+
+\chapter{Introduction}
+\label{sec:intro}
+Empirical modeling involves a blending of substantive subject matter and statistical information.
+In our case, the substantive information includes assumptions like a series system and the $\alpha$-masked candidate set models described later.
+Such information suggests the relevant variables and simplifies learning from data (in our case, maximum likelihood estimation).
+
+In contrast, statistical information stems from the chance regularities in data, which are statistical model attempts to ``adequately'' capture.
+
+
+Discuss latent or hidden variables.
+
+Draw a graph in prob. model section. What do we know, how we know it, etc.
+
+
+We consider series systems consisting of some fixed number of components with 
+uncertain lifetimes. We desire a mathematical model of the system that may be 
+used to predict the failure time of the system and its component cause. 
+However, since the system lifetime and the component cause of failure is 
+uncertain, we are interested in probabilistically modeling the system lifetime, 
+e.g., there is a $75\%$ chance that component $3$ will cause a system failure 
+in the next $3$ years.
+
+We assume the system belongs to some parametric family but whose true parameter 
+index is unknown. Furthermore, we also assume there is a sample of 
+\emph{masked system failure times} that carry information about the true 
+parameter index.
+
+Using the information in the sample, we employ the frequentist approach of 
+repeated experiments which induces a sampling distribution on the maximum 
+likelihood point estimator of the fixed but unknown true parameter index where 
+\emph{a priori} any value in the parameter space is equally likely. The point 
+estimator converges to a multivariate normal sampling distribution with a mean 
+given by the true parameter index and a variance that is inversely proportional 
+to sample size.
+
+\chapter{Probabilistic model}
+\label{sec:general_series_system}
+%A probabilistic model is specified by equations involving random variables which make assumptions about how observable data about the system is generated. In %what follows, we describe our model and observable data.
+
+A probabilistic model describes how observable data about the system is generated.
+In what follows, we describe our model and observable data.
+
+A \emph{set} is an unordered collection of distinct elements.
+The set of all subsets of a set is called the \emph{powerset}.
+The powerset of $\Set{X}$ is denoted by $\PS{\Set{X}}$.
+An interval in $\PS{\RealSet}$ is a set of all the real numbers lying between two indicated real numbers, e.g.,
+\begin{equation}
+	(a,b] \coloneqq \SetBuilder{x \in \RealSet}{x \geq a \land x \leq b} \in \PS{\RealSet}\,.
+\end{equation}
+
+\begin{definition}
+A probability space $(\Omega, \FancySet{F}, \Fun{P})$, where $\Fun{P} \colon \PS{\Omega} \mapsto [0,1]$ is the probability set function, $\Omega$ is the \emph{sample space}, and $\FancySet{F}$ is the set of measurable events (subsets of $\Omega$).
+\end{definition}
+
+
+A random variable is a measurable function defined on a probability space.
+\begin{definition}
+Given a probability space $(\Omega, \FancySet{F}, \Fun{P})$, a random variable $\RV{X}$ is a function of type $\Omega \mapsto \Codom(\RV{X})$.
+\end{definition}
+The range (or image) of $\RV{X}$ is also called the space of $\RV{X}$.
+
+For a random variable $\RV{X}$, we use $\RV{X} = x$ to denote the subset containing all elements $e \in \Omega$ that $\RV{X}$ maps to the value of $x$.
+
+\section{Series system}
+The system consists of $m$ components. We make the following assumption about 
+the state of the components.
+\begin{assumption}
+\label{asm:binary_state}
+The \jth component is initially in a non-failed state and permanently enters a failed state at some uncertain time $t_j > 0$ for $j=1\,,\ldots\,,m$.
+\end{assumption}
+Components have uncertain lifetimes as given by the following definition.
+\begin{definition}
+The lifetime of the \jth component is given by the continuous random variable 
+$\cv_j \in \left(0\,,\infty\right)$ for $j=1,\ldots,m$.
+\end{definition}
+We make the following assumption about the joint distribution of the component lifetimes.
+\begin{assumption}
+\label{asm:indep}
+The random variables $\cv_1,\ldots,\cv_m$ are mutually independent.
+\end{assumption}
+
+The system is a series system.
+\begin{assumption}
+    The system is in a non-failed state if all $m$ components are in a non-failed state, otherwise the system is in a failed state.
+\end{assumption}
+A system in which at least $k$ of the components must be in a non-failed state for the system to be in a non-failed system is denoted a $k$-out-of-$m$ system, 
+thus a series system is an $m$-out-of-$m$ system.
+
+The uncertain lifetime of the system is given by the following definition.
+\begin{theorem}
+    \label{thm:series_system_lifetime}
+    The lifetime of the system is given by the random variable
+    \begin{equation}
+    \label{eq:series_system_lifetime}
+    \sv = \min{\!\left(\cv_1,\ldots,\cv_m\right)}
+    \end{equation}
+    with a sample space $\left(0, \infty\right)$, where $\cv_1,\ldots,\cv_m$ are the component lifetimes.
+\end{theorem}
+\begin{proof}
+    A series system fails whenever any component fails, therefore its lifetime is equal to the lifetime of the component with the minimum lifetime.
+\end{proof}
+
+\section{Probability distribution functions and parametric families}
+As random variables, it is not certain which values $\sv,\cv_1,\ldots,\cv_m$ 
+will realize. However, their respective probability distribution functions 
+quantify the uncertainty. The cumulative distribution function is given by the 
+following definition.
+\begin{definition}
+    \label{def:cdf_function}
+    Let $\RV{X}$ be some random variable. The probability that $\RV{X} \leq x$ 
+    is given by its cumulative distribution function, denoted by
+    \begin{equation}
+    \cdf_{\RV{X}}\!\left(x\right) = \Prob{\RV{X} \leq x}\,.
+    \end{equation}
+\end{definition}
+The probability density function is given by the following definition.
+\begin{definition}
+    \label{def:pdf}
+    Let $\RV{X}$ be some continuous random variable. The \emph{relative 
+        likelihood} that $\RV{X} = x$ is given by its probability density 
+    function, denoted by
+    \begin{equation}
+    \pdf_{\RV{X}}(x) = \derivative{t}\cdf_{\RV{X}}(t)\,.
+    \end{equation}
+\end{definition}
+By the Second Fundamental Theorem of Calculus, the probability that a 
+continuous random variable $\RV{X} \in \left(a,b\right]$, $a \leq b$, is given 
+by
+\begin{equation}
+\label{eq:prob_F_R_p}
+\Prob{a < \RV{X} \leq b} = \cdf_{\RV{X}}(b) - \cdf_{\RV{X}}(a) = \int_{a}^{b} 
+\pdf_{\RV{X}}(s) \mathrm{d}s\,.
+\end{equation}
+
+By these definitions, the relative likelihood that the system will fail at time 
+$t$ is $\spdf(t)$ and probability the \jth component will before time $t$ is 
+$\cdf_{\cv_j}(t)$.
+\begin{notation}
+We simplify the notation and let $\cdf_j$ denote $\cdf_{\cv_j}$ and $\pdf_j$ denote $\pdf_{\cv_j}$.
+Column vectors are denoted by boldface lower case letters, e.g., $\vec{x}$, and row vectors are denoted by the transpose of column vectors, e.g., $\vec{x}^\Transpose$.
+Matrices are denoted by boldface upper case greek letters, e.g., $\matrx{A}$.
+The \jth column of $\matrx{A}$ is denoted by $\matrx{A}_j$ (or $\left[\matrx{A}\right]_j$) and the $(j,k)$-th element of $\matrx{A}$ is denoted by $\matrx{A}_{j\,k}$ (or $\left[\matrx{A}\right]_{j\,k}$).
+\end{notation}
+
+We restrict our attention to parametrized families of probability distribution functions. The system lifetime has a probability density function that is a member of the following parametric family.
+\begin{definition}
+    \label{def:sysparametric}
+    The system lifetime has a probability density function that is a member of 
+    the parametric family of probability density functions denoted by
+    \begin{equation}
+    \label{eq:paramsys}
+    \pfam = \left \{ \spdf\left(\; \cdot \given \sysparam\right) \colon 
+    \sysparam \in \RealSet^{q \times m} \right \}\,,
+    \end{equation}
+    where $\sysparam_j \in \boldsymbol\Omega$ corresponds to the parameter 
+    index of the \jth component lifetime.
+\end{definition}
+Particular values of $\sysparam$ index particular probability density functions 
+within the $\pfam$-family. The true probability density function of the system 
+lifetime is given by the following definition.
+\begin{definition}
+    \label{def:true_param}
+    The distribution of the system lifetime has a true parameter index denoted 
+    by $\tparam\sysparam$, and we say that
+    \begin{equation}
+        \sv \sim \spdf\!\left(\;\cdot \given \tparam\sysparam\right)\,.
+    \end{equation}
+\end{definition}
+By these definitions, it follows that
+\begin{equation}
+    \cv_j \sim \pdf_j\!\left(\; \cdot \given \tparam\sysparam_j\right)\,.
+\end{equation}
+
+\section{$\alpha$-masked component failure}
+By \cref{thm:series_system_lifetime}, if a system failure occurs at time $\ti$, then one of the components failed at time $\ti$.\footnote{Only a single component can cause a system failure since two or more continuous random variables cannot realize the same value.}
+\begin{definition}
+\label{def:comp_cause}
+The discrete random variable indicating the component responsible for a system failure is denoted by $\RV{K}$ with a sample space $\Set{K} = \{1,\ldots,m\}$. That is, $\RV{K} = j$ indicates that $\cv_j < \cv_k$ for $k \in \SetDiff[\Set{K}][\{ j \}]$.
+\end{definition}
+
+We may not be certain about which component caused a system failure, but we may be able to narrow the component cause to some \emph{subset}.
+We denote these a \emph{masked} component failure as given by the following definition.
+\begin{definition}
+\label{def:random_candidate_set}
+Let $\rvcand$ denote the random masked component failure with a sample space $\PS{\Set{K}}$.
+\end{definition}
+
+We suppose there is some process that, informed by some degree of knowledge about the components, generates a masked component failure which \emph{plausibly}\footnote{The random masked component failures carry information about the true parameter index $\tparam\sysparam$ by being dependent in some way on the component lifetimes.} contains the failed component as depicted in \cref{fig:gen_model}.
+\begin{figure}
+	\caption{Graphical model of random variables where $\sv = \min\{\cv_1,\cv_2\ldots,\cv_m\}$ and masked component failure $\rvcand$ is generated by some process that is a function of $\tparam\sysparam$.}
+	\label{fig:gen_model}
+	\begin{center}
+		\input{img/graph_model.tex}
+	\end{center}
+\end{figure}
+
+A masked component failure represents the notion of a diagnostician who is able to, with varying degrees of success, isolate the failed component to some subset of the system.
+We consider a particular generative model given by the following definition.
+\begin{definition}
+\label{def:rv_A}
+An $\alpha$-masked component failure $\rvcand$ contains the failed component with probability $\alpha \cdot 100 \%$, where $\alpha$ is denoted its \emph{accuracy}.
+Let $\RV{A}$ denote the random accuracy of a masked component failure with a sample space $\Set{A} \subseteq [0,1]$.
+The distribution of a random masked component failure $\rvcand$ given $\RV{A} = \alpha$ is denoted a random $\alpha$-masked component failure.
+\end{definition}
+
+The accuracy of a masked component failure could theoretically convey information about the system.
+As a simplification, we make the following assumption.
+\begin{assumption}
+\label{asm:indep_A_S_K}
+The random accuracy $\RV{A}$ of masked component failures is independent of the random system lifetime $\sv$ and the random component cause $\RV{K}$ and therefore does not carry information about the true parameter index $\tparam\sysparam$.
+\end{assumption}
+
+A random masked component failure may have an uncertain cardinality.
+We model this uncertainty with the random variable given by the following definition.
+\begin{definition}
+\label{def:rv_W}
+Let $\RV{W} = \Card{\rvcand}$ denote the random cardinality of a random masked component failure with a sample space $\{1,\ldots,m-1\}$.
+$\RV{W}$ may never realize $m$ since that does not isolate a proper subset of the components and it may never realize $0$ since that does not estimate the component cause of failure.
+\end{definition}
+Note that if $\RV{W}=m$ were to be realized, contrary to the above definition, then a consistent point estimator for the lifetime distribution $\sv$ is possible but no consistent estimator of the component lifetimes $\cv_1,\ldots,\cv_m$ is possible.
+In \cref{dummy}, we provide a point estimator in such a situation that is inconsistent but minimizes the \emph{mean squared error}.
+
+The cardinality of a masked component failure could theoretically convey information about the system.
+As a simplification, we make the following assumption.
+\begin{assumption}
+\label{asm:indep_W_S}
+The random cardinality $\RV{W}$ of masked component failures is independent of the random system lifetime $\sv$ and the random component cause $\RV{K}$ and therefore does not carry information about the true parameter index $\tparam\sysparam$.
+\end{assumption}
+
+We make the following simplifying assumption.
+\begin{assumption}
+\label{asm:indep_C_given_K_S}
+The random masked component failure $\rvcand$ conditioned $\RV{K}$ is independent of $\sv$.
+\end{assumption}
+The $\alpha$-masked component model is somewhat naive since $\rvcand$ given $\RV{K}$ is conditionally independent of $\sv$.
+By \cref{asm:indep_C_given_K_S}, an $\alpha$-masked component failure carries information about $\tparam\sysparam$ through its dependency on $\RV{K}$.
+
+The indicator function and the $k$-subset functions are needed for subsequent material and are given by the following definitions.
+\begin{definition}[Indicator function]
+	Given a subset $\Set{A}$ of a set $\Set{B}$, the indicator function $\SetIndicator{\Set{A}} \colon \Set{B} \mapsto \{0,1\}$
+	is equal to $1$ if $x \in \Set{A}$ and $0$ otherwise.
+\end{definition}
+
+\begin{definition}
+	The subsets of $\Set{A}$ that are of cardinality $k$ is defined as
+	\begin{equation}
+	\left[\Set{A}\right]^k \coloneqq \SetBuilder{\Set{X} \in \Set{A}}{\Card{\Set{A}} = k}\,,
+	\end{equation}
+	which has a cardinality
+	\begin{equation}
+	\binom{\Card{\Set{A}}}{k}\,.
+	\end{equation}
+\end{definition}
+
+The distribution of candidate sets conditioned on a specific cardinality is given by the following definition.
+\begin{definition}
+	The random candidate set $\rvcand$ conditioned on $\RV{W} = w$ has a sample space given by
+	\begin{equation}
+	\candsw{w} = \left[\PS{\RV{K}}\right]^w\,.
+	\end{equation}
+\end{definition}
+By \cref{asm:indep_W_S,asm:indep_A_S_K}, the distributions of $\RV{W}$ and $\RV{A}$ is not dependent on the true parameter index $\tparam\sysparam$.
+Any inferences about the parametric model will be \emph{independent} of $\RV{W}$ and $\RV{A}$ except in the sense that conditioning on larger $\alpha$-masked component failures or less accurate accuracy $\alpha$ generates estimators with greater variance.
+This, of course, is quite important, but the fact that a particular $\RV{W}$ or $\RV{A}$ is realized says nothing by itself about $\tparam\sysparam$.
+
+%The \emph{probability space} of the model conditioned on $\RV{W} = w$ is given by the triple
+%\begin{equation}
+%	\left((0,\infty) \times \candsw{w}, \Set{B} \times \PS{\candsw{w}}, \Fun{P}\right)
+%\end{equation}
+%where $\Set{B}$ is the \emph{Borel space}, the set of half-open intervals, and $\Fun{P} \colon \Set{B} \times \PS{\candsw{w}} \mapsto [0,1]$ is the %probability measure.
+
+\begin{figure}
+	\label{fig:gen_model_alpha}
+	\caption{Graphical model of random variables where $\sv = \min\{\cv_1,\cv_2\ldots,\cv_m\}$, $\rvcand$ is a random $\alpha$-masked candidate set of cardinality $w$, $\RV{K}$ is the random component failure, $\RV{W}$ is the cardinality of random candidate sets, and $\RV{A}$ is the random $\alpha$.}
+	\begin{center}
+		\input{img/graph_model_alpha.tex}
+	\end{center}
+\end{figure}
+In general, a sample of masked system failures may have variable sized candidate sets. In \cref{dummyref}, we derive the sampling distribution of the maximum likelihood estimator of this kind of sample using the inverse-variance weighted mean.
+
+The \emph{primary} data point is the \emph{masked system failure} as given by the following definition.
+\begin{definition}
+An $\alpha$-\emph{masked system failure} consists of a system failure time $\ti$, a corresponding set of failed candidate components $\cand$, and an expected accuracy $\alpha$ of the $\cand$, denoted by $\Tuple{\ti,\cand,\alpha}$.
+\end{definition}
+\begin{assumption}
+\label{asm:cand_prob}
+A random $\alpha$-\emph{masked system failure} is a jointly distributed random system lifetime $\sv$, random failed candidate set $\rvcand$, and random $\alpha$-accuracy $\RV{A}$.
+\end{assumption}
+
+\begin{assumption}
+\label{def:msfs}
+A random sample of $n$ \emph{masked system failures}, denoted by
+\begin{equation}
+\mfs = \left( \Tuple{\sv_1,\rvcand_1,\RV{A}_1},\ldots,\Tuple{\sv_n,\rvcand_n,\RV{A}_n}\right)\,,
+\end{equation}
+consists of $n$ independent and identically jointly distributed pairs of system failure times and component sets.
+\end{assumption}
+
+\begin{assumption}
+The only information we have about the system and its true parameter index $\tparam\sysparam$ is given by observing a random sample of $n$ masked component failures,
+\begin{equation}
+    \left(
+    	\Tuple{\sv_1=\ti_1,\rvcand_1=\Set{C}[1], \RV{A}_1=\alpha_1}, \ldots, 
+    	\Tuple{\sv_n=\ti_n,\rvcand_n=\Set{C}[n], \RV{A}_n=\alpha_n}
+    \right)\,.
+\end{equation}
+\end{assumption}
+
+Given the assumed model, the object of statistical interest is the (unknown) true parameter index $\tparam\sysparam$.
+Provided an estimate of $\tparam\sysparam$, any characteristic that is a function of $\tparam\sysparam$ can be estimated as a result, thus the primary objective is to use the \emph{information} in a sample of $n$ masked system failures to estimate $\tparam\sysparam$ with some quantifiable uncertainty.
+
+\label{sec:distribution_functions}
+\chapter{Derivation of parametric probability distribution functions}
+\Cref{sec:general_series_system} described the probabilistic model. In what follows, we derive the parametric functions that are entailed by the model.
+
+\section{System lifetime}
+The complement of the cumulative distribution function is the reliability 
+function and is given by the following definition.
+\begin{definition}
+    \label{def:rel_function}
+    Let $\RV{X}$ be some random variable. The probability that $\RV{X} > x$ is 
+    given by its reliability function, denoted by
+    \begin{equation}
+    \label{eq:rel_function}
+    \srv_{\RV{X}}\!\left(x\right) = \Prob{\RV{X} > x} = 1 - 
+    \cdf_{\RV{X}}\!\left(x\right)\,.
+    \end{equation}
+\end{definition}
+
+The reliability function of the system lifetime is given by the following 
+theorem.
+\begin{theorem}
+\label{thm:series_reliability_function}
+The system lifetime has a reliability function given by
+\begin{equation}
+\label{eq:series_reliability_function}
+    \srv_{\sv}\left(\ti \Given \tparam\sysparam\right) = \prod_{j=1}^{m} \srv_j\left(\ti \Given \tparam\sysparam_j\right)\,,
+\end{equation}
+where $\srv_j$ is the reliability function of the \jth component.
+\end{theorem}
+\begin{proof}
+By \cref{def:rel_function}, the reliability function is given by
+\begin{equation}
+    \srv_{\sv}\left(\ti \Given \tparam\sysparam\right) = \Prob{\sv > \ti}\,.
+\end{equation}
+By \cref{eq:series_system_lifetime}, $\sv = \min(\cv_1,\,,\ldots\,,\cv_m)$. Performing this substitution yields
+\begin{align}
+    \srv_{\sv}(\ti \Given \tparam{\sysparam}) = \Prob{\min(\cv_1,\,,\ldots\,, \cv_m) > \ti}\,.
+\end{align}
+For the minimum to be larger than $\ti$, every component must be larger than $t$, leading to the equivalent equation
+\begin{equation}
+    \srv_{\sv}(\ti \Given \tparam{\sysparam}) = \Prob{\cv_1 > \ti, \ldots, \cv_m > \ti}\,.
+\end{equation}
+By \cref{asm:indep}, the component lifetimes are independent, thus by the axioms of probability
+\begin{equation}
+    \srv_{\sv}\left(\ti \Given \tparam{\sysparam}\right) = \Prob{\cv_1 > \ti} \cdots \Prob{\cv_m > \ti}\,.
+\end{equation}
+By \cref{def:general_reliability_function}, the probability that $\cv_j > \ti$ is equivalent to the reliability function of the \jth component lifetime evaluated at $\ti$. Performing these substitutions results in
+\begin{equation}
+    \srv_{\sv}\left(t \Given \tparam{\sysparam}\right) = \prod_{j=1}^{m} \srv_j(t \Given \tparam{\sysparam}_j)\,.
+\end{equation}
+\end{proof}
+The probability density function of the system's lifetime is given by the following theorem.
+\begin{theorem}
+\label{thm:series_pdf_function}
+The lifetime of the $m$-out-of-$m$ system has a probability density function given by
+\begin{equation}
+\label{eq:series_pdf_function}
+    \spdf(t \Given \tparam\sysparam) = \sum_{j=1}^{m} \left(\pdf_j(t \Given \tparam{\sysparam}_j)
+    \prod_{\substack{k=1\\k \neq j}}^{m} \srv_k(t \Given \tparam{\sysparam}_k)\right )\,,
+\end{equation}
+where $\srv_k$ and $\pdf_k$ are respectively the reliability and probability 
+density functions of the \kth component.
+\end{theorem}
+\begin{proof}
+By \cref{eq:f_and_R_related},
+\begin{equation}
+    \spdf\left(t \Given \tparam\sysparam\right) = -\derivative{t} \srv_{\sv}\left(t \Given \tparam\sysparam\right)\,.
+\end{equation}
+By \cref{thm:series_reliability_function}, this is equivalent to
+\begin{equation}
+    \spdf\left(t \Given \tparam\sysparam\right) = -\derivative{t} \prod_{j=1}^{m} \srv_j\left(t \Given \tparam{\sysparam}_j\right)\,.
+\end{equation}
+By the product rule, this is equivalent to
+\begin{equation}
+\begin{split}
+    \spdf(t) &= \derivative{t} \srv_1\left(t\Given \tparam{\sysparam}_1\right) \prod_{j=2}^{m} \srv_j\left(t \Given \tparam{\sysparam}_j\right)\\
+    & \qquad - \srv_1\left(t \Given \tparam{\sysparam}_1\right) \derivative{t} \prod_{j=2}^{m} \srv_j\left(t \Given \tparam{\sysparam}_j\right)\,.
+\end{split}
+\end{equation}
+By \cref{eq:f_and_R_related}, we can substitute $-\derivative{t} \srv_1\left(t \Given \tparam{\sysparam}_1\right)$ with $\pdf_1\left(t \Given \tparam{\sysparam}_1\right)$, resulting in
+\begin{equation}
+\begin{split}
+    \spdf(t) &= \pdf_1(t) \prod_{j=2}^{m} \srv_j\left(t \Given \tparam{\sysparam}_j\right)\\
+    & \qquad - \srv_1\left(t \Given \tparam{\sysparam}_1\right) \derivative{t} \prod_{j=2}^{m} \srv_j\left(t \Given \tparam{\sysparam}_j\right)\,.
+\end{split}
+\end{equation}
+
+Applying the product rule again results in
+\begin{equation}
+\begin{split}
+    \spdf(t \Given \tparam\sysparam) &= \pdf_1\left(t \Given \tparam{\sysparam}_1\right) \prod_{\substack{j=2}}^{m} \srv_j\left(t \Given \tparam{\sysparam}_j\right)\\
+    & \qquad + \pdf_2\left(t \Given \tparam{\sysparam}_2\right) \prod_{\substack{j=1\\j \neq 2}}^{m} \srv_j\left(t \Given \tparam{\sysparam}_j\right)\\
+    & \qquad - \srv_1\left(t \Given \tparam{\sysparam}_1\right) \srv_2\left(t \Given \tparam{\sysparam}_2\right) \derivative{t} \prod_{j=3}^{m} \srv_j\left(t \Given \tparam{\sysparam}_j\right)\,.
+\end{split}
+\end{equation}
+We see a pattern emerge. Applying the product rule $m-1$ times results in
+\begin{align}
+\begin{split}
+    \spdf\left(t \Given \tparam\sysparam\right)
+        &= \sum_{j=1}^{m-1} \pdf_j\left(t \Given \tparam{\sysparam}_j\right) \prod_{\substack{k=1\\k \neq j}}^{m} \srv_k\left(t \Given \tparam{\sysparam}_k \right)\\
+        & \qquad - \prod_{j=1}^{m-1} \srv_j\left(t \Given \tparam{\sysparam}_j\right) \derivative{t} \srv_m\left(t \Given \tparam{\sysparam}_m\right)\\
+        &= \sum_{j=1}^{m} \pdf_j\left(t \Given \tparam{\sysparam}_j\right) \prod_{\substack{k=1\\k \neq j}}^{m} \srv_k\left(t \Given \tparam{\sysparam}_k\right)\,.
+\end{split}
+\end{align}
+\end{proof}
+
+The failure rate function simplifies some of the subsequent material and is given by the following definition.
+\begin{definition}
+\label{def:failure_rate}
+A random variable $\RV{X}$ with a probability density function $\pdf_{\RV{X}}$ 
+and reliability function $\srv_{\RV{X}}$ has a failure rate function given by
+\begin{equation}
+\label{eq:def_failure_rate}
+    \haz_{\RV{X}}(t) = \frac{\pdf_{\RV{X}}(t)}{\srv_{\RV{X}}(t)}\,.
+\end{equation}
+\end{definition}
+
+The failure rate function of the system lifetime is given by the following theorem.
+\begin{theorem}
+\label{thm:series_failure_rate_function}
+The system lifetime has a failure rate function given by
+\begin{equation}
+\label{eq:series_failure_rate_function}
+    \haz_{\sv}(t \Given \tparam\sysparam) =
+        \sum_{j=1}^{m}
+            \haz_j(t \Given \tparam{\sysparam}_j)
+\end{equation}
+where $\haz_j$ is the failure rate function of the \jth component lifetime.
+\end{theorem}
+\begin{proof}
+By \cref{eq:def_failure_rate}, the failure rate function for the system is given by
+\begin{equation}
+     \haz_{\sv}(t \Given \tparam\sysparam) = \frac{\spdf(t \Given \tparam\sysparam)}{\srv_{\sv}(t \Given \tparam\sysparam)}\,.
+\end{equation}
+Plugging in these parametric functions results in
+\begin{equation}
+\haz_{\sv}(t \Given \tparam{\sysparam}) = \frac{\sum_{j=1}^{m} \left(\pdf_j(t \Given \tparam{\sysparam}_j) \prod_{\substack{k=1\\k \neq j}}^{m} \srv_k(t \Given \tparam{\sysparam}_k)\right )}{\prod_{j=1}^{m} \srv_j(t \Given \tparam{\sysparam}_j)}\,,
+\end{equation}
+which can be simplified to
+\begin{align}
+\haz_{\sv}(t \Given \tparam{\sysparam})
+    &= \sum_{j=1}^{m} \pdf_j(t \Given \tparam{\sysparam}_j) / \srv_j(t \Given \tparam{\sysparam}_j)\\
+    &= \sum_{j=1}^{m} \haz_j(t \Given \tparam{\sysparam}_j)\,.
+\end{align}
+\end{proof}
+
+\section{Component cause of system failure}
+\label{sec:joint_dist}
+According to \cref{def:comp_cause}, the component responsible for a system failure is given by the discrete random variable $\RV{K}$. The joint likelihood that component $k$ is the cause of a system failure occurring at time $t$ is given by the following theorem.
+\begin{theorem}
+\label{thm:general_joint_density}
+The joint probability density function of random variable $\RV{K}$ and random system lifetime $\sv$ is given by
+\begin{equation}
+\label{eq:general_joint_density}
+    \pdf_{\RV{K}, \sv}(k, t \Given \tparam{\sysparam}) = \pdf_k(t \Given \tparam\sysparam) \prod_{\substack{j=1\\j \neq k}}^{m} \srv_j(t \Given \tparam\sysparam)\,,
+\end{equation}
+where $\pdf_k$ and $\srv_k$ are respectively the probability density and 
+reliability functions of the \kth component.
+\end{theorem}
+\begin{proof}
+See \cref{appendix:alternative_joint_proof} for a detailed proof. However, a 
+quick justification follows. The likelihood that component $k$ is the cause of 
+a system failure at time $t$ is equivalent to the likelihood that component $k$ 
+fails at time $t$ and the other components do not fail before time $t$. 
+According to \cref{asm:indep}, the random variables $\cv_1, \ldots, \cv_m$ are 
+mutually independent, therefore the likelihood is the product of the 
+probability density function $\pdf_k(t \Given \tparam{\sysparam}_k)$ and the 
+reliability functions $\srv_j(t \Given \tparam{\sysparam}_j)$ for $j \in 
+\SetDiff[\Set{K}][\{ k \}]$.
+\end{proof}
+
+By \cref{def:comp_cause}, if a system failure occurs at time $t$, then each component has a particular probability of being the cause as given by the following theorem.
+\begin{theorem}
+\label{def:general_cond_prob}
+The conditional probability mass function $\pmf_{\RV{K} \Given \sv}$ maps each component $k \in \Set{K}$ to the probability that 
+component $k$ is the cause of the system failure at time $t$ and is given by
+\begin{equation}
+\label{eq:general_cond_prob_failure_rate}
+    \pmf_{\RV{K} \Given \sv}\left(k \Given t, \tparam{\sysparam}\right) = \frac{\haz_k\left(t \Given \tparam{\sysparam}_k\right)}{\haz_{\sv}\left(t \Given \tparam{\sysparam}\right)}\,,
+\end{equation}
+where $\haz_j$ and $\haz_{\sv}$ are respectively the failure rate functions of 
+the \jth component and the system.
+\end{theorem}
+\begin{proof}
+By the axioms of probability,
+\begin{equation}
+    \pmf_{\RV{K} \Given \sv}(k \Given t, \tparam\sysparam) =
+    \frac { \pdf_{\RV{K}, \sv}(k, t \Given \tparam{\sysparam}) }
+    { \spdf(t \Given \tparam{\sysparam}) }\,,
+\end{equation}
+thus we wish to show that
+\begin{equation}
+\label{eq:proof_cor_K_given_S_failure_rate}
+    \frac{\haz_k(t \Given \tparam{\sysparam}_k)}{\haz_{\sv}(t \Given \tparam{\sysparam})} =
+    \frac   { \pdf_{\RV{K}, \sv}(k, t \Given \tparam{\sysparam}) }
+            { \spdf(t \Given \tparam{\sysparam}) }\,.
+\end{equation}
+By \cref{thm:series_failure_rate_function}, the system's failure rate function is given by
+\begin{equation*}
+\haz_{\sv}(t \Given \tparam\sysparam) = \sum_{j=1}^{m} \haz_j(t \Given \tparam{\sysparam}_j)\,.
+\tag{\ref{eq:series_failure_rate_function} revisited}
+\end{equation*}
+Performing this substitution results in
+\begin{equation}
+    \frac{\haz_k(t \Given \tparam{\sysparam}_k)}{\haz_{\sv}(t \Given \tparam{\sysparam})} = \frac{\haz_k(t \Given \tparam{\sysparam}_k)}{\sum_{j=1}^{m} \haz_j(t \Given \tparam{\sysparam}_j) }\,.
+\end{equation}
+By \cref{def:failure_rate}, the failure rate function of the \pth component is given by
+\begin{equation}
+    \haz_p(t \Given \tparam{\sysparam}_p) = \frac{\pdf_p(t \Given \tparam{\sysparam}_p)}{\srv_p(t \Given \tparam{\sysparam}_p)}\,.
+\end{equation}
+Performing this substitution results in
+\begin{equation}
+    \frac{\haz_k(t \Given \tparam{\sysparam}_k)}{\haz_{\sv}(t \Given \tparam{\sysparam})} = \frac{\pdf_k(t \Given \tparam{\sysparam}_k)}{\srv_k(t \Given \tparam{\sysparam}_k)} \cdot
+    \left [
+        \underbrace{
+            \frac{\pdf_1(t \Given \tparam{\sysparam}_1)}{\srv_1(t \Given \tparam{\sysparam}_1)} + \cdots + \frac{\pdf_m(t \Given \tparam{\sysparam}_m)}{\srv_m(t \Given \tparam{\sysparam}_m)}
+        }_{A}
+    \right ]^{-1}\,.
+\end{equation}
+To combine the fractions labeled $A$ in the above equation, we make their respective denominators the same, resulting in
+\begin{equation}
+    \frac{\haz_k(t \Given \tparam{\sysparam}_k)}{\haz_{\sv}(t \Given \tparam\sysparam)} =
+    \frac{\pdf_k(t \Given \tparam{\sysparam}_k)}{\underbrace{\srv_k(t \Given \tparam{\sysparam}_k)}_{B}} \cdot
+    \frac{\overbrace{\prod_{j=1}^{m} \srv_j(t \Given \tparam{\sysparam})}^{C} }{\sum_{j=1}^{m} \left [ \prod_{\substack{p=1\\p \neq j}}^{m} \srv_p(t \Given \tparam{\sysparam}_p) \right ] \pdf_j(t \Given \tparam{\sysparam}_j)}\,.
+\end{equation}
+Dividing the part of the above equation labeled $C$ in the numerator by the part labeled $B$ in the denominator results in
+\begin{equation}
+    \frac{\haz_k(t \Given \tparam{\sysparam}_k)}{\haz_{\sv}(t \Given \tparam{\sysparam})} = \frac{\pdf_k(t \Given \tparam{\sysparam}_k) \prod_{\substack{j=1\\j \neq k}}^{m} \srv_j(t \Given \tparam{\sysparam}_j)} {\sum_{j=1}^{m} \pdf_j(t \Given \tparam{\sysparam}_j) \prod_{\substack{p=1\\p \neq j}}^{m} \srv_p(t \Given \tparam{\sysparam}_p)}\,.
+\end{equation}
+By \cref{eq:series_pdf_function}, the denominator in the above equation is the density $\spdf(t \Given \tparam\sysparam)$ and, by \cref{eq:general_joint_density}, the numerator is the joint density $\pdf_{\RV{K}, \sv}(k, t \Given \tparam\sysparam)$. Performing these substitutions results in
+\begin{equation}
+\frac{\haz_k(t \Given \tparam{\sysparam}_k)}{\haz_{\sv}(t \Given \tparam\sysparam)} = \frac{\pdf_{\RV{K}, \sv}(k, t \Given \tparam\sysparam)}{\spdf(t \Given \tparam\sysparam)}\,.
+\end{equation}
+\end{proof}
+\begin{corollary}
+The joint probability density function of random variable $\RV{K}$ and random system lifetime $\sv$ is given by
+\begin{equation}
+\label{eq:k_s_haz}
+    \pdf_{\RV{K}, \sv}(k, t\Given \tparam\sysparam) = \haz_k(t \Given \tparam{\sysparam}_k) \srv_{\sv}(t \Given \tparam\sysparam)\,.
+\end{equation}
+\end{corollary}
+The proof of \cref{eq:k_s_haz} immediately follows from \cref{eq:general_joint_density,eq:general_cond_prob_failure_rate}.
+
+\section{$\alpha$-masked component failures}
+\label{sec:cand_sel}
+The series system consists of $m$ components with random lifetimes $\cv_1,\ldots,\cv_m$.
+These random variables are \emph{latent} (unobservable) and thus, for instance, we cannot know with certainty from a sample of masked system failures which component failed.
+
+The $\alpha$-candidate sets have a conditional probability distribution given by the following theorem.
+\begin{theorem}
+The random $\alpha$-candidate set $\rvcand$ conditioned on $\RV{W}$, $\RV{K}$, and $\RV{A}$ has a probability distribution given by
+\begin{equation}
+\label{eq:rvcand_given_k_w_a}
+	\pmf_{\rvcand \Given \RV{K}, \RV{W}, \RV{A}}(\cand \Given k, w, \alpha) = \frac{\alpha}{\binom{m-1}{w-1}} \SetIndicator{\cand}(k) + \frac{1-\alpha}{\binom{m-1}{w}} \SetIndicator{\SetComplement[\cand]}(k)
+\end{equation}
+with a sample space $\candsw{w}$.
+\end{theorem}
+\begin{proof}
+	Suppose we condition on $\RV{K}=k$, i.e., the \kth-component failed.
+	By \cref{def:}, a random $\alpha$-candidate set $\rvcand$ contains $k$ with probability $\alpha$ and does \emph{not} contain $k$ with probability $1-\alpha$.	
+	
+	We partition the sample space $\candsw{w} \coloneqq \left[\Set{K}\right]^w$ into the set of sets containing $k$ and its complement.
+	There are $^{m-1}C_{w-1}$ candidate sets that contain $k$ since we may place $k$ in the ``first'' position and of the remaining $w-1$ positions uniformly choosing any of the remaining $m-1$ components.
+	There are $^{m-1}C_w$ candidate sets that do not contain $k$ since, by removing $k$ from the set of $m$ choices, uniformly choosing $w$ of the remaining $m-1$ components.
+
+	By definition, the outcomes in the partition containing $k$ occur with probability $\alpha$ and we assign uniform probability $(^{m-1}C_{w-1})^{-1}$ to any such outcome.
+	By the product rule the joint probability that a random $\alpha$-candidate set contains $k$ is
+	\begin{equation}
+		\frac{\alpha}{\binom{m-1}{w-1}}\,.
+	\end{equation}
+	
+	Similarly, the outcomes in the partition not containing $k$ occur with probability $1-\alpha$ and we assign uniform probability $(^{m-1}C_w)^{-1}$ to any such outcome.
+	By the product rule the joint probability that a random $\alpha$-candidate set does not contain $k$ is
+	\begin{equation}
+		\frac{1-\alpha}{\binom{m-1}{w}}\,.
+	\end{equation}
+\end{proof}
+
+\begin{remark}
+The $\alpha$-candidate set model is somewhat naive since if $\SetIndicator{\cand_1}(k) = \SetIndicator{\cand_2}(k)$ then
+\begin{equation}
+\pmf_{\rvcand \Given \RV{K}, \sv, \RV{W}, \RV{A}}(\cand_1 \Given k, t_1, w, \alpha) = \pmf_{\rvcand \Given \RV{K}, \sv, \RV{W}, \RV{A}}(\cand_2 \Given k, t_2, w, \alpha)\,.
+\end{equation}
+That is, $\alpha$-masked component failures that include the failed component are equally likely to be chosen and $\rvcand$ given $\RV{K}$ is conditionally independent of the system failure time $\sv$.
+A more informative generative model of masked component failures may preferentially include components that are more likely to fail at the given system failure time.
+\end{remark}
+
+The random variable $\RV{K}$ is \emph{latent}.
+In a masked system failure sample, the only observable is the candidate set, the system failure time, and the expected accuracy $\alpha$ of the $\alpha$-masked candidate set.
+The joint probability density function of $\rvcand$ and $\sv$ conditioned on $\RV{W}$ and $\RV{A}$ is given by the following theorem.
+\begin{theorem}
+The conditional joint probability density function of random variable $\rvcand$ and random system lifetime $\sv$ given $\RV{W} = w$ is given by
+\begin{equation}
+\label{eq:joint_alpha}
+\pdf_{\rvcand,\sv \Given \RV{W}, \RV{A}}(\cand,t \Given w, \alpha, \tparam\sysparam) =
+	\sum_{k=1}^{m} \pmf_{\rvcand \Given \RV{K}, \RV{W}, \RV{A}}(\cand \Given k, w, \alpha) \pdf_{\RV{K},\sv}(k,t \Given \tparam\sysparam)
+\end{equation}
+with a sample space $\candsw{w} \times (0,\infty)$.
+\Cref{eq:joint_alpha} may be rewritten as
+\begin{equation}
+\label{eq:joint_alpha_2}
+\mathsmaller{\pdf_{\rvcand,\sv \Given \RV{W}, \RV{A}}(\cand,t \Given w, \alpha, \tparam\sysparam) =
+\frac{\srv_{\sv}(t \Given \tparam\sysparam)}{\binom{m-1}{w}}
+\left(
+	(1-\alpha) \haz_{\sv}(t \Given \tparam\sysparam) - \left(1-\alpha \frac{m}{w}\right) \sum_{k \in \cand} \haz_k(t \Given \tparam\sysparam_k)
+\right)}\,.
+\end{equation}
+\end{theorem}
+\begin{proof}
+By the laws of probability, the joint distribution of $\rvcand$, $\RV{K}$ and $\sv$ conditioned on $\RV{W}$ and $\RV{A}$ may be written as
+\begin{equation}
+	\pdf_{\rvcand,\RV{K},\sv \Given \RV{W}, \RV{A}}(\cand,k,t \Given w, \alpha, \tparam\sysparam) = \pdf_{\rvcand \Given \RV{K}, \sv, \RV{W}, \RV{A}}(\cand \Given k, t, w, \alpha, \tparam\sysparam) \pdf_{\RV{K},\sv \Given \RV{W}, \RV{A}}(k,t \Given w, \alpha, \tparam\sysparam)\,.
+\end{equation}
+
+We observe that $\rvcand$ conditioned on $\RV{K}$, $\RV{W}$, and $\RV{A}$ is independent of $\sv$ and the true parameter index $\tparam\sysparam$ and the joint distribution of $\sv$ and $\RV{K}$ is independent of $\RV{W}$ and $\RV{A}$.
+Thus, we simplify the joint probability density function to
+\begin{equation}
+\pdf_{\rvcand,\RV{K},\sv \Given \RV{W}, \RV{A}}(\cand,k,t \Given w, \alpha, \tparam\sysparam) = \pmf_{\rvcand \Given \RV{K}, \RV{W}, \RV{A}}(\cand \Given k, w, \alpha) \pdf_{\RV{K},\sv}(k,t \Given \tparam\sysparam)\,.
+\end{equation}
+
+The marginal joint distribution of $\rvcand$ and $\sv$ given $\RV{W}$ is calculated by summing the joint probability distribution over $\RV{K}$ which has a sample space $\{1,\ldots,m\}$.
+\end{proof}
+
+
+The \emph{optimal} case is provided by the $1$-masked candidate set as given by the following corollary.
+\begin{corollary}
+	\label{thm:general_joint_likelihood_cand}
+	The joint probability density of $\rvcand$ and $\sv$ conditioned on $\RV{W} = w$ and $\alpha=1$ is given by
+	\begin{equation}
+	\label{eq:general_joint_likelihood_cand}
+	\pdf_{\rvcand, \sv \Given \RV{W}, \RV{A}}(\cand, t \Given w, \alpha=1,\tparam\sysparam) = \frac{\srv_{\sv}(t \Given \tparam\sysparam)}{\binom{m-1}{w-1}}	
+	\sum_{k \in \cand} \haz_k\!\left(t \Given \tparam\sysparam\right)
+	\end{equation}
+	with a sample space $\candsw{w} \times (0,\infty)$.
+\end{corollary}
+
+Suppose the candidate sets are chosen \emph{randomly}, which is equivalent to the $\frac{w}{m}$-masked candidate set model.
+\begin{corollary}
+The joint probability density of $\rvcand$ and $\sv$ conditioned on $\RV{W} = w$ and $\alpha=\frac{w}{m}$ is given by
+\begin{equation}
+	\pdf_{\rvcand, \sv \Given \RV{W}, \RV{A}}(\cand, t \Given w, \alpha=w/m,\tparam\sysparam) = \frac{\spdf(t \Given \tparam\sysparam)}{\binom{m}{w}}	
+\end{equation}
+with a sample space $\candsw{w} \times (0,\infty)$.
+\end{corollary}
+\begin{proof}
+Intuitively, since random candidate sets of $w$ components (out of $m$) are randomly chosen, any of the $\binom{m}{w}$ subsets of size $w$ are equally likely and thus the probability mass of each candidate set is just $\binom{m}{w}^{-1}$.
+Taking the product of the density for the system lifetime $\sv$ and $\binom{m}{w}^{-1}$ yields the result.
+However, a more rigorous proof is given by substituting $\alpha$ with $\frac{w}{m}$ in \cref{eq:joint_alpha_2} and simplying, yielding the intermediate result
+\begin{align}
+\pdf_{\rvcand,\sv \Given \RV{W}, \RV{A}}(\cand,t \Given w, \alpha, \tparam\sysparam)
+	&= \frac{\srv_{\sv}(t \Given \tparam\sysparam)}{\binom{m-1}{w}}
+		\frac{m-w}{m} \haz_{\sv}(t \Given \tparam\sysparam)\\
+	&= \frac{\srv_{\sv}(t \Given \tparam\sysparam)}{\binom{m}{w}}
+	\haz_{\sv}(t \Given \tparam\sysparam)\,.
+\end{align}
+By \cref{dummy}, $\spdf(t \Given \tparam\sysparam) = \srv_{\sv}(t \Given \tparam\sysparam) \haz_{\sv}(t \Given \tparam\sysparam)$.
+Making this substitution yields the result.
+\end{proof}
+
+As intuition suggests, candidate sets that are randomly chosen carry no information about the true parameter index.
+Therefore, the set of informative $\alpha$-masked candidate set models for estimating $\tparam\sysparam$ is indexed by the interval $\frac{w}{m} < \alpha \leq 1$.
+\begin{remark}
+Conversely, suppose we have an \emph{adversarial} diagnostician who generates $\alpha$-masked candidate sets where $\alpha < \frac{w}{m}$.
+Then, the random candidate sets serve as \emph{misinformation}.
+If it is known or estimated that the candidate sets are misinforming, then we may estimate the answer to a related but different question, ''What is $\tparam\sysparam$ not likely to be?''
+While not nearly as informative, the only case in which no information about $\tparam\sysparam$ is conveyed is when candidate sets are randomly selected, i.e., $\alpha = \frac{w}{m}$.
+\end{remark}
+
+
+\begin{corollary}
+	\label{def:general_cond_cand_probability_alpha}
+	The conditional probability mass function $\pmf_{\rvcand \Given \sv, \RV{W}, \RV{A}}$ maps each candidate set $\cand$ to the probability that the given candidate set contains the component responsible for the system failure at time $t$.
+	By the axioms of probability,
+	\begin{equation}
+	\begin{split}
+	\label{eq:general_cond_cand_probability_alpha}
+	\pmf_{\rvcand \Given \sv, \RV{W}, \RV{A}}(\cand \Given t, w, \alpha, \tparam\sysparam) =
+	\frac{(1-\alpha) \haz_{\sv}(t \Given \tparam\sysparam) - (1-\alpha\frac{m}{w}) \sum_{j \in \cand} \haz_j(t \Given \tparam\sysparam_j)}{\binom{m-1}{w} \haz_{\sv}(t \Given \tparam\sysparam)}
+	\SetIndicator{\candsw{w}}(\cand)\,,
+	\end{split}
+	\end{equation}
+	where $\haz_{\sv}$ and $\haz_j$ are the failure rate functions of the system 
+	and the \jth component respectively.
+\end{corollary}
+\begin{proof}
+Suppose it is given that $\RV{W} = w$ and $\RV{A} = \alpha$.
+By \cref{asm:indep_W_S, asm:indep_A_S} and the axioms of probability, we may rewrite the joint distribution of $\rvcand$ and $\sv$ as
+\begin{equation}
+%\label{eq:general_joint_cond_w_cand_likelihood}
+\pdf_{\rvcand,\sv \Given \RV{W}, \RV{A}}(\cand, t \Given w, \alpha, \tparam\sysparam) =
+\pmf_{\rvcand \Given \sv, \RV{W}, \RV{A}}(\cand \Given t, w, \alpha, \tparam\sysparam) \spdf(t \Given \tparam\sysparam)\,,
+\end{equation}
+which may be rearranged to
+\begin{equation}
+\pmf_{\rvcand \Given \sv, \RV{W}, \RV{A}}(\cand \Given t, w, \alpha, \tparam\sysparam) = \frac
+{
+	\pdf_{\rvcand, \sv \Given \RV{W}, \RV{A}}(\cand, t \Given w, \alpha, \tparam\sysparam)
+}
+{
+	\spdf(t \Given \tparam\sysparam)
+}\,,
+\end{equation}
+where $\pdf_{\rvcand, \sv \Given \RV{W}, \RV{A}}$ is the joint probability density function given by \cref{thm:general_joint_likelihood_cand}.
+Making this substitution and further simplifying yields the result.
+\end{proof}
+
+By \cref{asm:indep_W_S}, the random lifetime $\sv$ and the cardinality of the random candidate set $\RV{W} = \Card{\rvcand}$ are independent, thus by the axioms of probability the joint density of $\rvcand$, $\sv$, and $\RV{W}$ is given by
+\begin{equation}
+\pdf_{\rvcand, \sv, \RV{W} \Given \RV{A}}(\cand, t, w \Given \alpha, \tparam\sysparam) = \pmf_{\rvcand \Given \sv, \RV{W}, \RV{A}}(\cand \Given t, w, \alpha, \tparam\sysparam) \pmf_{\RV{W} \Given \RV{A}}(w \Given \alpha) \spdf(t \Given \tparam\sysparam)\,.
+\end{equation}
+
+\begin{corollary}
+\label{def:general_cond_cand_probability}
+When $\alpha=1$, $\pmf_{\rvcand \Given \sv, \RV{W}, \RV{A}}$ simplifies to 
+\begin{equation}
+\label{eq:general_cond_cand_probability}
+\pmf_{\rvcand \Given \sv, \RV{W}, \RV{A}}(\cand \Given t, w, \alpha=1, \tparam\sysparam) =
+\frac{\SetIndicator{\candsw{w}}(\cand)}{\binom{m-1}{w-1}}
+\frac
+{
+	\sum_{j \in \cand} \haz_j\left(t \Given \tparam\sysparam_j\right)
+}
+{
+	\haz_{\sv}\left(t \Given \tparam\sysparam\right)
+}\,,
+\end{equation}
+where $\haz_{\sv}$ and $\haz_j$ are the failure rate functions of the system 
+and the \jth component respectively.
+\end{corollary}
+
+
+
+
+\begin{corollary}
+\label{cor:K_given_S_indep_W_A_C}
+The random component failure $\RV{K}$ given $\sv$ is conditionally independent of $\rvcand$, $\RV{W}$, and $\RV{A}$, i.e.,
+\begin{equation}
+	\pmf_{\RV{K} \Given \rvcand, \sv, \RV{W}, \RV{A}}(k \Given \cand, t, w, \alpha, \tparam\sysparam) = \pmf_{\RV{K} \Given \sv}(k \Given t, \tparam\sysparam)\,.
+\end{equation}
+\end{corollary}
+See \cref{app:K_given_S_indep_W_A_C} for a proof.
+
+
+\chapter{Likelihood and Fisher information}
+\label{sec:general_fisher_info}
+Given a random variable $\RV{X}$, the \emph{information content} of observing a particular realization $\RV{X} = x$ is defined as
+\begin{equation}
+\info_{\RV{X}}(x) \coloneqq -\log \pmf_{\RV{X}}(x)\,.
+\end{equation}
+Intuitively, the more likely the outcome $x$, the less information content of observing $x$, e.g., if $x$ is certain then observing $x$ conveys no information.
+
+The \emph{expected value} of the information content is given by the following definition.
+\begin{definition}
+The \emph{entropy} of discrete random $\RV{X}$ is a measure of uncertainty defined as
+\begin{equation}
+\entropy(\RV{X}) \coloneqq \Expect{\info_{\RV{X}}(\RV{X})} = \Expect{- \log \pmf_{\RV{X}}(\RV{X})}\,.
+\end{equation}
+\end{definition}
+
+The following example may provide some intuition about the basis of the entropy metric.
+\begin{example}
+\label{ex:entropy1}
+Assuming the only information diagnosticians have about a series system is provided by the distribution of $\RV{K}$, the lower-bound on average number of ``yes'' or ``no'' questions needed to determine the component cause of a failed system is given by $\entropy(\RV{K})$ (where the \emph{logarithm} is base-$2$).
+In the worst-case, $\RV{K}$ is uniformly distributed and $\entropy(\RV{K}) = \log_2 m$.
+\end{example}
+The expectation $\Expect{-\log \pdf_{\RV{X}(x)}}$ of a \emph{continuous} random variable $\RV{X}$ is called \emph{differential} entropy.
+Since \emph{negative} values are possible in this case, the previous example no longer applies but the metric is still useful.
+
+Suppose we are interested in the entropy of $\RV{X}$ given $\RV{Y} = y$,
+\begin{equation}
+\entropy(\RV{X} \Given \RV{Y} = y) \coloneqq \Expect{-\log \pdf_{\RV{X} \given \RV{Y}}(\RV{X} \given y)}\,.
+\end{equation}
+More information is never expected to increase the uncertainty, i.e., $\entropy(\RV{X} \Given \RV{Y} = y) \leq \entropy(\RV{X})$, and if $\RV{X}$ and $\RV{Y}$ are statistically dependent then $\entropy(\RV{X} \Given \RV{Y} = y) < \entropy(\RV{X})$.
+
+If the diagnosticians described in example~\ref{ex:entropy1} are provided with the additional information that the system failed at time $t$, then the lower-bound on the average number of questions required to isolate the component cause is given by $\entropy(\RV{K} \Given \sv = t) \leq \entropy(\RV{K})$.
+
+If we \emph{average} over all of the values $\RV{Y}$ may realize, we get the conditional entropy
+\begin{equation}
+	\entropy(\RV{X} \Given \RV{Y}) \coloneqq \Expect{-\log \pdf_{\RV{X} \given \RV{Y}}(\RV{X} \given \RV{Y})}\,.
+%&\coloneqq \sum_{y \in \Set{Y}} \pdf_{\RV{Y}}(y) \entropy(\RV{X} \Given \RV{Y} = y)\\
+%&= \!\! \sum_{ x \in \Set{X}, y \in \Set{Y}} \!\! \pdf_{\RV{X},\RV{Y}}(x,y) \log_2 \pdf_{\RV{X} \Given \RV{Y}}(x \Given y)\,.
+\end{equation}
+
+The joint entropy of $\RV{X}$ and $\RV{Y}$ is defined as
+\begin{equation}
+\entropy(\RV{X}, \RV{Y}) \coloneqq \Expect{- \log \pdf_{\RV{X},\RV{Y}}(\RV{X},\RV{Y})}
+\end{equation}
+which may also be computed by
+\begin{equation}
+	\entropy(\RV{X},\RV{Y}) = \entropy(\RV{X} \Given \RV{Y}) + \entropy(\RV{Y})\,.
+\end{equation}
+If $\RV{X}$ and $\RV{Y}$ are \emph{statistically independent}, then $\entropy(\RV{X} \Given \RV{Y}) = \entropy(\RV{X})$ and $\entropy(\RV{Y} \Given \RV{X}) = \entropy(\RV{Y})$.
+
+When we make an \emph{observation} of a random variable, the entropy is a measure of the \emph{expected information content} provided by the observation.
+The expected information provided by a sample of $n$ masked system failures is given by the following theorem.
+%\begin{definition}
+%\label{def:entropy}
+%\begin{equation}
+%\entropy(\rvcand, \sv \Given \RV{W} = w, \RV{A} = \alpha) = - \int_{0}^{\infty} \sum_{\cand \in \candsw{w}} \log_2 \PDF{\cand,t \Given w, \alpha, %\tparam\sysparam}[\rvcand,\sv \Given \RV{W}] \PDF{\cand,t \Given w, \alpha, \tparam\sysparam}[\rvcand,\sv \Given \RV{W}] \dif t
+%\end{equation}
+%\end{definition}
+\begin{theorem}
+Since $\sv$ is statistically independent of $\RV{W}$ and $\RV{A}$,
+\begin{equation}
+	\entropy(\rvcand, \sv \Given \RV{W} = w, \RV{A} = \alpha) = \entropy(\rvcand \Given \sv, \RV{W} = w, \RV{A} = \alpha) + \entropy(\sv)\,.
+\end{equation}
+\end{theorem}
+
+Given some distribution $\sv$, the \emph{maximum} entropy is when the failed component is in the candidate set by random chance, $\RV{A} = \frac{w}{m}$, as given by
+\begin{equation}
+\entropy(\rvcand, \sv \Given \RV{W}=w,\RV{A}=w/m) = \entropy(\sv) + \log_2 \! \binom{m}{w}
+\end{equation}
+and the \emph{minimum} entropy is when the failed component is \emph{certainly} in the candidate set, $\RV{A}=1$, as given by
+\begin{equation}
+	\entropy(\rvcand, \sv \Given \RV{W}=w,\RV{A}=1) = \entropy(\sv) + \entropy(\rvcand \Given \sv, \RV{W} = w, \RV{A} = 1)
+\end{equation}
+\begin{proof}
+The ...
+\end{proof}
+
+The rate of change of the entropy with respect to $\alpha$ is given by the following theorem.
+\begin{theorem}
+	test
+\end{theorem}
+
+
+
+In what follows, we frequently prefer to work with vectors rather than matrices.
+\begin{definition}
+\label{def:vtopr}
+Let $\vtopr \colon \mathbb{R}^{m \times q} \mapsto \mathbb{R}^{m \cdot q}$ denote the linear transformation of a matrix of $m$ rows and $q$ columns into a column vector of $m \cdot q$ elements, where consecutive matrix rows are placed side by side.
+Additionally, the \jth component of a vector $\vec{a}$ is denoted by $\left[\vec{a}\right]_j$ or $a_j$.
+\end{definition}
+\begin{notation}
+By \cref{def:vtopr}, $\tparam\sysparam$ has an equivalent representation denoted by $\tparam\sysparamvec \equiv \vtopr\!\left(\tparam\sysparam\right)$ and the \jth component of $\tparam\sysparamvec$ is denoted by $\tparam\paramv_j$.
+We use matrix and vector representations interchangeably.
+\end{notation}
+
+
+
+
+
+
+
+The likelihood of observing a particular realization $\mfs = \Tuple{\cand_1,t_1},\ldots,\Tuple{\cand_n,t_n}$ conditioned on $\RV{W} = w$ and $\RV{A} = \alpha$ is given by the following definition.
+\begin{definition}
+	\label{def:msft_joint_pdf}
+	A random sample of $n$ masked system failure times conditioned on candidate sets of cardinality $w$ has a joint probability density given by
+	\begin{equation}
+	\label{eq:msft_joint_pdf}
+	\PDF{\Tuple{\cand_1,t_1},\ldots,\Tuple{\cand_n,t_n} \Given w, \alpha, \tparam{\sysparam}}[\mfs \Given \RV{W}, \RV{A}] =
+	\prod_{i=1}^{n} \spdf(t_i \Given \tparam\sysparam) \cdot \PDF{\cand_i \Given t_i, w, \alpha, \tparam\sysparam}[\rvcand \Given \sv, \RV{W}, \RV{A}]\,,
+	\end{equation}
+	where $\spdf$ is the marginal density given by \cref{thm:series_pdf_function} and $\pdf_{\rvcand \Given \sv, \RV{W}, \RV{A}}$ is the conditional probability mass given by \cref{def:general_cond_cand_probability}.
+\end{definition}
+
+%The generative model of $\mfs$ conditioned on $\RV{W} = w$, which directly follows from \cref{eq:msft_joint_pdf}, is given by \cref{alg:Fn_generator}.
+%\begin{algorithm}[h]
+%	\DontPrintSemicolon
+%	\KwResult{a realization of a masked system failure time with $w$ candidates.}
+%	\KwIn{\\
+%		$\qquad\tparam\sysparam$, the true parameter value.\\
+%		$\qquad w$, the cardinality of the candidate sets.}
+%	\KwOut{\\
+%		$\qquad \mfo$, a realization of $\rvcand, \sv$ conditioned on $\RV{W} = w$.}
+%	\BlankLine
+%	\SetKwProg{func}{Model}{}{}
+%	\func{\genSampleFn{$w, \tparam\sysparam$}}
+%	{
+%		draw a system lifetime $t \sim \spdf(\;\cdot \Given \sysparam)$\;
+%		draw a candidate set $\cand \sim \pmf_{\rvcand \Given \sv, \RV{W}}(\; \cdot \Given t, w, \sysparam)$\;
+%		$\mfo \gets \Pair{t}{\cand}$\;
+%		\KwRet{$\mfo$}
+%	}
+%	\caption{Generative model of a masked system failure time with $w$ candidates.}
+%	\label{alg:Fn_generator}
+%\end{algorithm}
+
+A random variable is a measurable function from a probability space to a measurable space of values that the variable can take on.
+Such a space of values are is called a random variable.
+
+
+
+The subsequent material makes a few assumptions, denoted \emph{regularity conditions}, given by the following.
+\begin{assumption}
+\label{def:reg_cond}
+The following regularity conditions hold for the $\pfam$-family of the series system:
+\begin{enumerate}
+    \item $\tparam\sysparamvec$ is interior to the parameter support $\Omega$.
+    \item The log-likelihood $\Fun{\ell}$ is continuous, thrice differentiable, and bounded.
+    \item{
+        The true parameter value $\tparam\sysparamvec$ is identified, i.e.,
+        \begin{equation}
+            \tparam\sysparamvec = \argmax_{\sysparamvec \in \Omega} \Expect{\ln \pdf_{\rvcand,\sv \given \RV{W},\RV{A}}(\rvcand, \sv \given w, \alpha, \sysparamvec)}[\tparam\sysparamvec]\,.
+        \end{equation}
+    }
+\end{enumerate}
+\end{assumption}
+
+By \cref{def:msft_joint_pdf}, the probability density that $\mfs = \Tuple{\cand_1,t_1,\alpha},\ldots,\Tuple{\cand_n,t_n,\alpha}$ conditioned on $\RV{W} = w$ and $\RV{A} = \alpha$ is given by
+\begin{equation*}
+\begin{split}
+& \pdf_{\mfs \Given \RV{W}, \RV{A}}\!\left(\Tuple{\cand_1,t_1},\ldots,\Tuple{\cand_n,t_n} \Given w, \alpha, \tparam{\sysparamvec}\right) =\\
+    & \qquad \prod_{i=1}^{n} \pdf_{\rvcand,\sv \Given \RV{W},\RV{A}}(\cand_i, t_i \Given w, \alpha, \tparam\sysparamvec)\,.
+\end{split}
+\tag{\ref{eq:msft_joint_pdf} revisited}
+\end{equation*}
+
+If we fix the sample of masked system failures and allow the parameter $\sysparamvec$ to change, we have the likelihood function.
+\begin{definition}
+\label{def:likelihood_func}
+The likelihood function represents the \emph{likelihood} of parameter index $\sysparamvec$ with $\mfs$ fixed at $\Tuple{\cand_1,t_1},\ldots,\Tuple{\cand_n,t_n}$ is given by
+\begin{equation}
+    \likelihood_n(\sysparamvec \Given w, \alpha) \coloneqq \prod_{i=1}^{n} \pdf_{\rvcand, \sv \Given \RV{W}, \RV{A}}(\cand_i, t_i \Given w, \alpha, \sysparamvec)\,.
+\end{equation}
+\end{definition}
+The likelihood is a measure of the extent to which the given sample provides support for particular values of a parameter in $\pfam$;
+its surface captures all the information there is about $\tparam\sysparamvec$ from the given sample.
+
+The log-likelihood plays a more central role than the likelihood for reasons that will be made clear later on.
+\begin{definition}
+\label{def:general_log_like}
+The log-likelihood with respect to $\sysparamvec$ given a particular $\mfs = \Tuple{\cand_1,t_1,\alpha},\ldots,\Tuple{\cand_n,t_n,\alpha}$ conditioned on $\RV{W} = w$ and $\RV{A} = \alpha$ is given by
+\begin{equation}
+\label{eq:log_like_mle}
+\Fun{\ell_n}(\sysparamvec \Given w, \alpha) = \sum_{i=1}^{n} \ln \pdf_{\rvcand,\sv \Given \RV{W}, \RV{A}}(\cand_i, t_i \Given w, \alpha, \sysparamvec)\,.
+\end{equation}
+\end{definition}
+
+
+
+
+
+
+In subsequent material, we need the gradient operator given by the following definition.
+\begin{definition}[Gradient operator]
+The gradient operator $\nabla \colon \left(\RealSet^q \mapsto \RealSet\right) \mapsto \left(\RealSet^q \mapsto \RealSet^q\right)$ is defined as
+\begin{equation}
+    \nabla \Fun{g} \coloneqq \left (
+        \pd{\Fun{g}}{x_1},\,
+        \ldots\,,
+        \pd{\Fun{g}}{x_q}
+    \right )^{\Transpose}\,.
+\end{equation}
+\end{definition}
+
+The score function is given by the following definition.
+\begin{definition}
+The Fisher's score function, denoted by $\Fun{s_n} \colon \RealSet^{m \cdot q} \mapsto \RealSet^{m \cdot q}$, is the gradient of the log-likelihood function given a sample of $n$ masked failure times,
+\begin{equation}
+\label{eq:score}
+    \Fun{s_n}(\sysparamvec \Given w, \alpha) \coloneqq \nabla \Fun{\ell_n}(\sysparamvec \Given w, \alpha)\,.
+\end{equation}
+\end{definition}
+
+The variance-covariance is given by the following definition.
+\begin{definition}
+A random vector $\RV{\vec{X}} \in \mathbb{R}^{p}$ has a variance-covariance given by
+\begin{equation}
+\label{eq:covariance_matrix_op}
+    \Var{\RV{\vec{X}}} \coloneqq \Expect{
+        \left(\RV{\vec{X}} - \Expect{\RV{\vec{X}}} \right)
+        \left(\RV{\vec{X}} - \Expect{\RV{\vec{X}}} \right)^\Transpose
+    }\,,
+\end{equation}
+which is a $p$-by-$p$ semi-positive definite matrix.
+\end{definition}
+
+The score function given a realization $\mfs = \Tuple{\cand_1,\ti_1,\alpha},\ldots,\Tuple{\cand_n,\ti_n,\alpha}$ given $\RV{W} = w$ and $\RV{A} = \alpha$ is a statistic.
+When we consider it as a function of a random sample, it is a random vector.
+When evaluated at the true parameter index $\tparam\sysparamvec$, it has a variance-covariance given by the following definition.
+\begin{definition}[Fisher information matrix]
+\label{def:info_matrix_var}
+The score as a function of a random sample $\mfs$ given $\RV{W} = w$ and $\RV{A} = \alpha$ has a variance-covariance known as the Fisher information matrix, a $(m \cdot q)$-by-$(m \cdot q)$ matrix denoted by
+\begin{equation}
+\label{eq:info_matrix_var}
+    \infomatrx_{\matrx{n}}(\tparam\sysparamvec \Given w, \alpha)
+        \coloneqq \Var{\Fun{s_n}(\tparam\sysparamvec \Given w, \alpha)}[\tparam\sysparamvec]\,.
+\end{equation}
+\end{definition}
+
+The Hessian is given by the following definition.
+\begin{definition}
+The Hessian operator $\hessian \colon (\RealSet^q \mapsto \RealSet) \mapsto (\RealSet^q \mapsto \RealSet^{q \times q}$ applied to $\Fun{g} \colon \RealSet^q \mapsto \RealSet$ is a $q$-by-$q$ matrix where the $(j,k)$-th element is defined as $\md{\Fun{g}}{2}{x_j}{}{x_k}{}$.
+\end{definition}
+
+
+This is somewhat related to the \emph{entropy}, except instead of the logarithm of the density we take the logarithm of the gradient of the density, i.e.,
+\begin{equation}
+\infomatrx(\tparam\sysparamvec \Given w, \alpha)
+= \Var{\left(\nabla_{\sysparamvec} \ln \pdf_{\rvcand,\sv \given \RV{W}, \RV{A}}(\rvcand,\sv \given w,\alpha,\sysparamvec)\right) \rvert_{\sysparamvec=\tparam\sysparamvec}}[\tparam\sysparamvec]\,.
+\end{equation}
+
+Under the regularity conditions, the information matrix may be computed from the Hessian and is given by the following definition.
+For clarity, the $(i,j)$-th element of the information matrix is given by the following definition.
+\begin{definition}
+The information matrix of $\tparam\sysparam$ given by the joint distribution of $\rvcand$ and $\sv$ conditoned on $\RV{W} = w$ and $\RV{A} = \alpha$ is gyven by the expectation of the negative of the Hessian of the log-likelihood function $\ell$ evaluated at $\tparam\sysparamvec$.
+The $(i,j)$-th element of $\infomatrx$ is given by
+\begin{equation}
+\begin{split}
+\label{eq:info_matrix_el}
+\infomatrx\!\left(\tparam\sysparamvec \Given w, \alpha\right)_{i\,j}
+= -\sum_{\cand \in \candsw{w}} \int_{0}^{\infty}
+{
+	\biggl[
+	\md{}{2}{\paramv_i}{}{\paramv_j}{}
+	\ln \pdf_{\rvcand,\sv \Given \RV{W},\RV{A}}(\cand, t \Given w, \alpha, \sysparamvec)
+	\biggr]
+}
+\bigg \rvert_{\sysparamvec=\tparam\sysparamvec} \times\\
+\qquad \pdf_{\rvcand,\sv \Given \RV{W},\RV{A}}(\cand, t \Given w, \alpha, \tparam\sysparamvec) \dif t\,,
+\end{split}
+\end{equation}
+where $\candsw{w} \times (0,\infty)$ is the sample space.
+\end{definition}
+
+Observe that 
+
+\Cref{dummydef} may be difficult to compute.
+
+\begin{definition}
+The information matrix is given by the expectation of the negative of the Hessian of the log-likelihood function $\ell$ evaluated at $\tparam\sysparamvec$. That is,
+\begin{equation}
+\label{eq:info_matrix}
+    \infomatrxn\left(\tparam\sysparamvec\Given w\right) = -\operatorname{\mathlarger{\expectation}_{\tparam\sysparamvec}}\!\!
+    \left[
+        \eval
+        {
+            \hessian \left(
+                \ell_n\left(\sysparamvec \Given w \right)
+            \right)
+        }_{\sysparamvec=\tparam\sysparamvec} 
+    \right ]\,,
+\end{equation}
+where the expectation is taken with respect to $\tparam\sysparamvec$ and the Hessian is taken with respect to $\sysparamvec$ and then evaluated at $\tparam\sysparamvec$.
+\end{definition}
+
+\begin{notation}
+We denote the Fisher information matrix of $\tparam\sysparamvec$ given $\mfsi{1}$ by
+\begin{equation}
+   \infomatrx\!\left(\tparam\sysparamvec \Given w\right) \coloneqq \infomatrxni{1}\!\left(\tparam\sysparamvec \Given w\right)\,.
+\end{equation}
+\end{notation}
+
+The information matrix is a key quantity in large sample theory; it quantifies the \emph{expected} information (as a reduction of uncertainty) $\mfsw$ carries about $\tparam\sysparamvec$.
+For sufficiently large samples, the log-likelihood has a Taylor series approximation given by
+\begin{equation}
+    \ell_n\left(\sysparamvec \Given w\right) \approx -\frac{1}{2}\left(\sysparamvec - \tparam\sysparamvec\right)^\intercal \infomatrxn\left(\tparam\sysparamvec \Given w\right)\left(\sysparamvec - \tparam\sysparamvec\right)\,,
+\end{equation}
+which is maximized at $\tparam\sysparamvec$.
+Intuitively, the more ``peaked'' the log-likelihood is expected to be at $\tparam\sysparamvec$, the more information a random sample is expected to carry about $\tparam\sysparamvec$.
+
+The information independent samples have about about $\tparam\sysparamvec$ is \emph{additive} as given by the following postulate.
+\begin{postulate}
+\label{post:info_add}
+Algebraically, the Fisher information independent samples have about the true parameter index $\tparam\sysparamvec$  is additive such that
+\begin{equation}
+    \infomatrx_{\matrx{n_1} + \matrx{n_2}}\left(\tparam\sysparamvec \Given 
+    \cdot \; \right) = \infomatrx_{\matrx{n_1}}(\tparam\sysparamvec \Given 
+    \cdot \;) + \infomatrx_{\matrx{n_2}}(\tparam\sysparamvec \Given \cdot \;)\,.
+\end{equation}
+\end{postulate}
+By \cref{post:info_add}, the Fisher information of a random sample of $n$ masked system failure times drawn from $\mfs$ given $\RV{W} = w$ and $\RV{A} = \alpha$ is given by
+\begin{equation}
+    \infomatrx_{\matrx{n}}(\tparam\sysparamvec \Given w, \alpha) = n \infomatrx(\tparam\sysparamvec \Given w, \alpha)\,.
+\end{equation}
+
+
+
+%\begin{remark}
+%A model is a simplification of reality. The model denoted by $\mfs$ is an approximation of some (unknown) underlying generative model, e.g., $\RV{W}$ and %$\sv$ may not truly be independent. Since the \emph{expected} information matrix is an expectation with respect to the simplified model, the \emph{expected} %information is also a simplified approximation. The \emph{observed} information matrix, given by
+%\begin{equation}
+%    \observedn(\mleu \Given \mfso) = - \eval
+%    {
+%        \hessian \left(
+%            \ell\left(\sysparamvec \Given \mfso\right)
+%        \right)
+%    }_{\sysparamvec = \mleu}\,,
+%\end{equation}
+%is a statistic of a real sample and therefore makes less of a commitment to the simplified model. Generally, the \emph{observed} information matrix is %preferable but since we know (by prescription) the underlying generative model,
+%\begin{equation}
+%   \observedn\!\left(\mleu \Given \mfs\right) \xrightarrow{P} \infomatrxn\!\left(\tparam\sysparamvec\right)\,,
+%\end{equation}
+%and so we proceed with the \emph{expected} information matrix.
+%\end{remark}
+
+
+A \emph{masked system failure time} in which the cardinality of the candidate set is distributed according to $\RV{W}$, as described by \cref{dummyref}, has 
+a Fisher information matrix given by the following theorem.
+\begin{theorem}
+	The \emph{Fisher information} matrix of true parameter index $\tparam\sysparamvec$ with respect to a realization of jointly distributed random system lifetime $\sv$ and candidate set $\rvcand$ is given by
+	\begin{equation}
+	\infomatrx(\tparam\sysparamvec) = \kern-1em
+	\sum_{\Tuple{w,\alpha} \in \Set{W} \times \Set{A}} \kern-1em \pmf_{\RV{W},\RV{A}}(w,\alpha) \infomatrx(\tparam\sysparamvec \Given w, \alpha)\,,
+	\end{equation}
+	where $\pmf_{\RV{W}, \RV{A}}$ is the joint distribution of $\RV{W}$ and $\RV{A}$ with a support $\Set{W} \times \Set{A}$.
+\end{theorem}
+\begin{proof}
+	Suppose we have a random sample of $n$ masked system failure times.
+	By \cref{dummyref}, the expected number of sample points that have $w$ $\alpha$-masked candidate sets is given by
+	\begin{equation}
+	q \coloneqq n \cdot \pmf_{\RV{W},\RV{A}}(w,\alpha)\,.
+	\end{equation}
+	Thus, by the additive property of \emph{Fisher information} given by \cref{post:info_add}, the information matrix of $\tparam\sysparam$ conditioned on $q$ such observations is given by
+	\begin{equation}
+	\infomatrx_{\matrx{q}}(\tparam\sysparamvec \Given w, \alpha) = n \cdot \pmf_{\RV{W},\RV{A}}(w,\alpha) \infomatrx(\tparam\sysparamvec \Given w, \alpha)\,.
+	\end{equation}
+	When we sum over the entire support of $\RV{W}$ and $\RV{A}$, we arrive at the \emph{information matrix} of $\tparam\sysparam$ conditioned on $n$ masked candidate sets as given by
+	\begin{equation}
+	\infomatrx_{\matrx{n}}(\tparam\sysparamvec) = \kern-1em
+	\sum_{\Tuple{w,\alpha} \in \Set{W} \times \Set{A}} \kern-1em n \cdot \pmf_{\RV{W},\RV{A}}(w,\alpha) \infomatrx(\tparam\sysparamvec \Given w, \alpha)\,.
+	\end{equation}
+	When we set $n$ to $1$, we get the result
+	\begin{equation}
+	\infomatrx(\tparam\sysparamvec) = \kern-1em
+	\sum_{\Tuple{w,\alpha} \in \Set{W} \times \Set{A}} \kern-1em \pmf_{\RV{W},\RV{A}}(w,\alpha) \infomatrx(\tparam\sysparamvec \Given w, \alpha)\,.
+	\end{equation}
+\end{proof}
+
+\chapter{Sampling distribution of parameter estimators}
+\label{sec:general_estimating_parameters:mle}
+By \cref{def:sysparametric,def:true_param}, the random system lifetime $\sv$ has a probability density function that is a member of the $\pfam$-family with a true parameter index $\tparam\sysparamvec$. Let some estimator of $\tparam\sysparamvec$ be a function of the information in a random sample of $n$ masked system failure times. The estimator is a function of a random sample, thus it has \emph{sampling distribution}, a random vector denoted by $\sampdpt$. That is,
+\begin{equation}
+%\sampdpt = \operatorname{\vec{\psi}}\left(\mfs\right)\,.
+\sampdpt = \Fun{\vec{\psi}}(\mfs)\,.
+\end{equation}
+A particular realization of the estimator is denoted by $\pointest$, i.e., $\sampdpt = \pointest$. All else being equal, we prefer estimators which vary only \emph{slightly} from sample to sample with a \emph{central tendency} around $\tparam\sysparamvec$. That is, we prefer unbiased estimators in which each component has small variance.
+
+The sampling distribution of $\pointest$ has a variance-covariance given by $\Var{\sampdpt}$ (see \cref{eq:covariance_matrix_op}) and a bias given by the following definition.
+\begin{definition}
+The bias of a point estimator $\sampdpt$ is given by
+\begin{equation}
+    \bias{\sampdpt} = \Expect{\sampdpt} - \tparam\sysparamvec\,.
+\end{equation}
+\end{definition}
+We are often faced with a trade-off between bias and variance. A measure of estimator accuracy that is a function of both the bias and the variance is the mean squared error as given by the following definition.
+\begin{definition}
+\label{def:mse}
+The mean squared error (MSE) of the sampling distribution of $\pointest$ is given by
+\begin{equation}
+\label{eq:mse}
+\mse \left( \sampdpt \right) = \Expect{
+        \left (
+            \sampdpt - \tparam\sysparamvec
+        \right )^{\Transpose}
+        \left (
+            \sampdpt - \tparam\sysparamvec
+        \right )}
+\end{equation}
+\end{definition}
+An equivalent way to compute the mean squared error is given by the following postulate.
+\begin{postulate}
+The mean squared error of the sampling distribution of $\pointest$ as given by \cref{def:mse} is equivalent to
+\begin{equation}
+\label{eq:mse_bias_var}
+\mse \left( \sampdpt \right) = \trace\left(\Var{\sampdpt}\right) +
+    \bias^2 \bigl(\sampdpt \bigr)\,,
+\end{equation}
+where $\trace\left(\matrx{A}\right)$ computes the sum of the diagonal elements of square matrix $\matrx{A}$.
+\end{postulate}
+
+\emph{Fisher information} reduces the uncertainty about $\tparam\sysparamvec$.
+The \emph{minimum-variance unbiased estimator} (UMVUE) has a lower-bound given by the inverse of the \emph{Fisher information matrix}, denoted the \emph{Cram\'{e}r-Rao lower-bound}.
+The minimum variance obtainable from a random sample of $n$ masked system failure times drawn from $\mfs$ is given by
+\begin{equation}
+\label{eq:crlb}
+    \matrx{CRLB_n} = \frac{1}{n} \infomatrx^{-1}\left(\tparam\sysparamvec 
+    \right)\,.
+\end{equation}
+By \cref{eq:mse_bias_var}, if $\pointest$ is an unbiased estimator of $\tparam\sysparamvec$, then the mean squared error is given by
+\begin{equation}
+\label{eq:mse_unbiased}
+\mse(\sampdpt) = \trace\!\left( \Var{\sampdpt}\right)\,.
+\end{equation}
+
+By \cref{eq:mse_unbiased,eq:crlb}, the mean squared error of any unbiased point 
+estimator of $\tparam\sysparamvec$ in which the only \emph{a priori} 
+information is given by a random sample $\mfs$ has a lower-bound given by the 
+trace of $\matrx{CRLB_n}$,
+\begin{equation}
+\label{eq:mse_lower_bound_total}
+\mse(\sampdpt) \geq \trace\!\left(\matrx{CRLB_n}\right)\,.
+\end{equation}
+
+\section{Maximum likelihood estimator for $\alpha$-masked system failure times each consisting of $w$ components}
+Suppose the only information about the true parameter index $\tparam\sysparamvec$ is given by a sample of $n$ $\alpha$-masked system failure times in which only those system failures with $w$ components with accuracy $\alpha$ are observed.
+The maximum likelihood estimator based on this conditional sample is given in the following definition.
+\begin{definition}
+\label{def:general_mle}
+A parameter index $\mle$ that maximizes the \emph{likelihood} of observing some realization of $\mfs$ given $\RV{W} = w$ and $\RV{A}$ (see \cref{def:msfs}) is a maximum likelihood estimator of $\tparam\sysparamvec$.
+That is,
+\begin{equation}
+\label{eq:general_mle}
+\mle = \argmax_{\sysparamvec \in \vec\Omega} \likelihood_n(\sysparamvec \Given w, \alpha)\,,
+\end{equation}
+where $\vec\Omega$ is the feasible parameter space of the parametric family.
+\end{definition}
+As further justification of \cref{asm:cand_prob}, the maximum likelihood estimator maximizes the likelihood of generating the given $\mfso$ such that for each system failure time a component in the corresponding candidate set is the cause.
+
+The accuracy of the maximum likelihood estimator is a function of the agreement between the model and reality.
+In our model, the primary point of disagreement is given by the assumption of a series system under a parametric model of independent component lifetimes, i.e., $\pfam$.
+However, if the model is a reasonable abstraction of the objects of interest, 
+
+The distribution of candidate sets, i.e, $\rvcand$, disagrees with the way the actual candidate sets are generated.
+	Even if this is the case, the logic that components that are more likely to have caused a system failure \emph{with respect to the parameters} (other ways in which a component might fail are outside the scope of the parametric model)
+
+
+The accuracy of the maximum likelihood estimator is a function of the agreement between the model and reality.
+In our model, the primary point of disagreement is given by the assumption of a series system under a parametric model of independent component lifetimes, i.e., $\pfam$.
+
+Another point of disagreement is the assumption that candidates are generated from the joint probability densities of the component lifetimes $\cv_1,\ldots,\cv_m$ and random candidate sets $\rvcand$.
+However, recall the assumption is that, under the assumed model $\sv = \min(\cv_1,\ldots,\cv_m)$, components that are more likely to have failed at observable time $\sv = t$ are more likely to be in the observable candidate set.
+
+Note that \emph{any other} distribution of candidate sets generates a smaller likelihood given the parametric model.
+We claim this is the \emph{optimal} candidate set since it provides the most information about $\sysparamvec$.
+If the parametric family $\pfam$ is a very accurate model of the reality, then whether the failed component is in the candidate set or not is irrelevant.
+What matters more is that the most likely components are in the candidate set, as that will provide the most information about $\sysparamvec$.
+
+
+
+If this is not a very accurate model, the maximum likelihood estimator may not be a consistent estimator even if .
+Rather, the maximum likelihood estimator will generate an estimate that makes the provided sample the most likely to be generated by the assumed model, i.e., the component lifetimes will not be accurately modeled since they must be modeled in such a way as to make the biased sample more likely.
+
+The logarithm is a monotonically increasing function, thus the parameter value $\mle$ that maximizes $\likelihood$ also maximizes the log-likelihood $\ell$ (see \cref{def:general_log_like}), i.e.,
+\begin{equation}
+\label{eq:general_mle}
+\mle = \argmax_{\sysparamvec \in \vec\Omega} \ell(\sysparamvec \Given w, \mfso)\,.
+\end{equation}
+
+According to Bickel~\cite{bickel}, if the parameter support $\vec\Omega$ of the parametric family is open, the log-likelihood $\ell$ is differentiable with respect to $\sysparamvec$, and $\mle$ exists, then $\mle$ must be a stationary point of $\ell$ as given by
+\begin{equation}
+\label{eq:score_zero}
+\score\left(\mle \Given w, \mfso\right) = \vec{0}\,,
+\end{equation}
+where $\score$ is the score function given by \cref{eq:score}. In cases where there are no closed-form solutions to \cref{eq:score_zero}, iterative methods may be used as described in \cref{appendix:numerical_solution}.
+
+An estimator of $\tparam\sysparamvec$ given a sample $\mfsw = \mfso$ is the maximum likelihood estimator $\mle$ described in \cref{def:general_mle}. Since $\mle$ is a function of the random sample $\mfsw$, it has a \emph{sampling distribution}.
+\begin{definition}
+The \emph{sampling distribution} of $\mle$ is a random vector denoted by $\sampd \in \mathrm{R}^{m \cdot q}$.
+\end{definition}
+
+\sloppy
+The generative model for the maximum likelihood estimator, $\genSampleMLE(w \Given \cdot\;)$, is described by \cref{alg:samp_d_gen_model}. This generative model depends on \genSampleFn, the generative model for the \emph{masked system failure time} as described by \cref{alg:Fn_generator}. Note that in \cref{alg:samp_d_gen_model}, \cref{alg:samp_d_gen_model_argmax} may be approximated with \findmle, a function that numerically solves the stationary points of the maximum likelihood equations as described by \cref{alg:mle_search}.
+
+\fussy
+\begin{algorithm}[H]
+\DontPrintSemicolon
+\KwResult{a realization of a maximum likelihood estimate from the sampling distribution of $\mle$.}
+\KwIn{\\
+    $\qquad \tparam\sysparamvec$, the true parameter index.\\
+    $\qquad w$, the cardinality of the candidate set.\\
+    $\qquad n$, the number of masked system failure times.
+}
+\KwOut{\\
+    $\qquad \mle$, a realization of $\sampd$.
+}
+\BlankLine
+\SetKwProg{func}{Model}{}{}
+\func{$\genSampleMLE${$\left(n, w, \tparam\sysparamvec\right)$}}{
+    $\mfso \gets \emptyset$\;
+    \For{$i \gets 1$ \KwTo $n$}{
+        $\mf \gets \genSampleFn\left(w, \tparam\sysparamvec\right)$\;
+        $\mfso \gets \mfso \cup \{ \mf \}$\;
+    }
+    $\mle \gets \argmax_{\sysparamvec \in \Omega} \ell\left(\sysparamvec \Given w, \mfso\right)$\;\label{alg:samp_d_gen_model_argmax}
+    \KwRet{$\mle$}
+}
+\caption{Generative model of the maximum likelihood estimator conditioned on $w$ candidates}
+\label{alg:samp_d_gen_model}
+\end{algorithm}
+
+The asymptotic sampling distribution of $\mle$ is a consistent estimator of $\tparam\sysparamvec$.
+\begin{postulate}
+\label{def:consistent}
+    As $n \to \infty$, the sampling distribution of $\mle$ converges in probability to $\tparam{\sysparamvec}$, written
+    \begin{equation}
+    \label{eq:consistent}
+        \sampd \xrightarrow{P} \tparam{\sysparamvec}\,,
+    \end{equation}
+    since
+    \begin{equation}
+    \lim_{n \to \infty} \Prob{\mse\left(\sampd\right) < \epsilon} = 1
+    \end{equation}
+    for every $\epsilon > 0$.
+\end{postulate}
+
+By \cref{eq:consistent,eq:covariance_matrix_op}, the variance-covariance of the asymptotic sampling distribution of $\mle$ is given by
+\begin{equation}
+\label{def:asym_covariance_matrix}
+    \Var{\sampd} = \Expect{
+        \left(\sampd - \tparam\sysparamvec \right)
+        \left(\sampd - \tparam\sysparamvec \right)^{\Transpose}}\,.
+\end{equation}
+
+\begin{postulate}
+The variance-covariance of the asymptotic sampling distribution of $\mle$ obtains the \emph{Cram\'{e}r-Rao lower-bound} for point estimators that are strictly a function of $n$ masked system failure times in which candidate sets are of cardinality $w$. We denote this variance-covariance by
+\begin{equation}
+    \cov(\tparam\sysparamvec \Given w, \alpha) \equiv \frac{1}{n} \infomatrx^{-1}(\tparam\sysparamvec\Given w, \alpha)\,.
+\end{equation}
+\end{postulate}
+
+The asymptotic sampling distribution of $\mle$ is normally distributed.
+\begin{postulate}
+\label{def:converge_in_dist}
+    As $n \to \infty$, the sampling distribution of $\mle$ converges in distribution to a multivariate normal distribution with a mean $\tparam\sysparamvec$ and a variance-covariance $\cov(\tparam\sysparamvec \Given w, \alpha)$, written
+    \begin{equation}
+    \label{eq:converge_in_dist}
+        \sampd \xrightarrow{d} \mvn\!
+            \left(
+                \tparam\sysparamvec, \cov(\tparam\sysparamvec \Given w, \alpha)
+            \right)\,.
+    \end{equation}
+\end{postulate}
+The maximum likelihood estimator $\mle$ is an asymptotically \emph{efficient} estimator since it obtains the Cram\'{e}r-Rao lower-bound as given by \cref{eq:inverse_info}. Thus, for a sufficiently large sample of masked system failure times, the sampling distribution of $\mle$ varies only \emph{slightly} from sample to sample with a \emph{central tendency} around $\tparam\sysparamvec$. 
+
+By \cref{eq:mse_unbiased,eq:crlb,eq:consistent,eq:inverse_info}, the asymptotic sampling distribution of $\mle$ has the minimum mean squared error of any unbiased estimator,
+\begin{equation}
+\label{eq:mse_mle_trace}
+\mse \left( \sampd \right) =
+    \frac{1}{n} \trace \left (
+        \infomatrx^{-1} \bigl(\tparam\sysparamvec \Given w, \alpha\bigr)
+    \right) = \trace\left(\rm{CRLB}_{n\,w}\right)\,.
+\end{equation}
+
+\begin{remark}
+Look up Slverty's theorem to justify the next paragraph.
+\end{remark}
+\sloppy
+To estimate the sampling distribution of $\mle$, we may assume the sample size is sufficiently large such that the asymptotic distribution becomes a reasonable approximation. Since $\sampd \xrightarrow{P} \tparam\sysparamvec$ and $\sampd \xrightarrow{d} \mvn\left(\tparam\sysparamvec, \cov(\tparam\sysparamvec \Given w, \alpha)\right)$, it follows that
+\begin{equation}
+\sampd \xrightarrow{d} \mvn\left(\mle, \cov(\mle \Given w, \alpha)\right)\,.
+\end{equation}
+
+
+
+TODO: talk about $\RV{A} = \alpha$. We don't really want to think about modeling it, only saying that it is given in a sample. Say, for instance, the masked system failure time also has a label for how accurate they determine the candidate set to be, i.e., $\alpha$-candidate set model where $\alpha$ can vary over the sample. Group by $w$ and $\alpha$, compute the information matrix, then combine them as described in this section to get the final estimator.
+
+\fussy
+Thus, we can approximate $\tparam\sysparamvec$ and $\infomatrx(\tparam\sysparamvec \Given w, \alpha)$ and obtain the following result. The proof of this theorem is beyond the scope of this paper.
+\begin{theorem}
+\label{thm:approx_normal}
+For sufficiently large sample size $n$, the sampling distribution of $\mle$ is approximately normally distributed with a mean $\mle$ and a variance-covariance matrix $\cov(\mle \Given w, \alpha)$, written
+\begin{equation}
+\label{eq:asymptotic_normality}
+    \sampd \stackrel{\text{approx.}}{\sim} \mvn\left(\mle, \cov(\mle \Given w, \alpha)\right)\,.
+\end{equation}
+\end{theorem}
+
+\section{Maximum likelihood estimator}
+\label{sec:full_samp_dist}
+Consider an i.i.d. sample of $r$ asymptotically unbiased estimates of $\tparam\sysparamvec$ denoted by $\bar{\vec\theta}^{(i)}$ which have sampling distributions with variance-covariances given respectively by $\matrx{\Sigma}^{(i)}$ for $i=1,\,\ldots\,,r$.
+The maximum likelihood estimator of $\tparam\sysparamvec$ given these point estimates is the inverse-variance weighted mean and is given by
+\begin{equation}
+    \hat{\vec\theta} = \left( \sum_{i=1}^{r} \matrx{A_i} \right)^{-1}
+    \left( \sum_{i=1}^{r} \matrx{A_i} \bar{\vec\theta}^{(i)} \right)\,,
+\end{equation}
+where $\matrx{A_i}$ is the inverse of $\matrx{\Sigma}^{(i)}$.
+
+Suppose that the estimates are given by the maximum likelihood estimator described in \cref{dummyref}.
+The maximum likelihood estimator given these estimates has a sampling distribution given by the following definition.
+\begin{definition}
+Let $\mfs$ be a random sample of $n$ masked system failure times in which $n_i$ realizations have $w_i$ $\alpha_i$-masked component failures for $i = 1,\ldots,r$.
+The maximum likelihood estimator given by
+\begin{equation}
+    \hat{\sysparamvec} = \left( \sum_{i=1}^{r} \matrx{A_i} \right)^{-1}
+    \left( \sum_{i=1}^{r} \matrx{A_i} \hat\sysparamvec^{(i)} \right)\,,
+\end{equation}
+has a sampling distribution given by
+\begin{equation}
+    \sampdu = \left( \sum_{i=1}^{r} \matrx{A_i} \right)^{-1}
+    \left( \sum_{i=1}^{r} \matrx{A_i} \sampdir{n_i}{w_i,\alpha_i}{i}\right)\,,
+\end{equation}
+where $\sampdir{n_i}{w_i,\alpha_i}{i}$ is the sampling distribution of $\mleir{n_i}{w_i,\alpha_i}$ for $i=1,\ldots,r$ and
+\begin{equation}
+\label{eq:mat_A_info}
+    \matrx{A_i} = n_i \infomatrx(\tparam\sysparamvec \Given w_i, \alpha_i)
+\end{equation}
+is the information matrix for $\tparam\sysparamvec$ with respect to $\mfswn{n_i}{w_i,\alpha_i}$.
+\end{definition}
+
+
+\begin{theorem}
+The random vector $\sampdu$ is an asymptotically unbiased estimator of $\tparam\sysparamvec$.
+\end{theorem}
+\begin{proof}
+The expectation of $\sampdu$ is given by
+\begin{align}
+    \Expect{\sampdu}
+    &= \Expect{\left( \sum_{i=1}^{r} \matrx{A_i} \right)^{-1} \left( \sum_{i=1}^{r} \matrx{A_i} \sampdir{n_i}{w_i,\alpha_i}{i} \right)}\\
+    &=  \left( \sum_{i=1}^{r} \matrx{A_i} \right)^{-1}
+            \left( \sum_{i=1}^{r} \matrx{A_i}
+            \Expect{\sampdir{n_i}{w_i,\alpha_i}{i}}\right)\\    
+    &= \left( \sum_{i=1}^{r} \matrx{A_i} \right)^{-1} \left(\sum_{i=1}^{r} \matrx{A_i} \right) \tparam\sysparamvec\\
+    &= \tparam\sysparamvec\,.
+\end{align}
+\end{proof}
+
+\begin{theorem}
+\label{thm:var_sampdu}
+The variance-covariance of $\sampdu$ is given by
+\begin{equation}
+\label{eq:var_samp_d_full}
+    \Var{\sampdu} = \left( \sum_{i=1}^{r} n_i \infomatrx(\tparam\sysparamvec \Given w_i, \alpha_i) \right)^{-1}\,.
+\end{equation}
+\end{theorem}
+\begin{proof}
+Let
+\begin{equation}
+\label{eq:proof_of_var_samp_d_full_mat_B}
+    \matrx{B} = \left( \sum_{i=1}^{r} \matrx{A_i} \right)^{-1}\,.
+\end{equation}
+The variance-covariance of $\sampdu$ is given by
+\begin{align}
+    \Var{\sampdu}
+        &= \Var{\matrx{B} \left( \sum_{i=1}^{r} \matrx{A_i} \sampdir{n_i}{w_i,\alpha_i}{i} \right)}\\
+        &= \matrx{B} \Var{\sum_{i=1}^{r} \matrx{A_i} \sampdir{n_i}{w_i,\alpha_i}{i}} \matrx{B^{\Transpose}}\\
+        &= \matrx{B} \left(\sum_{i=1}^{r} \Var{\matrx{A_i} 
+        \sampdir{n_i}{w_i,\alpha_i}{i}}\right) \matrx{B^{\Transpose}}\\
+        &= \matrx{B} \left(\sum_{i=1}^{r} \matrx{A_i} \Var{\sampdir{n_i}{w_i,\alpha_i}{i}} \matrx{A_i^{\Transpose}} \right) 
+        \matrx{B^{\Transpose}}\,.
+\end{align}
+By \cref{eq:inverse_info}, the variance-covariance of $\sampdir{n_i}{w_i,\alpha_i}{i}$ is given by
+\begin{equation}
+    \frac{1}{n_i} \infomatrx^{-1}(\tparam\sysparamvec \Given w_i, \alpha_i)\,.
+\end{equation}
+By \cref{eq:mat_A_info}, this is equivalent to $\matrx{A_i^{-1}}$. Performing this substitution results in
+\begin{align}
+    \Var{\sampdu}
+        &= \matrx{B} \left(\sum_{i=1}^{r} \matrx{A_i} \matrx{A_i^{-1}} 
+        \matrx{A_i^{\Transpose}} \right) \matrx{B^{\Transpose}}\\
+        &= \matrx{B} \left(\sum_{i=1}^{r} \matrx{A_i^{\Transpose}}\right) 
+        \matrx{B^{\Transpose}}\,.
+\end{align}
+The summation is equivalent to $\matrx{\left({B^{\Transpose}}\right)^{-1}}$. 
+Performing this substitution results in
+\begin{align}
+    \Var{\sampdu}
+        &= \matrx{B} \matrx{\left(B^{\Transpose}\right)^{-1}} 
+        \matrx{B^{\Transpose}}\\
+        &= \matrx{B}
+\end{align}
+By \cref{eq:proof_of_var_samp_d_full_mat_B}, $\matrx{B}$ is given by
+\begin{equation}
+    \left( \sum_{i=1}^{r} \matrx{A_i} \right)^{-1}
+\end{equation}
+and by \cref{eq:mat_A_info}, $\matrx{A_i}$ is given by
+\begin{equation}
+    n_i \infomatrx(\tparam\sysparamvec \Given w_i, \alpha_i)\,.
+\end{equation}
+Performing these substitution results in
+\begin{equation}
+    \Var{\sampdu} = \left( \sum_{i=1}^{r} n_i \infomatrx(\tparam\sysparamvec \Given w_i, \alpha_i) \right)^{-1}\,.
+\end{equation}
+\end{proof}
+
+The weighted estimator asymptotically achieves the Cram\'{e}r-Rao lower-bound as given by \cref{eq:crlb} thus it is the asymptotic UMVUE estimator of $\tparam\sysparamvec$ given a random sample of masked samples failures in which $n_i$ realizations have $w_i$ $\alpha_i$-masked component failures for $i=1,\ldots,r$.
+
+A linear combination of multivariate normal distributions is a multivariate normal distribution, thus the asymptotic sampling distribution of $\mleu$ is normally distributed.
+\begin{postulate}
+\label{def:converge_in_dist_full}
+As $n \to \infty$, the sampling distribution of $\mleu$ converges in distribution to a multivariate normal with a mean $\tparam\sysparamvec$ and a variance-covariance given by \cref{eq:var_samp_d_full}, written
+\begin{equation}
+\label{eq:converge_in_dist_weighted}
+    \sampdu \xrightarrow{d} \mvn\left(\tparam\sysparamvec, \left(\sum_{i=1}^{r} n_i \infomatrx\left(\tparam\sysparamvec \Given w_i \right)\right)^{-1}\right)\,.
+\end{equation}
+\end{postulate}
+
+The generative model for $\sampdu$ is given by \cref{alg:samp_du_gen_model}.
+\begin{algorithm}
+    \DontPrintSemicolon
+    \KwIn{\\
+        $\qquad \tparam\sysparam$, the true parameter value of the series system.
+    }
+    \KwOut{\\
+        $\qquad \mleu$, a realization of $\sampdu$.
+    }
+    \BlankLine
+    \SetKwProg{func}{Model}{}{}
+    \func{$\genSampleMLE${$(\tparam\sysparam)$}}{
+        draw accuracy $\alpha \sim \pmf_{\RV{A}}(\, \cdot \,)$\;        
+        draw $\alpha$-masked failure cardinality $w \sim \pmf_{\RV{W} \Given \RV{A}}(\,\cdot\, \Given \alpha \,)$\;
+        $\mleu \gets \genSampleMLE(\tparam\sysparam, w,\alpha)$\;
+        \KwRet{$\mleu$}
+    }
+\caption{Generative model of maximum likelihood estimator}
+\label{alg:samp_du_gen_model}
+\end{algorithm}
+
+\chapter{Sampling distribution of functions of parameters}
+\label{sec:app}
+Suppose we have a characteristic of interest $\vecstat \colon \mathbb{R}^{m \cdot q} \mapsto \mathbb{R}^{p}$ that is a function of the parametric model.
+The \emph{true} value of the characteristic is given by $\vecstat(\tparam\sysparamvec)$.
+By the invariance property of maximum likelihood estimators, if $\mleu$ is the maximum likelihood estimator of $\tparam\sysparamvec$ then $\vecstat(\mleu)$ is the maximum likelihood estimator of $\vecstat(\tparam\sysparamvec)$.
+
+By \cref{def:converge_in_dist}, $\sampdu$ is a random vector drawn from a multivariate normal distribution,
+\begin{equation*}
+    \sampdu \sim \mvn\left(\tparam\sysparamvec, \var\left[\sampdu\right]\right)\,,
+    \tag{\text{\ref{eq:converge_in_dist_weighted} revisited}}
+\end{equation*}
+therefore $\vecstat\left(\sampdu\right)$ is a random vector. Under the regularity conditions (see \cref{def:reg_cond}), $\vecstat\left(\sampdu\right)$ is asymptotically normally distributed with a mean given by $\vecstat(\tparam\sysparamvec)$ and a variance-covariance given by $\var\left[\vecstat(\sampdu)\right]$, written
+\begin{equation}
+\vecstat\left(\sampdu\right) \xrightarrow{d} \mvn\left(\vecstat\left(\tparam\sysparamvec\right), \var\left[\vecstat(\sampdu)\right]\right)\,.
+\end{equation}
+
+\section{Confidence intervals}
+\label{sec:app:conf_interval}
+A property of multivariate normal distributions is that the marginal of any subset of the components is given by dropping the irrelevant components from the mean vector $\tparam\sysparamvec$ and the variance-covariance $\var\left[\sampdu\right]$.
+
+If we are interested in the asymptotic marginal distribution of the \jth component, we drop all of the other components, resulting in the univariate normal distribution given by
+\begin{equation}
+\label{eq:normal_marg}
+    \left[\sampdu\right]_j \sim \mathcal{N}\left(\tparam\paramv_j, \frac{\sigma^2}{n}\right)\,,
+\end{equation}
+where $\sigma^2 = \left[\infomatrx^{-1}\left(\tparam\sysparamvec\right)\right]_{j j}$.
+
+Asymptotically, the random variable $\left[\sampdu\right]_j$ realizes a value less than any constant $a$ with a probability given by
+\begin{equation}
+    \Prob{\left[\sampdu\right]_j < a } = \operatorname{\Phi}\!\left(\frac{a - \tparam\param_j}{\sigma_j}\right)\,,
+\end{equation}
+where $\Phi$ is the cumulative distribution function of the standard normal.
+
+The smallest interval in which $\left[\sampdu\right]_j$ is realized with probability $p$ is given by
+\begin{equation}
+\label{eq:prob_interval}
+     \tparam\paramv_j \, \raisebox{.2ex}{$\scriptstyle\pm$} \, \sigma_j \operatorname{\Phi^{-1}}\!\left(p/2\right)\,,
+\end{equation}
+where $\Phi^{-1}$ is the inverse cumulative distribution function of the standard normal.
+
+By the invariance property of maximum likelihood estimators, a maximum likelihood estimator of \cref{eq:prob_interval} is the confidence interval given by the following definition.
+\begin{definition}
+\label{def:conf_interval}
+An asymptotic $(1 - \alpha) \cdot 100 \%$ confidence interval for the \jth component of the true parameter index $\tparam\paramv$ is given by
+\begin{equation}
+\label{eq:conf_interval}
+    \estimator\paramv_j \, \raisebox{.2ex}{$\scriptstyle\pm$} \, \estimator{\sigma}_j \, \operatorname{\Phi^{-1}}\!\left(1-\alpha/2\right)\,,
+\end{equation}
+where $\estimator\paramv_j$ is the \jth component of $\mleu$ and $\estimator{\sigma}_j$ is the \jth diagonal element of $\estimator{\var}\left[\sampdu\right]$.
+\end{definition}
+Note that the confidence interval given by \cref{eq:conf_interval} is a realization of a random interval since $\estimator\paramv_j$ is a realization of the normal distribution given by \cref{eq:normal_marg} and $\estimator{\sigma}_j$ is a function $\estimator\paramv_j$, where it is expected that $(1-\alpha/2) \cdot 100 \%$ of the random intervals generated contain the true parameter index $\tparam\paramv_j$.
+
+\section{Hypothesis testing}
+\label{sec:app:conf_region}
+The intervals discussed in \cref{sec:app:conf_interval} ignore correlations between the components of $\sampdu$. Asymptotically, $\sampdu$ has a probability $p$ of occurring within the hyper-ellipsoid (the smallest hyper-volume with probability $p$) centered around $\tparam\sysparamvec$ given by
+\begin{equation}
+\label{eq:conf_region}
+    \left(\sampdu - \tparam\sysparamvec\right)^\intercal \infomatrxn\left(\tparam\sysparamvec\right)\left(\sampdu - \tparam\sysparamvec\right) \;\leq\; \chi_{m \cdot q}^{2}(p)\,,
+\end{equation}
+where $\chi_{m \cdot q}^2(p)$ is the $p$ quantile of the chi-square distribution with $m \cdot q$ degrees of freedom. 
+
+By the invariance property of maximum likelihood estimators, a maximum likelihood estimator of \cref{eq:conf_region} is given by the confidence region.
+\begin{definition}
+Suppose we have a maximum likelihood estimate $\mleu$ and hypothesize that the true parameter index is given by $\sysparamvec$. At significance level $\alpha$ we fail to reject the null hypothesis $H_0 \colon \tparam\sysparamvec = \sysparamvec$ versus the alternative hypothesis $H_a \colon \tparam\sysparamvec \neq \sysparamvec$ if
+\begin{equation}
+\label{eq:hypothesis_test_mean}
+    \left(\sysparamvec - \mleu\right)^\intercal \infomatrxn\left(\mleu\right) \left(\sysparamvec - \mleu\right) \;\leq\; \chi_{m \cdot q}^{2} \left(1-\alpha\right)\,,
+\end{equation}
+where $\chi_{m \cdot q}^2(1 - \alpha)$ is the $(1 - \alpha)$ quantile of the chi-square distribution with $m \cdot q$ degrees of freedom.
+\end{definition}
+
+Applying \cref{eq:hypothesis_test_mean} to the marginal of 
+$\left[\sampd\right]_j$ generates the confidence interval described in 
+\cref{dummyref}.
+
+\section{Monte-carlo simulation}
+\label{sec:app:monte_carlo}
+The generative model of the sampling distribution of $\sampdu$, as described in 
+\cref{alg:samp_du_gen_model}, is asymptotically equivalent to generating 
+samples from the multivariate normal distribution given by \cref{dummyref}. 
+However, generating samples from the multivariate normal is much less 
+computationally demanding than the non-asymptotic model.
+
+The generative model may be used to generate samples of any statistic that is a function of the true parameter index $\tparam\sysparamvec$. A sample drawn from $\vecstat(\sampd)$ may be generated by drawing $r$ maximum likelihood estimates from the sampling distribution
+\begin{equation}
+    \mleui{1}, \ldots, \mleui{r}\,,
+\end{equation}
+and applying $\vecstat$ to each, resulting in the sample
+\begin{equation}
+\label{eq:phi_sample}
+    \vecstat\left(\mleui{1}\right),
+    \ldots,
+    \vecstat\left(\mleui{r}\right)\,.
+\end{equation}
+An estimate of the variance-covariance $\var\left[\vecstat(\sampdu\right]$ is given by the sample covariance
+\begin{equation}
+\begin{split}
+    \estimator{\var}\left[\vecstat\left(\sampdu\right)\right] &=\\
+    & \!\!\!\! \frac{1}{r} \sum_{i=1}^{r}
+            \left(\vecstat\left(\mleui{i}\right) - \vecstat(\mleu)\right)
+            \left(\vecstat\left(\mleui{i}\right) - \vecstat(\mleu)\right)^\intercal\,.
+\end{split}
+\end{equation}
+Thus,
+\begin{equation}
+    \vecstat\left(\sampdu\right) \sim \mvn\left(\vecstat\left(\mleu\right), \estimator{\var}\left[\sampdu\right] \right)\,.
+\end{equation}
+
+In what follows, we explore a couple of characteristics of interest about the series system.
+\subsection{Mean time to failure of components}
+The \emph{mean time to failure} of component $j$ is given by
+\begin{equation}
+    \scalarstat(\tparam\sysparamvec) = \expectation_{\tparam\sysparamvec}\!\! \left[\cv_j\right]\,.
+\end{equation}
+Suppose $\scalarstat(\tparam\sysparamvec) \in \mathbb{R}^{m \cdot q}$, then the variance-covariance of 
+\begin{equation}
+    \jacobian\left(\scalarstat(\tparam\sysparamvec)\right) \infomatrxn^{-1}\left(\tparam\sysparamvec\right) \jacobian\left(\scalarstat(\tparam\sysparamvec)\right)^\intercal\,,
+\end{equation}
+where $\jacobian\left(\,\cdot\,\right) \in \mathbb{R}^{?}$ is the Jacobian as 
+given by \cref{dummyref}.
+
+The maximum likelihood estimator of $\tparam\sysparamvec$ is given by $\scalarstat(\mleu)$ and is approximately normally distributed,
+\begin{equation}
+\scalarstat(\sampdu) \xrightarrow{d} \mathcal{N}\left(\scalarstat\left(\mleu\right), \estimator{\sigma}^2\right)\,.
+\end{equation}
+where $\estimator{\sigma}^2$ is the sample variance.
+
+\chapter{The maximum entropy distribution: exponentially distributed component lifetimes}
+\label{sec:common_distributions}
+Suppose we have a series systems in which component lifetimes are exponentially 
+distributed.
+
+\section{Parametric functions}
+Suppose the \jth component has a failure rate $\tparam{\lambda}_j$, denoted by 
+$\cv_j \sim \text{EXP}(\tparam{\lambda}_j)$. The random variable $\cv_j$ has 
+reliability, density, and failure rate functions given respectively by
+\begin{align}
+    \label{eq:expo_reliability}
+    \srv_j(t \Given \tparam\lambda_j) &=
+        \exp(-\tparam\lambda_j \cdot t)\,,\\
+    \label{eq:expo_pdf}
+    \pdf_j(t \Given \tparam\lambda_j) &=
+        \tparam\lambda_j \exp(-\tparam\lambda_j \cdot t)\,,\\
+    \label{eq:expo_haz}
+    \haz_j(\cdot \Given \tparam\lambda_j) &=
+        \tparam{\lambda}_j\,,
+\end{align}
+where $t > 0$ and $\tparam{\lambda}_j > 0$.
+
+A series system with exponentially distributed lifetimes is also 
+exponentially distributed.
+\begin{theorem}
+\label{thm:expo_series_family}
+The random lifetime $\sv$ of a series system composed of $m$ components with 
+exponentially distributed lifetimes is exponentially distributed with a failure 
+rate that is the sum of the component failure rates with a true parameter index 
+given by
+\begin{equation}
+    \tparam{\vec\lambda} = \Tuple{\tparam\lambda_1, \ldots, 
+    \tparam\lambda_m}^{\Transpose}
+\end{equation}
+where $\tparam{\lambda}_j$ is the failure rate of the \jth component. That is,
+\begin{equation}
+    \sv \sim \expdist \left(\sum_{j=1}^{m} \tparam{\lambda}_j\right)\,,
+\end{equation}
+
+\end{theorem}
+\begin{proof}
+By \cref{thm:series_reliability_function},
+\begin{equation}
+    \srv_{\sv}(t \Given \tparam{\vec\lambda}) = \prod_{j=1}^{m} \srv_j(t \Given 
+    \tparam\lambda_j)\,.
+\end{equation}
+Plugging in the component reliability functions as given by 
+\cref{eq:expo_reliability} results in
+\begin{equation}
+    \srv_{\sv}(t \Given \tparam{\vec\lambda}) = \prod_{j=1}^{m} 
+    \exp(-\tparam\lambda_j \cdot t) =
+    \exp \left(-\left [ \sum_{j=1}^{m}{\tparam\lambda_j} \right ] t\right)\,.
+\end{equation}
+This reliability function belongs to the family of exponential 
+distributions with a true parameter index given by the sum of the component 
+failure rates.
+\end{proof}
+
+By \cref{thm:expo_series_family}, the system has a probability density, 
+failure rate, and reliability functions given respectively by
+\begin{align}
+\label{eq:expo_sys_pdf}
+\spdf(t \Given \tparam{\vec\lambda}) &=
+    \left ( \sum_{j=1}^{m} {\tparam{\lambda}_j} \right ) \exp
+    \left(-\left [ \sum_{j=1}^{m}{\tparam{\lambda_j}} \right ] t\right)\,,\\
+\label{eq:expo_sys_failure_rate}
+\haz_{\sv}(\cdot \Given \tparam{\vec\lambda}) &=
+    \sum_{j=1}^{m}{\tparam\lambda_j}\,,\\
+\label{eq:sys_expo_reliability_function}
+\srv_{\sv} \left(t \Given \tparam{\vec\lambda} \right) &=
+    \exp \left(-\left [ \sum_{j=1}^{m}{\tparam\lambda_j} \right ] t\right)
+\end{align}
+where $t > 0$ and $\tparam{\lambda}_j > 0$.
+
+The conditional probability that component $k$ is the cause of a system failure at time $t$ is given by
+\begin{equation}
+\label{eq:expo_prob_K_given_S}
+    \pmf_{\RV{K} \Given \sv}(k \Given t, \tparam{\vec\lambda}) = \pmf_{\RV{K}}(k \Given \tparam{\vec\lambda}) =
+        \frac{\tparam{\lambda}_k}{\sum_{p=1}^{m} 
+        \tparam{\lambda}_p}\SetIndicator{\Set{K}}(k)\,.
+\end{equation}
+\begin{proof}
+By \cref{thm:series_failure_rate_function},
+\begin{equation}
+\pmf_{\RV{K} \Given \sv}(k \Given t, \tparam{\vec\lambda}) = \frac
+    {\haz_k(t \Given \tparam{\vec\lambda}_k)}
+    {\haz_{\sv}(t \Given \tparam{\vec\lambda})}\,.
+\end{equation}
+Plug in the failure rate of component $k$ and the failure rate of the system given by \cref{eq:expo_sys_failure_rate,eq:expo_haz}.
+\end{proof}
+Due to the constant failure rates of the components, $\RV{K}$ and $\sv$ are independent. The joint density of $\RV{K}$ and $\sv$ is given by
+\begin{equation}
+\label{eq:expo_joint_k_s}
+\pdf_{\RV{K}, \sv}(k, t \Given \tparam{\vec\lambda}) =
+    \tparam{\lambda}_k \exp \left(-\left [ \sum_{j=1}^{m}{\tparam{\lambda_j}} \right ] t\right)
+    \SetIndicator{\Set{K} \times \RealSet^{+}}(k,t)
+\end{equation}
+\begin{proof}
+By definition,
+\begin{equation}
+\pdf_{\RV{K}, \sv}(k, t \Given \tparam{\vec\lambda}) =
+    \pmf_{\RV{K} \Given \sv}(k \Given t, \tparam{\vec\lambda}) \spdf(t \Given \tparam{\vec\lambda})\,.
+\end{equation}
+Plug in the conditional probability and the marginal probability given by \cref{eq:expo_prob_K_given_S,eq:expo_sys_pdf}.
+\end{proof}
+
+The conditional joint density of $\rvcand$ and $\sv$ given $\RV{W}$ is given by
+\begin{equation}
+    \jointpdf(\cand, t \Given w, \tparam{\vec\lambda}) = \frac{\SetIndicator{\RealSet_{>0} \times \candsw{w}}(t,\cand)}{\binom{m-1}{w-1}} \left ( \sum_{j \in \cand} \lambda_j \right ) \exp \left [ - \left ( \sum_{j=1}^{m} \lambda_j \right ) t \right ]\,,
+\end{equation}
+whose proof follows from \cref{thm:general_joint_likelihood_cand}.
+
+The conditional probability that a component in $\rvcand$ is the cause of a system failure given that $\sv = t$ and $\RV{W} = w$ is given by
+\begin{equation}
+\label{eq:expo_cand_given_s}
+    \pmf_{\rvcand \Given \sv, \RV{W}}(\cand \Given t, w, \tparam{\vec\lambda}) =
+        \frac{ \sum_{j \in \cand} \tparam{\lambda}_j }
+            { \binom{m-1}{w-1} \sum_{p=1}^{m} \tparam{\lambda}_p } \SetIndicator{\RealSet_{>0} \times \candsw{w}}(t,\cand)\,.
+\end{equation}
+whose proof follows from \cref{def:general_cond_cand_probability}.
+
+Note that the marginal distribution of $\rvcand$ given $\RV{W}$ is given by
+\begin{equation}
+\label{eq:expo_cand_given_s}
+     \pmf_{\rvcand \Given \RV{W}}\!\left(\cand \Given w, \tparam{\vec\lambda}\right) =
+        \frac{ \sum_{j \in \cand} \tparam{\lambda}_j }
+            { \binom{m-1}{w-1} \sum_{p=1}^{m} \tparam{\lambda}_p } \SetIndicator{\candsw{w}}(\cand)\,,
+\end{equation}
+\begin{proof}
+The marginal is given by
+\begin{align}
+     \pmf_{\rvcand \Given \RV{W}}(\cand \Given w, \tparam{\vec\lambda})
+        &= \int_{-\infty}^{\infty} \jointpdf\left(\cand, t \Given w, \tparam{\vec\lambda}\right) \dif t\\
+        &= \int_{0}^{\infty} \mathsmaller{\frac{\SetIndicator{\RealSet_{+} \times \candsw{w}}(t,\cand)}{\binom{m-1}{w-1}}
+        	\left ( \sum_{j \in \cand} \lambda_j \right ) \exp \left [ - \left ( \sum_{j=1}^{m} \lambda_j \right ) t \right ] \dif t}\\
+        &= \mathsmaller{\frac{ \SetIndicator{\candsw{w}(\cand)}}{\binom{m-1}{w-1}}} \sum_{j \in \cand} \lambda_j \int_{0}^{\infty} \mathsmaller{ \exp \left [ - \left ( \sum_{j=1}^{m} \lambda_j \right ) t \right ] \dif t}\,.
+\end{align}
+Multiplying the integrand by
+\begin{equation}
+    \frac{\sum_{j=1}^{m} \lambda_j}{\sum_{j=1}^{m} \lambda_j}\,
+\end{equation}
+results in
+\begin{align}
+     \pmf_{\rvcand \Given \RV{W}}(\cand \Given w, \tparam{\vec\lambda})
+        &= \mathsmaller{\frac{ \SetIndicator{\candsw{w}(\cand)} }{\binom{m-1}{w-1}} \frac{\sum_{j \in \cand} \lambda_j}{\sum_{j=1}^{m} \lambda_j}} \int_{0}^{\infty} \mathsmaller{ \left ( \sum_{j=1}^{m} \lambda_j \right) \exp \left [ - \left ( \sum_{j=1}^{m} \lambda_j \right ) t \right ] \dif t}\\
+        &= \mathsmaller{\frac{ \SetIndicator{\candsw{w}(\cand)} }{\binom{m-1}{w-1}} \frac{\sum_{j \in \cand} \lambda_j}{\sum_{j=1}^{m} \lambda_j}} \int_{0}^{\infty} \spdf\left(t \Given \vec{\tparam\lambda}\right) \dif t\\
+        &= \mathsmaller{\frac{ \SetIndicator{\candsw{w}(\cand)}}{\binom{m-1}{w-1}} \frac{\sum_{j \in \cand} \lambda_j}{\sum_{j=1}^{m} \lambda_j}}\,.
+\end{align}
+\end{proof}
+The marginal distribution of $\rvcand \Given \RV{W} = w$ given by \cref{dummyref} is the same as the joint distribution of $\rvcand$ and $\sv$ given 
+$\RV{W}$ given by \cref{eq:expo_cand_given_s}.
+Thus, $\rvcand$ and $\sv$ are conditionally independent given $\RV{W}$.
+
+\section{Maximum entropy distribution}
+The larger the variance of the estimator, the larger a sample necessary to obtain an estimate with a given mean squared error.
+
+Given that $\entropy(\RV{K} \Given \sv) \leq \entropy(\RV{K})$, a maximum entropy distribution has the form
+\begin{equation}
+\entropy(\RV{K}, \sv) = \entropy(\RV{K}) + \entropy(\sv)\,,
+\end{equation}
+where each of the components, and thus the system lifetime $\sv$, has an interval of support $(0,\infty)$.
+
+Given the way in which $\RV{K}$ is defined as a function of $\sv$, there is a possibility that $\sv$ and $\RV{K}$ are necessarily dependent.
+However, by \cref{?}, we see that if the component lifetimes are exponentially distributed, then the system lifetime $\sv$ is exponentially distributed, and by \cref{?} $\RV{K}$ is \emph{independent} of $\sv$.
+
+Moreover, if we constrain the system lifetime to have an expectation $\mu$, then the maximum entropy distribution of $\sv$ is given by
+\begin{equation}
+\sv \sim \expdist(\lambda = 1 / \mu)\,.
+\end{equation}
+
+Independently, the maximum entropy distribution of the discrete random variable $\RV{K}$ is given by the discrete uniform distribution
+\begin{equation}
+\RV{K} \sim \unifdist(1,m)\,.
+\end{equation}
+By \cref{?}, we know that these components must be exponentially distributed and that each component must be uniformly distributed such the sum of their failure rates must equal $\lambda$, i.e.,
+\begin{equation}
+\cv_j \sim \expdist(\lambda / m)
+\end{equation}
+for $j=1,\ldots,m$.
+
+TODO: fix this
+
+The entropy of $\Pair{\sv}{\RV{K}}$ has very little to do determining the \emph{parameters}. The preceding discussion only applied to the number of questions, on average, needed to discern which component failed, and, independently, when did it fail, i.e., sample from $\RV{K}$ and then from $\sv$
+
+% compare max entropy distribution against other exp dists that aren't max... 
+%see asymptotics and such
+
+\section{Maximum likelihood estimator}
+According to \cref{def:general_mle}, the maximum likelihood estimator of $\tparam{\vec\lambda}$ is the value that maximizes the log-likelihood on a given masked system failure time sample, denoted $\mfs$. The likelihood function is given by
+\begin{equation}
+\label{eq:expo_like}
+\likelihood(\vec\lambda \Given \mfs) \propto
+    \exp \left [ - \left ( \sum_{j=1}^{m} \lambda_j \right ) \left ( \sum_{i=1}^{n} t_i \right ) \right ]
+    \left [ \prod_{i=1}^{n} \left ( \sum_{j \in \cand_i} \lambda_j \right ) \right ]\,,
+\end{equation}
+whose proof follows from \cref{def:likelihood_func}. Therefore, the log-likelihood function $\ell$ is given by
+\begin{equation}
+    \ell(\vec{\lambda} \Given \mfs) = \text{const} + \sum_{i=1}^{n} \ln \left [ \sum_{j \in \cand_i} \lambda_j \right ] - \left [ \sum_{i=1}^{n} t_i \right ] \left [ \sum_{j=1}^{m} \lambda_j \right ]\,.
+\end{equation}
+Thus, maximum likelihood estimator of $\tparam{\vec\lambda}$ is given by
+\begin{equation}
+\label{eq:expo_sys_mle}
+    \expomle = \argmax_{\vec\lambda > \vec{0}} \ell(\vec\lambda \Given \mfs)\,.
+\end{equation}
+The solution to \cref{eq:expo_sys_mle} must be a stationary point, i.e., a point at which the score function is zero. The \jth component of the score function is given by
+\begin{equation}
+\label{eq:score_expo_j}
+    \frac{\partial \ell}{\partial \lambda_j} = 
+    \sum_{i=1}^{n} \left ( \sum_{p \in \cand_i} \lambda_p \right )^{-1} \SetIndicator{\cand_i}(j) - \sum_{i=1}^{n} t_i\,.
+\end{equation}
+
+According to \cref{def:converge_in_dist}, the sampling distribution of $\expomle$ converges in distribution to a multivariate normal with a mean given by $\tparam{\vec\lambda}$ and a variance-covariance given by
+\begin{equation}
+    \frac{1}{n} \infomatrx^{-1}(\tparam{\vec\lambda})\,.
+\end{equation}
+Since $\tparam{\vec\lambda}$ is not known it may be approximated by
+\begin{equation}
+    \infomatrx^{-1}\left(\expomle\right)\,.
+\end{equation}
+
+The $(j,k)$-th element of the Fisher information matrix is given by
+\begin{equation}
+\label{eq:expo_info}
+    \left [ \infomatrx(\tparam{\vec\lambda}) \right ]_{j k} =
+        \frac
+        {
+            \sum_{\cand}
+            \left [
+                \left ( \sum_{p \in \cand} \tparam{\lambda}_p \right )^{-1}
+                \SetIndicator{\cand \times \cand}(j,k)
+            \right ]
+        }
+        {
+            \binom{m-1}{w-1} \sum_{p=1}^{m} \tparam{\lambda}_p
+        }\,.
+\end{equation}
+where the summation indexed by $\cand$ is over $\PS{\Set{K}}$.
+\begin{proof}
+By \cref{eq:info_matrix_el}, the $(j,k)$-th element of the information matrix is given by
+\begin{equation}
+\label{eq:proof_expo_info_1}
+\begin{split}
+    \left [ \infomatrx(\tparam{\vec\lambda}) \right ]_{i j}
+    = - \sum_{\cand} \int_{0}^{\infty} &
+        \eval
+        {
+            \md{}{2}{\lambda_i}{}{\lambda_j}{}
+            \ln \jointpdf \left(\cand, t \Given w, \vectomat{\vec\lambda} \right)
+        }_{\vec\lambda=\tparam{\vec\lambda}} 
+        \cdot\\
+        & \qquad \qquad \qquad \qquad \jointpdf \left(\cand, t \Given w, \vectomat{\tparam{\vec\lambda}} \right) \dif t\,,
+\end{split}
+\end{equation}
+In the above equation, the second-order partial derivative of the log of the joint density is equivalent to the partial derivative with respect to the \kth parameter of the \jth component of the score, given by \cref{eq:score_expo_j}, conditioned on a masked system failure time sample of size $1$, denoted by $\mfs_1$. This mixed second-order partial derivative is given by
+\begin{align}
+    \frac{\partial{}}{\partial \lambda_k} \frac{\partial \ell}{\partial \lambda_j}
+        &= \frac{\partial{}}{\partial \lambda_k} \left (
+            \left [ \sum_{p \in \cand} \lambda_p \right ]^{-1}
+            \SetIndicator{\cand}(j) - t \right )\\
+    \label{eq:proof_expo_info_2}
+        &= -\left ( \sum_{p \in \cand} \lambda_p \right )^{-2} \SetIndicator{\cand \times \cand}(j,k)\,.
+\end{align}
+Plugging in the joint density and substituting \cref{eq:proof_expo_info_2} into \cref{eq:proof_expo_info_1} results in
+\begin{equation}
+    \left [ \infomatrx(\tparam{\vec\lambda}) \right ]_{i j} =
+    \sum_{\cand}
+    \int_{0}^{\infty}
+    \eval{
+        \left ( \sum_{p \in \cand} \lambda_p \right )^{-2} \SetIndicator{\cand \times \cand}(p,k)
+    }_{\vec\lambda = \vec{\tparam\lambda}}
+    \frac{1}{\binom{m-1}{w-1}}
+    \left ( \sum_{p \in \cand} \tparam\lambda_p \right ) \exp \left ( - \left [ \sum_{p=1}^{m} \tparam\lambda_p \right ] t \right )
+     \dif t\,.
+\end{equation}
+Simplifying and rearranging results in
+\begin{equation}
+\label{eq:proof_expo_info_3}
+    \left [ \infomatrx(\tparam{\vec\lambda}) \right ]_{i j} =
+    \frac{1}{\binom{m-1}{w-1}}
+    \sum_{\cand}
+    \left ( \sum_{p \in \cand} \tparam\lambda_p \right )^{-1}
+    \SetIndicator{\cand \times \in \cand}(p,k)
+    \int_{0}^{\infty}
+    \exp \left ( - \left [ \sum_{p=1}^{m} \tparam\lambda_p \right ] t \right ) 
+     \dif t\,.
+\end{equation}
+Multiplying the integral by $\frac{\sum_{p=1}^{m} \tparam\lambda_p}{\sum_{p=1}^{m} \tparam\lambda_p}$ results in an integral of the form
+\begin{equation}
+    \int_{0}^{\infty} \frac{\sum_{p=1}^{m} \tparam\lambda_p}{\sum_{p=1}^{m} \tparam\lambda_p} \exp \left ( - \left [ \sum_{p=1}^{m} \tparam\lambda_p \right ] t \right ) 
+     \dif t\,.
+\end{equation}
+Pulling the $\left(\sum_{p=1}^{m} \tparam\lambda_p\right)^{-1}$ constant out of the integrand results in
+\begin{align}
+    \frac{1}{\sum_{p=1}^{m} \tparam\lambda_p} \int_{0}^{\infty}
+    \left ( \sum_{p=1}^{m} \tparam\lambda_p \right ) \exp \left ( - \left [ \sum_{p=1}^{m} \tparam\lambda_p \right ] t \right ) \dif t
+    &= \frac{1}{\sum_{p=1}^{m} \tparam\lambda_p} \int_{0}^{\infty}
+    \spdf(t \Given \tparam{\vec\lambda}) \dif t\\
+\label{eq:proof_expo_info_4}
+    &= \frac{1}{\sum_{p=1}^{m} \tparam\lambda_p}\,.
+\end{align}
+Substituting \cref{eq:proof_expo_info_4} into \cref{eq:proof_expo_info_3} results in
+\begin{equation}
+\label{eq:proof_expo_info_5}
+    \left [ \infomatrx(\tparam{\vec\lambda}) \right ]_{i j} =
+    \frac{1}{\binom{m-1}{w-1}}
+    \sum_{\cand} \left\{
+    \left ( \sum_{p \in \cand} \tparam\lambda_p \right )^{-1}
+    \frac{1}{\sum_{p=1}^{m} \tparam\lambda_p} \SetIndicator{\cand \times \cand}(p,k) \right \}\,.
+\end{equation}
+\end{proof}
+
+\subsection{Sufficient statistics}
+\label{sec:expo_sufficient}
+Consider a sample of $n$ masked system failure times denoted by $\mfso$. The mean system lifetime of the sample is given by
+\begin{equation}
+    \bar{t} = \frac{1}{n} \sum_{i=1}^{n} \ti_i\,.
+\end{equation}
+and another statistic, denoted by $\cntsymb$, is a dictionary of candidate set-frequency count pairs where a candidate set $\vec{k} \in \cands$ maps to its sample frequency and is given by
+\begin{equation}
+    \cntsymb_{\vec{k}} = \sum_{i=1}^{n} \SetIndicator{\vec{k}}(\cand_i)\,.
+\end{equation}
+Given a sample $\mfso$, the likelihood $\likelihood(\vec\lambda \Given \mfso)$ described by \cref{eq:expo_like} is the same as the likelihood given by
+\begin{equation}
+\likelihood(\vec\lambda \Given \bar t, \cntsymb) =
+    \exp \left( -n \bar{t} \sum_{j=1}^{m} \lambda_j \right)
+    \prod_{\cand \in \candsw{w}} \left ( \sum_{j \in \cand} \lambda_j \right )^{\cntsymb_{\cand}}\,,
+\end{equation}
+where $\candsw{w}$ is the set of all candidate sets of cardinality $w$.
+\begin{proof}
+The likelihood function $\likelihood$ with respect to a sample of $n$ masked system failure times is given by
+\begin{equation*}
+\likelihood(\vec\lambda \Given \mfso) \propto
+    \exp \left [ - \left ( \sum_{j=1}^{m} \lambda_j \right ) \left ( \sum_{i=1}^{n} t_i \right ) \right ]
+    \left [ \prod_{i=1}^{n} \left ( \sum_{j \in \cand_i} \lambda_j \right ) \right ]\tag{\ref{eq:expo_like} revisited}\,.
+\end{equation*}
+Substituting $\sum_{i=1}^{n} \ti_i$ in the above equation with the equivalent expression $n \bar{t}$ results in
+\begin{equation}
+\likelihood(\vec\lambda \Given \mfs) \propto
+    \exp \left [ - n \bar{t} \sum_{j=1}^{m} \lambda_j \right ]
+    \underbrace{
+        \left [ \prod_{i=1}^{n} \left ( \sum_{j \in \cand_i} \lambda_j \right ) \right ]
+    }_{A}\,.
+\end{equation}
+In the above equation, each unique set $\left(\lambda_{j_1} + \cdots + \lambda_{j_w}\right)$ in the product (labeled $A$) has multiplicity $\cntsymb_{\{\lambda_{j_1} \cdots \lambda_{j_w}\}}$, thus we may substitute this product with the equivalent product
+\begin{equation}
+    \prod_{\cand \in \candsw{w}} \left ( \sum_{j \in \cand} \lambda_j \right )^{\cntsymb_{\cand}}\,,
+\end{equation}
+where $\cand$ is over all unique candidate sets of cardinality $w$. The result of this substitution is given by
+\begin{equation}
+\likelihood(\vec\lambda \Given \bar{t}, \cntsymb) =
+    \exp \left ( -n \bar{t} \sum_{j=1}^{m} \lambda_j \right )
+    \prod_{\cand \in \candsw{w}} \left ( \sum_{j \in \cand} \lambda_j \right )^{\cntsymb_{\cand}}\,.
+\end{equation}
+\end{proof}
+
+The statistics $\bar{t}$ and $\cntsymb$ are jointly sufficient for $\vec{\tparam\lambda}$
+\begin{proof}
+By the Fisher–Neyman factorization theorem, since $\likelihood$ given by \cref{eq:expo_like} can be factored as $\likelihood(\bar{t}, \cntsymb) = h(\bar{t}, \cntsymb) g(\bar{t}, \cntsymb)$, $\cntsymb$ and $\bar t$ are joint sufficient statistics for $\tparam{\vec\lambda}$.
+\end{proof}
+
+It may be helpful to consider the following example.
+\begin{example}
+Suppose we have a $3$-out-of-$3$ system with exponentially distributed component lifetimes.
+If we are given a sample of $4$ masked system times,
+\begin{equation}
+    \mfsoi{4} = \left(
+        \Pair{t_1 = 1}{\cand_1 = \{ 1, 2 \}},
+        \Pair{t_2 = 1}{\cand_2 = \{ 1, 3 \}},
+        \Pair{t_3 = 2}{\cand_3 = \{ 1, 2 \}},
+        \Pair{t_4 = 2}{\cand_4 = \{ 1, 2 \}}
+    \right)\,,
+\end{equation}
+then joint sufficient statics of $\vec{\tparam\lambda}$ are
+\begin{align*}
+    \bar t &= \frac{1 + 1 + 2 + 2}{4} = \frac{3}{2}\,,\\
+    \cntsymb &= \{\cntsymb_{\{1,2\}} \mapsto 3\,,\cntsymb_{\{1,3\}} \mapsto 1\}\,.
+\end{align*}
+No additional information is needed to compute the likelihood of $\vec\lambda$ with respect to the given $\mfsn{4}$ sample.
+\end{example}
+
+The log-likelihood $\ell$ is given by
+\begin{equation}
+\ell(\sysparamvec \Given \bar t, \vec\cntsymb, w) =
+    -n \bar t \left ( \sum_{j=1}^{m} \lambda_j \right ) +
+    \sum_{\cand \in \candsw{w}} \cntsymb_{\cand} \ln
+        \left ( \sum_{j \in \cand} \lambda_j \right )\,.
+\end{equation}
+To find the MLE $\estimator{\vec\lambda}_n$, we find the stationary points for $\lambda_1, \ldots, \lambda_m$ given by
+\begin{equation}
+    0   =  -n \bar t +
+            \sum_{\cand \in \candsw{w}} \cntsymb_{\cand}
+                \left (
+                    \sum_{j \in \cand} \lambda_j
+                \right )^{-1} \SetIndicator{\cand}(k)\;; k = 1, \ldots, m\,.
+\end{equation}
+The $(j, k)$-th element of the observed information matrix $\observed_n$ is given by
+\begin{equation}
+    \left [ \observed_n(\tparam{\vec\lambda} \vec\cntsymb) \right ]_{j k} =
+        - \sum_{\cand \in \candsw{w}} \cntsymb_{\cand} \left( \sum_{i \in \cand} \tparam\lambda_i \right)^{-2} \SetIndicator{\cand \times \cand}(j,k)\,,
+\end{equation}
+which only depends on the statistic $\cntsymb$.
+
+\section{Applications}
+
+A $(1-\alpha) \cdot 100 \%$-confidence interval for $\tparam{\lambda}_j$ is 
+given by
+\begin{equation}
+\estimator\lambda_j \raisebox{.2ex}{$\scriptstyle\pm$} z_{1-\alpha/2}
+    \sqrt{\frac{1}{n} \left [ \infomatrx^{-1}(\vec{\estimator{\vec\lambda}_n}) \right ]_{j j}}\,.
+\end{equation}
+
+
+\section{Case study: 3-out-of-3 system}
+The $3$-out-of-$3$ system's lifetime distribution functions are given by
+\begin{align}
+    \srv_{\sv}(t \Given \tparam{\vec\lambda}) &=
+        \exp
+        \left [
+            -(\tparam{\lambda}_1 + \tparam{\lambda}_2 + \tparam{\lambda}_3) t
+        \right ]\,,\\
+    \spdf(t \Given \tparam{\vec\lambda}) &=
+        (\tparam{\lambda}_1 + \tparam{\lambda}_2 + \tparam{\lambda}_3)
+        \exp
+        \left [
+            -(\tparam{\lambda}_1 + \tparam{\lambda}_2 + \tparam{\lambda}_3) t
+        \right ]\,,\\
+    \haz_{\sv}(t \Given \tparam{\vec\lambda}) &= \tparam{\lambda}_1 + \tparam{\lambda}_2 + \tparam{\lambda}_3\,,
+\end{align}
+where $t > 0$, $\tparam\lambda_1 > 0$, $\tparam\lambda_2 > 0$, and $\tparam\lambda_3 > 0$.
+
+\subsection{Sampling distributions of the maximum likelihood estimator}
+\subsubsection{Component sets of size two}
+If we condition on samples in which each observation consists of two 
+candidates, $\RV{W} = \Card{\rvcand} = 2$, the likelihood function is 
+given by
+\begin{equation}
+\begin{split}
+    \likelihood(\vec\lambda \Given \bar{t}, \cntsymb) &= (\lambda_1 + \lambda_2)^{\cnt{1,2}} (\lambda_1 + \lambda_3)^{\cnt{1,3}} (\lambda_2 + \lambda_3)^{\cnt{2,3}} \exp\left(-n \bar{t} \left(\lambda_1 + \lambda_2 + \lambda_3\right)\right)
+\end{split}
+\end{equation}
+and the log-likelihood function is given by
+\begin{equation}
+\begin{split}
+    \ell(\vec\lambda \Given \bar{t}, \cntsymb) &= \cnt{1,2} \ln(\lambda_1 + \lambda_2) + \cnt{1,3} \ln(\lambda_1 + \lambda_3) + \\
+        & \qquad \qquad \cnt{2,3} \ln(\lambda_2 + \lambda_3) - n \bar{t} (\lambda_1 + \lambda_2 + \lambda_3)\,.
+\end{split}
+\end{equation}
+The maximum likelihood estimate $\expomle$ is given by the solving the system of equations in which the score is zero, $\score(\vec\lambda) = \vec{0}$, where the score is given by
+\begin{equation}
+\label{eq:score_expo}
+    \score\left(\vec\lambda\right) = \colvec{3}
+        {\frac{\cnt{1,2}}{\lambda_1 + \lambda_2} +  \frac{\cnt{1,3}}{\lambda_1 + \lambda_3}}
+        {\frac{\cnt{1,2}}{\lambda_1 + \lambda_2} +  \frac{\cnt{2,3}}{\lambda_2 + \lambda_3}}
+        {\frac{\cnt{1,3}}{\lambda_1 + \lambda_3} +  \frac{\cnt{2,3}}{\lambda_1 + \lambda_3}} -
+        n \bar{t} \colvec{3}{1}{1}{1}\,.
+\end{equation}
+This has a closed form solution given by
+\begin{equation}
+    \expomle = \frac{1}{n \bar{t}} \colvec{3}
+        {\cnt{1,2} + \cnt{1,3} - \cnt{2,3}}
+        {\cnt{1,2} - \cnt{1,3} + \cnt{2,3}}
+        {-\cnt{1,2} + \cnt{1,3} + \cnt{2,3}}\,.
+\end{equation}
+The information matrix is given by
+\begin{equation}
+\infomatrx \left ( \tparam{\vec\lambda} \right ) =
+\frac{1}{2(\tparam{\lambda}_1 + \tparam{\lambda}_2 + \tparam{\lambda}_3)}
+\left[
+\begin{array}{ccc}
+ \frac{1}{\tparam{\lambda}_1+\tparam{\lambda}_2}+\frac{1}{\tparam{\lambda}_1+\tparam{\lambda}_3}    & \frac{1}{\tparam{\lambda}_1+\tparam{\lambda}_2}                                                   & \frac{1}{\tparam{\lambda}_1+\tparam{\lambda}_3}\\
+ \frac{1}{\tparam{\lambda}_1+\tparam\lambda _2}                                                            & \frac{1}{\tparam{\lambda}_1+\tparam{\lambda}_2}+\frac{1}{\tparam{\lambda}_2+\tparam{\lambda}_3}   & \frac{1}{\tparam{\lambda}_2+\tparam{\lambda}_3}\\
+ \frac{1}{\tparam{\lambda}_1+\tparam{\lambda}_3}                                                    & \frac{1}{\tparam{\lambda}_2+\tparam{\lambda}_3}                                                   & \frac{1}{\tparam{\lambda}_1+\tparam{\lambda}_3}+\frac{1}{\tparam{\lambda}_2+\tparam{\lambda}_3}
+\end{array}
+\right]
+\end{equation}
+
+To derive the variance-covariance of the sampling distribution of $\expomle$ for a sample of $n$ masked system failure times, denoted by $\sampdexpo$, we take the inverse of $n \cdot \infomatrx \left(\tparam{\vec\lambda} \right)$ resulting in
+\begin{equation}
+    \var_{\tparam{\vec\lambda}}\!\left[\sampdexpo\right] = \frac{\tparam{\lambda}_1+\tparam{\lambda}_2+\tparam{\lambda}_3}{n}
+    \left[
+        \begin{array}{ccc}
+         \tparam{\lambda}_1 +  \tparam{\lambda}_2 +  \tparam{\lambda}_3 & - \tparam{\lambda}_3 & - \tparam{\lambda}_2 \\
+        -\tparam{\lambda}_3 &  \tparam{\lambda}_1 +  \tparam{\lambda}_2   + \tparam{\lambda}_3 & - \tparam{\lambda}_1 \\
+        -\tparam{\lambda}_2 & -\tparam{\lambda}_1  & \tparam{\lambda}_1   + \tparam{\lambda}_2   + \tparam{\lambda}_3 \\
+\end{array}
+\right]\,.
+\end{equation}
+%For large $n$, the $(i,j)-\text{th}$ entry is given approximately by
+%\begin{equation}
+%    \left[\covmatrixn\right]_{i j} \approx
+%    \frac{2\left(\cnt{1,2} + \cnt{1,3} + \cnt{2,3}\right) \left(
+%        \cnt{1,2} + \cnt{1,3} + \cnt{2,3}\right)}
+%        {n (n \bar{t})^2}\,.
+%\end{equation}
+By the asymptotic unbiasedness of $\expomle$, the asymptotic mean squared error is given by the trace of the variance-covariance matrix,
+\begin{equation}
+    \mse\left(\sampdexpo\right) = \frac{3(\tparam{\lambda}_1 +  \tparam{\lambda}_2 +  \tparam{\lambda}_3)^2}{n}\,.
+\end{equation}
+
+According to \cref{thm:approx_normal}, for a sufficiently large sample size $n$,
+\begin{equation}
+\label{eq:expo_mvn3}
+    \sampdexpo \sim \mathrm{MVN}\biggl(\tparam{\vec\lambda}, \frac{1}{n}\infomatrx^{-1}(\tparam{\vec\lambda})\biggr)\,.
+\end{equation}
+Consequently, each time we observe a particular $\sampdexpo = \expomle$, we draw a random vector from the multivariate normal distribution given by \cref{eq:expo_mvn3}. Thus, an independent asymptotic $(1-\alpha) \cdot 100 \%$-confidence interval for $\tparam\lambda_j$ is given by
+\begin{equation}
+    \estimator{\lambda}_j \raisebox{.2ex}{$\scriptstyle\pm$} \frac{z_{1 - \alpha/2}}{\sqrt n}
+    \left (
+        \estimator{\lambda}_1 + \estimator{\lambda}_2 + \estimator{\lambda}_3
+    \right)\,.
+\end{equation}
+
+\subsubsection{Component sets of size one}
+If we condition on samples in which each observation consists of one candidate, $\RV{W} = \Card{\rvcand} = 1$, the likelihood function is given by
+\begin{equation}
+    \likelihood(\vec\lambda \Given \bar{t}, \cntsymb) = \lambda_1^{\cnt{1}} \lambda_2^{\cnt{2}} \lambda_3^{\cnt{3}} \exp\left(-n \bar{t} \left(\lambda_1 + \lambda_2 + \lambda_3\right)\right)
+\end{equation}
+and the log-likelihood function is given by
+\begin{equation}
+    \ell(\vec\lambda \Given \bar{t}, \cntsymb) = \cnt{1} \ln\lambda_1 + \cnt{2} \ln\lambda_2 + \cnt{3} \ln\lambda_3 - n \bar{t}\left(\lambda_1 + \lambda_2 + \lambda_3\right)\,.
+\end{equation}
+The maximum likelihood estimator is given by
+\begin{equation}
+    \expomle = \frac{1}{n \bar{t}} \colvec{3}
+        {\cnt{1}}
+        {\cnt{2}}
+        {\cnt{3}}\,,
+\end{equation}
+and the information matrix is given by
+\begin{equation}
+\infomatrx \left ( \tparam{\vec\lambda} \right ) =
+\frac{1}{\tparam{\lambda}_1 + \tparam{\lambda}_2 + \tparam{\lambda}_3}
+\left[
+\begin{array}{ccc}
+    \frac{1}{\tparam{\lambda}_1} & 0                            & 0\\
+    0                            & \frac{1}{\tparam{\lambda}_2} & 0\\
+    0                            & 0                            & \frac{1}{\tparam{\lambda}_3}
+\end{array}
+\right]\,,
+\end{equation}
+and thus the variance-covariance matrix is given by
+\begin{equation}
+    \cov\left(\tparam{\vec\lambda}\right) = \frac{\tparam{\lambda}_1+\tparam{\lambda}_2+\tparam{\lambda}_3}{n}
+    \left[
+    \begin{array}{ccc}
+        \tparam{\lambda}_1 & 0                  & 0\\
+        0                  & \tparam{\lambda}_2 & 0\\
+        0                  & 0                  & \tparam{\lambda}_3
+    \end{array}
+\right]\,.
+\end{equation}
+The asymptotic mean squared error is given by the trace of the variance-covariance matrix,
+\begin{equation}
+    \mse\left(\sampdexpo\right) = \frac{(\estimator{\lambda}_1 +  \estimator{\lambda}_2 +  \estimator{\lambda}_3)^2}{n}\,,
+\end{equation}
+which has three times less mean squared error than when conditioning on $\Card{\rvcand} = 2$. That is, an $\mfs$ sample in which each observation consists of one candidate has more information about $\vec{\tparam\lambda}$ than a sample in which each observation consists of two candidates.
+
+The independent asymptotic $(1-\alpha) \cdot 100 \%$-confidence interval for $\tparam\lambda_j$ is given by
+\begin{equation}
+    \estimator{\lambda}_j \raisebox{.2ex}{$\scriptstyle\pm$} z_{1 - \alpha/2}
+    \sqrt{
+        \frac
+        {
+            \estimator{\lambda}_j \left(\estimator{\lambda}_1 + \estimator{\lambda}_2 + \estimator{\lambda}_3\right)
+        }
+        {n}
+    }\,.
+\end{equation}
+By comparison, the confidence interval when conditioning on $\Card{\rvcand} = 2$ is
+\begin{equation}
+    \sqrt{
+        \frac
+        {
+            \estimator{\lambda}_1 + \estimator{\lambda}_2 + \estimator{\lambda}_3
+        }
+        {
+            \estimator{\lambda}_j
+        }
+    }
+\end{equation}
+as wide.
+
+\subsubsection{Degenerate: component sets of size three}
+The degenerate case is all components are candidates, $\RV{W} = \Card{\rvcand} = 3$. There is no maximum likelihood estimator $\vec{\estimator{\vec\lambda}_n}$. Rather, solving the equation results in the underspecified system given by
+\begin{equation}
+    \sum_{j=1}^{3} \estimator\lambda_j - \frac{1}{\bar{t}} = 0\,,
+\end{equation}
+where $\estimator\lambda_j > 0$ for $j=1,2,3$.
+
+The solution set of this underspecified system is the equation of a plane bounded in the positive region as depicted in \cref{fig:plane_sol}. The plane has a normal vector given by
+\begin{equation}
+\label{eq:normal_plane_vec}
+    \vec{n} = \Tuple{1,1,1}^\Transpose\,,
+\end{equation}
+which is independent of the statistic $\bar{t}$. Across multiple samples, the statistic $\bar{t}$ varies but the normal vector of the plane does not. Thus, the sampling distribution of the solution set will be a density over planes bounded in the positive region with a normal vector given by \cref{eq:normal_plane_vec}.
+
+As $n$ goes to infinity, the probability that $\vec{\tparam\lambda}$ intersects the plane goes to $1$. This information may not be very useful, especially if the system lifetime $\sv$ has a small expected value (the area of the bounded plane is $1/\bar{t}^2$), but if this is the only information available, what is the best course of action? An unbiased estimator that asymptotically converges to $\vec{\tparam\lambda}$ is not possible, but we can minimize some other loss function. If we assume $\vec{\tparam\lambda}$ takes on any supported value with equal likelihood, then the estimate that minimizes the expected Euclidean distance from the projection of $\vec{\tparam\lambda}$ onto the plane of the solution set is given by
+\begin{equation}
+    \vec{\tilde\lambda_n} = \frac{1}{3 \bar{t}} \vec{n}\,.
+\end{equation}
+
+\begin{figure}
+\caption{$\expomle$ solutions given three candidates}
+\label{fig:plane_sol}
+\centering
+\begin{tikzpicture}[scale=4]
+    \filldraw
+    [
+        draw=gray,
+        fill=gray!5,
+    ]
+    (1,0,0) node[anchor=south west] {$\frac{1}{\bar{t}}$} --
+    (0,1,0) node[anchor=south east] {$\frac{1}{\bar{t}}$} --
+    (0,0,1) node[anchor=east] {$\frac{1}{\bar{t}}$} -- cycle;
+    \draw (0,0,0) node{$\vec{0}$};
+    \draw[dashed,->] (.05,0,0) -- (1.5,0,0) node[anchor=north east]{$\estimator\lambda_1$};
+    \draw[dashed,->] (0,.05,0) -- (0,1.5,0) node[anchor=north west]{$\estimator\lambda_2$};
+    \draw[dashed,->] (0,0,.1) -- (0,0,1.5) node[anchor=north west]{$\estimator\lambda_3$};
+    \draw[->] (0,0,0) -- (1,1,1) node[above right] {$\vec{n} = 
+    \Tuple{1,1,1}^\Transpose$};
+    \draw[dotted,<-] (.2,.7,.1) -- (.4,1.1,0) node[above] {solution plane};
+    \draw[black,fill=black] (.333,.333,.333) circle (.1ex);
+    \draw[dotted,<-] (.333,.3,.333) -- (.333,-.15,.333) node[below] {optimal $\expomle = \frac{1}{3 \bar{t}} \vec{n}$};
+\end{tikzpicture}
+\end{figure}
+
+\subsection{Rate of convergence to the asymptotic sampling distribution}
+In this section, we evaluate how rapidly the sampling distribution of $\mle$ 
+converges to the asymptotic distribution as given by \cref{dummyref}, a 
+multivariate normal with a mean $\tparam\sysparamvec$ and a variance-covariance 
+matrix $\frac{1}{n} \infomatrx^{-1}\left(\tparam\sysparamvec\right)$.
+
+By \cref{eq:mse_mle_trace}, the asymptotic mean squared error of the maximum likelihood estimator $\mle$ is given by the trace of the variance-covariance matrix, $\mse = \frac{1}{n} \trace \left ( \infomatrx^{-1} \bigl(\tparam\sysparamvec\bigr) \right)$. An estimator of the mean squared error from a sample of $r$ maximum likelihood estimates is given by
+\begin{equation}
+\estimator{\mse}\left(\mlei{1}, \ldots, \mlei{r}\right) = \frac{1}{r} 
+\sum_{i=1}^{r} \left( \mlei{i} - \tparam\sysparamvec \right)^\Transpose \left( 
+\mlei{i} - \tparam\sysparamvec \right)\,.
+\end{equation}
+By generating $r$ masked system failure time of samples of size $n$, denoted by $\mfswn{1}{n}, \ldots, \mfswn{1}{r}$, and finding the corresponding maximum likelihood estimates, denoted by $\mlei{1}, \ldots, \mlei{r}$, we may estimate the mean squared error and compare the result against the asymptotic mean squared error. When we perform these steps for masked system failure time samples of size $n = 1,\ldots, N$, we may plot the rate of convergence.
+
+The absolute difference between the mean squared error of the asymptotic covariance matrix and the ``true'' covariance matrix is given by
+\begin{equation}
+    | \mse - \estimator\mse |\,,
+\end{equation}
+
+
+
+
+
+***
+Let's use a profile likelihood to look at how the likelihood function changes 
+with respect to a parameter component. Say, for instance, the other cmoponents 
+in the parameter are nuisance parameters, and we are really just interested in 
+the \jth component.
+***
+
+
+
+Let $\tparam{\vec\lambda} = \Tuple{2,3,4}^\Transpose$ and let the sample of 
+masked system failure times be of size $n=1000$. Theoretically, the MLE 
+$\vec{\estimator{\vec\lambda}_{1000}}$ is approximately distrubted as
+\begin{equation}
+\label{eq:expo_mvn_2_3_4}
+    \vec{\estimator{\lambda}_{1000}} \sim \mathrm{MVN} \bigg ( 
+    \Tuple{2,3,4}^\Transpose, \covn{1000} \bigg )\,.
+\end{equation}
+where
+\begin{equation}
+    \covn{1000} =
+    \left(
+        \begin{array}{ccc}
+            0.081	&   -0.036  &   -0.027\\
+            -0.036  &   0.081   &   -0.018\\
+            -0.027  &   -0.018  &   0.081
+        \end{array}
+    \right)\,.
+\end{equation}
+
+We generated two different sets of data points, one from the theoretical distribution described in \cref{eq:expo_mvn_2_3_4} and the other from the maximum likelihood method applied to $\mfsn{1000}$ samples. Refer to \cref{fig:theory_vs_actual} for a visualization of the data points. Visually, they have a similar distribution of data points, indicating that the asymptotic distribution is a reasonable approximation of the sampling distribution of the MLE $\vec{\estimator{\vec\lambda}_{1000}}$.
+\begin{figure}
+\centering
+\includegraphics[width=0.5\linewidth]{superimposed.png}
+\captionof{figure}{Theoretical MLE data points (gray) vs actual MLE data points (black)}
+\label{fig:theory_vs_actual}
+\end{figure}
+
+A sample variance-covariance matrix of $r=10000$ maximum likelihood estimates 
+was computed to be
+\begin{equation}
+    \widehat{\covn{1000}} =
+    \left(
+        \begin{array}{ccc}
+            0.081  &   -0.037 &   -0.027\\
+            -0.037 &   0.082  &   -0.018\\
+            -0.027 &   -0.018 &   0.081
+        \end{array}
+    \right)\,,
+\end{equation}
+which is approximately equivalent to the theoretical asymptotic distribution given by \cref{eq:expo_mvn_2_3_4}.
+
+\begin{figure}
+\begin{center}
+\input{fig_mse_expo_error.tex}
+\end{center}
+\end{figure}
+
+To derive an accurate estimate of the sampling distribution of $\expomle$ for small $n$, as opposed to the asymptotic sampling distribution for large $n$, we generate $r$ masked system failure time samples
+
+\begin{figure}
+\label{fig:frob_error}
+\begin{center}
+\input{fig_frob_error_3_expo.tex}
+\end{center}
+\end{figure}
+
+We define the error between two matrices $\matrx{A}$ and $\matrx{B}$ to be given by
+\begin{equation}
+    \lVert \matrx{A} - \matrx{B} \rVert_F\,,
+\end{equation}
+where $\lVert \matrx{C} \rVert_F$ is the Frobenius norm of matrix $\matrx{C}$,
+\begin{align}
+    \lVert \matrx{C} \rVert_F
+        &= \sqrt{\trace \left( \matrx{C} \matrx{C^\Transpose}\right)}\\
+        &= \sqrt{\vt{\matrx{A}}^\Transpose \vt{\matrx{A}}}\,.
+\end{align}
+
+In \cref{fig:frob_error}, we log-log plot the error between a simulated estimate of the true covariance matrix and the asymptotic covariance matrix with respect to sample size. The errors approximately follow a straight line, suggesting a power law error. We fit a power function of the form $a n^b$ to the differences with respect to sample size $n$ and found the best fit for the relative difference to be approximately proportional to $\frac{1}{n}$ and the best fit for the absolute difference to be approximately proportional to $\frac{1}{n^2}$.
+
+%In fact, the bias of $\mle$ is up to order $n^{-\frac{1}{2}}$, i.e., $\mse = \trace{\covmatrixn} + \beta n^{-\frac{1}{2}}$. [Can we empirically estimate $\beta$? Does this hold? Investigate.]
+
+
+
+%The asymptotic sampling distribution of $\mle$ can be transformed into a Chi-squared distribution, which is given by
+%\begin{equation}
+%    n(\mle - \tparam\sysparamvec)^\Transpose \infomatrx(\tparam\sysparamvec) 
+%    (\mle - \tparam\sysparamvec) \sim \chi_{m \cdot q}^2\,.
+%\end{equation}
+%Therefore, for a given $n$, we can construct a $(1 - \alpha)$ confidence region of this statistic. We expect that $(1-\alpha)$ of the $\mle$ point estimates to be inside of this %region.
+
+\chapter{Case study: Weibull}
+In our second case study, we analyze a series system in which the components have Weibull distributed lifetimes. Consider a component $j$ with a lifetime $\cv_j \sim \text{WEI}(\tparam{\alpha}_j, \tparam{\beta}_j)$.
+The random variable $\cv_j$ has reliability, density, and failure rate functions given by
+\begin{equation}
+\label{eq:weibull_reliability}
+\srv_j(t \given \alpha_j, \beta_j) =
+    \exp \left[-\left( \frac{t}{\alpha_j}\right)^{\beta_j} \right]\,,
+\end{equation}
+\begin{equation}
+\label{eq:weibull_pdf}
+\pdf_j(t \given \alpha_j, \beta_j) =
+    \frac{\beta_j}{\alpha_j}\left(\frac{t}{\alpha_j}\right)^{\beta_j-1} \exp \left [-\left(\frac{t}{\alpha_j}\right)^{\beta_j} \right ]\,,
+\end{equation}
+\begin{equation}
+\label{eq:weibull_failure}
+\haz_j(t \given \alpha_j, \beta_j) =
+    \frac{\beta_j}{\alpha_j}\left(\frac{t}{\alpha_j}\right)^{\beta_j-1}\,,
+\end{equation}
+where $t > 0$, $\alpha_j > 0$ is the scale parameter, and $\beta_j > 0$ is the shape parameter. See \cref{fig:weibull_series_functions} for a visualization of these functions.
+By \cref{eq:weibull_failure}, a component $j$ has a failure rate that increases with respect to time $t$ (e.g., wears out) if $\beta_j > 1$, decreases (e.g., burn-in period) if $0 < \beta_j < 1$, and remains constant if $\beta_j = 1$.
+\footnote{$\cv_j \sim \rm{WEI}\left(\alpha_j, \beta_j = 1\right) \iff \cv_j \sim \expdist\left(1/\alpha_j\right)$.}
+\begin{figure}
+    \pgfmathsetmacro{\alphaval}{2.0}
+    \pgfmathsetmacro{\betaval}{1.5}
+    \caption{Weibull}
+    \label{fig:weibull_series_functions}
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}
+            [
+                xlabel={time $t$},
+                xmin=0, xmax=2,
+                ymin=0, ymax=1.6,
+                minor y tick num=1
+            ]
+            \addplot[solid, domain=0:2, samples=100]
+                {exp(-(\alphaval*x)^\betaval)};
+            \addlegendentry{$\srv_j\left(t \given \alpha_j = \alphaval, \beta_j = \betaval\right)$}
+            \addplot[dashed, domain=0:2, samples=100]
+                {\betaval*\alphaval^\betaval*x^(\betaval-1)*exp(-(\alphaval*x)^\betaval)};
+            \addlegendentry{$\pdf_j\left(t \given \alpha_j = \alphaval, \beta_j = \betaval\right)$}
+            \addplot[dotted, domain=0:2, samples=100]
+                {\betaval/\alphaval*(x/\alphaval)^(\betaval -1)};
+            \addlegendentry{$\haz_j\left(t \given \alpha_j = \alphaval, \beta_j = \betaval\right)$}
+        \end{axis}
+    \end{tikzpicture}
+\end{figure}
+
+The lifetime of the series system composed of $m$ components with Weibull distributed lifetimes, $\cv_j \sim \text{WEI}(\tparam{\alpha}_j, \tparam{\beta}_j)$ for $j=1,\ldots,m$, has a true parameter value given by
+\begin{equation}
+    \tparam\sysparam =
+    \left(
+    \begin{matrix}
+        \tparam{\alpha}_1 & \tparam{\beta}_1\\
+        \vdots & \vdots\\
+        \tparam{\alpha}_m & \tparam{\beta}_m
+    \end{matrix}
+    \right)\,.
+\end{equation}
+where component $j$ has a true parameter value indexed by row $j$ of $\tparam\sysparam$, denoted by $\tparam{\sysparam}_j$. The system's reliability is given by
+\begin{equation}
+\label{eq:sys_weibull_reliability_function}
+    \srv_\sv \left(t \given \tparam\sysparam \right)
+    = \exp \left[-\sum_{j=1}^{m} \left( \frac{t}{\alpha_j}\right)^{\beta_j} \right]\,.
+\end{equation}
+\begin{proof}
+By \cref{thm:series_reliability_function},
+\begin{equation}
+    \srv_\sv \left(t \given \tparam\sysparam\right) = \prod_{j=1}^{m} \srv_j \left(t \given \tparam{\sysparam}_j \right)\,.
+\end{equation}
+Plugging in the component reliability functions as given by \cref{eq:weibull_reliability} results in
+\begin{equation}
+    \srv_\sv(t \given \tparam\sysparam) = \prod_{j=1}^{m} \exp \left [-\left(\frac{t}{\alpha_j}\right)^{\beta_j} \right ] = \exp \left[-\sum_{j=1}^{m} \left( \frac{t}{\alpha_j}\right)^{\beta_j} \right]\,.
+\end{equation}
+\end{proof}
+The system's failure rate is given by
+\begin{equation}
+\label{eq:sys_weibull_failure_rate_function}
+    \haz_{\sv}(t \given \tparam\sysparam) =
+        \sum_{j=1}^{m} \frac{\beta_j}{\alpha_j}\left(\frac{t}{\alpha_j}\right)^{\beta_j-1}\,,
+\end{equation}
+whose proof follows from \cref{thm:series_reliability_function}. The Weibull series system can have failure rates depicted by \cref{fig:weibull_series_failure_rate}.
+\begin{figure}
+    \caption{Failure rate monotonicity}
+    \label{fig:weibull_series_failure_rate}
+    \pgfplotsset{compat=1.5}
+    \pgfmathsetmacro{\alphaval}{0.5}
+    \pgfmathsetmacro{\betaAA}{.5}
+    \pgfmathsetmacro{\betaBA}{1.5}
+    \pgfmathsetmacro{\betaCA}{5}
+    \pgfmathsetmacro{\betaAB}{.7}
+    \pgfmathsetmacro{\betaBB}{.7}
+    \pgfmathsetmacro{\betaCB}{.7}
+    \pgfmathsetmacro{\betaAC}{1.5}
+    \pgfmathsetmacro{\betaBC}{1.5}
+    \pgfmathsetmacro{\betaCC}{1.5}
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}
+            [
+                xlabel={time $t$ $\rightarrow$},
+                ylabel={failure rate $\haz(t)$ $\rightarrow$},
+                xmin=0, xmax=2,
+                ymin=0, ymax=3.5,
+                yticklabels={,,},
+                xticklabels={,,},
+                ytick style={draw=none},
+                xtick style={draw=none}
+            ]
+            \addplot[solid, domain = 0.001:2, samples = 200]
+            {
+                (\betaAA * \alphaval^(\betaAA) * x^(\betaAA - 1) +
+                \betaBA * \alphaval^(\betaBA) * x^(\betaBA - 1) +
+                \betaCA * \alphaval^(\betaCA) * x^(\betaCA - 1))
+            };
+            \addlegendentry{non-monotonic}
+            \addplot[dashed, domain = 0.001:2, samples = 200]
+            {
+                (\betaAB * \alphaval^(\betaAB) * x^(\betaAB - 1) +
+                \betaBB * \alphaval^(\betaBB) * x^(\betaBB - 1) +
+                \betaCB * \alphaval^(\betaCB) * x^(\betaCB - 1))
+            };
+            \addlegendentry{monotonically increasing}
+            \addplot[dotted, domain = 0.001:2, samples = 200]
+            {
+                (\betaAC * \alphaval^(\betaAC) * x^(\betaAC - 1) +
+                \betaBC * \alphaval^(\betaBC) * x^(\betaBC - 1) +
+                \betaCC * \alphaval^(\betaCC) * x^(\betaCC - 1))
+            };
+            \addlegendentry{monotonically decreasing}
+        \end{axis}
+    \end{tikzpicture}
+\end{figure}
+
+By definition, the system's density is given by
+\begin{equation}
+\label{eq:sys_weibull_pdf_function}
+    \pdf_\sv( t \given \tparam\sysparam)
+        = \haz_{\sv}(t \given \tparam\sysparam)
+          \srv_\sv(t \given \tparam\sysparam)\,.
+\end{equation}
+where $\srv_\sv$ and $\haz_\sv$ are given respectively by \Cref{eq:weibull_reliability,eq:sys_weibull_failure_rate_function}.
+
+By \cref{dummyref}, the conditional probability that component $k$ is the cause of a system failure at time $t$ is given by
+\begin{equation}
+\label{eq:weibull_pmf_k_given_s}
+\pmf_{\RV{K} \given \sv}(k \given t, \tparam\sysparam) = \frac
+    {\haz_k(t \given \tparam\sysparam_k)}
+    {\haz_{\sv}(t \given \tparam\sysparam)}\,,
+\end{equation}
+where $\haz_k$ and $\haz_\sv$ are respectively given by \cref{eq:weibull_failure,eq:sys_weibull_pdf_function}.
+
+By definition, the joint density of $\RV{K}$ and $\sv$ is given by
+\begin{equation}
+\label{eq:weibull_joint_k_s}
+\pdf_{\RV{K}, \sv}( k, t \given \tparam\sysparam) =
+    \pmf_{\RV{K} \given \sv}(k \given t, \tparam\sysparam) \pdf_\sv(t \given \tparam\sysparam)\,,
+\end{equation}
+where conditional probability mass and the marginal probability are respectively given by \cref{eq:weibull_pmf_k_given_s,eq:sys_weibull_pdf}.
+
+By \cref{dummyref}, the joint density of $\rvcand$ and $\sv$ is given by
+\begin{equation}
+\label{eq:weibull_joint_cand_density}
+\pdf_{\rvcand, \sv}\left(\cand, t \given \tparam\sysparam \right) =
+    {{m-1} \choose {w-1}}^{-1} \sum_{k \in \cand} \pdf_{\RV{K}, \sv}( k, t \given \tparam\sysparam)\,.
+\end{equation}
+
+For subsequent material, we prefer to work with vectors rather than matrices. By \cref{def:vtopr}, $\sysparamvec \equiv \vtopr(\sysparam) = \Tuple{\alpha_1,\beta_1,\alpha_2,\beta_2,\ldots,\alpha_m,\beta_m}$.
+The joint likelihood $\likelihood$ for a masked system failure sample $\mfs$ is given by
+\begin{equation}
+\likelihood(\sysparamvec \given \mfs) =
+    \prod_{i=1}^{n} \pdf_{\rvcand, \sv}(\cand_i, t_i \given \sysparamvec)
+\end{equation}
+and the log-likelihood is given by
+\begin{equation}
+    \ell(\sysparamvec \given \mfs) =
+        \sum_{i=1}^{n} \ln \pdf_{\rvcand, \sv}(\cand_i, t_i \given \sysparamvec)\,.
+\end{equation}
+The score, the gradient of the log-likelihood $\ell$, is given by
+\begin{equation}
+    \score(\sysparamvec) = \nabla_{\sysparamvec} \ell(\sysparamvec \given \mfs) = \Tuple{
+        \ppderivative{\ell}{\alpha_1}\,,
+        \ppderivative{\ell}{\beta_1}\,,
+        \ldots\,,
+        \ppderivative{\ell}{\alpha_m}\,,
+        \ppderivative{\ell}{\beta_m}}\,.
+\end{equation}
+
+The Weibull series system has no closed form solution so instead we use the observed information matrix $\observed_n$,
+which computes the covariance of $\estimator{\sysparam}_n$ conditioned on an observed sample $\mfs = \mfso$,
+\begin{equation}
+\label{info_matrix_weibull}
+    \observed_n(\tparam\sysparam \given \mfso) = -\hessian\left(\ell\right)
+\end{equation}
+
+\chapter{Case study: Lomax (Pareto Type II)}
+In our second case study, we have chosen to analyze series systems in which the component lifetimes are members of the Lomax family. Lomax distributions are heavy-tailed and thus are compatible with assigning relatively high probabilities to the occurrence of rare events. Its heavy-tail makes it an appropriate model if one is concerned about \emph{Black Swan} events, rare events with disproportionate effects such as large asteroid impacts.
+
+Consider a component $j$ with a lifetime $\cv_j \sim \text{LOMAX}(\tparam{\lambda}_j, \tparam{\alpha}_j)$.
+\begin{definition}
+\label{def:pareto_lifetime_functions}
+The random variable $\cv_j$ has reliability, density, and failure rate functions given by
+\begin{equation}
+\srv{R_j} \left (t \given \tparam{\lambda}_j, \tparam{\alpha}_j \right ) =
+    \left (1 + \frac{t}{\tparam{\lambda}_j} \right )^{-\tparam{\alpha}_j}\,,
+\end{equation}
+\begin{equation}
+\pdf{f_j} \left ( t \given \tparam{\lambda}_j, \tparam{\alpha}_j \right ) =
+    \frac{\tparam{\alpha}_j}{\tparam{\lambda}_j} \left (1 + \frac{t}{\tparam{\lambda}_j} \right )^{-(\tparam{\alpha}_j + 1)}\,,
+\end{equation}
+\begin{equation}
+\lambda_j \left ( t \given \tparam{\lambda}_j, \tparam{\alpha}_j \right ) =
+    \frac{\tparam{\alpha}_j}{\tparam{\lambda}_j + t}\,,
+\end{equation}
+where $t > 0$, $\tparam{\lambda}_j > 0$ is the scale parameter, and $\tparam{\alpha}_j > 0$ is the shape parameter.
+\end{definition}
+
+Consider a series system composed of $m$ components with Lomax distributed lifetimes, $\cv_j \sim \text{LOMAX}(\tparam{\lambda}_j, \tparam{\alpha}_j)$ for $j=1,\ldots,m$. The system has a random lifetime denoted by the random variable $\sv$ with reliability, density, and failure rate functions given by
+\begin{equation}
+\label{eq:sys_pareto_reliability_function}
+\srv{R_{\sv}} \left ( t \given \tparam{\vec\theta} \right ) =
+    \prod_{p=1}^{m} \left (1 + \frac{t}{\tparam{\lambda}_p} \right )^{-\tparam{\alpha}_p}\,,
+\end{equation}
+\begin{equation}
+\label{eq:sys_pareto_pdf_function}
+\pdf{f_{\sv}} \left ( t \given \tparam{\vec\theta} \right ) =
+    \left [ \prod_{p=1}^{m} \left (1 + \frac{t}{\tparam{\lambda}_p} \right )^{-\tparam{\alpha}_p} \right ]
+    \left [ \sum_{p=1}^{m} \frac{\tparam{\alpha}_p}{\tparam{\lambda}_p + t} \right ]\,,
+\end{equation}
+\begin{equation}
+\label{eq:sys_pareto_failure_rate_function}
+\lambda_{\sv} \left ( t \given \tparam{\vec\theta} \right ) = 
+    \sum_{p=1}^{m} \frac{\tparam{\alpha}_p}{\tparam{\lambda}_p + t}\,,
+\end{equation}
+where $\tparam{\vec\theta} = \veclist{\tparam{\lambda}_1, \tparam{\alpha}_1, \ldots, \tparam{\lambda}_m, \tparam{\alpha}_m}$ is the true parameter value. The proofs of \Cref{eq:sys_pareto_reliability_function,eq:sys_pareto_pdf_function,eq:sys_pareto_failure_rate_function} follow from \Cref{eq:series_reliability_function,eq:series_pdf_function,eq:series_failure_rate_function}.
+
+In what follows, given a masked failure sample $\mfs_n$, we derive the requisite material necessary to find the MLE $\estimator{\vec\theta}_n$ of the true parameter value $\tparam{\vec\theta}$ and its covariance matrix $\covmatrix_n$. 
+
+To solve the MLE $\estimator{\vec\theta}_n$ as described in \Cref{appendix:numerical_solution}, first we need the joint density of $\rv{K}$ and $\sv$,
+\begin{equation}
+\pdf{f_{\rv{K}, \sv}}(k, t \given \tparam{\vec\theta}) =
+    \left [
+        \prod_{p=1}^{m}
+        \left (
+            1 + \frac{t}{\tparam{\lambda}_p}
+        \right )^{-\tparam{\alpha}_p}
+    \right ]
+    \left [
+        \frac{\tparam{\alpha}_k}{\tparam{\lambda}_k + t}
+    \right ]\,.
+\end{equation}
+Therefore, the joint density of $\rvcand$ and $\sv$ is given by
+\begin{equation}
+\label{eq:par_joint_cand_density}
+\pdf{f_{\rvcand, \sv}}(\cand, t \given \vec\theta) =
+    \left [ {{m-1} \choose {w-1}} \right ]^{-1}
+    \left [
+        \prod_{p=1}^{m}
+        \left (
+            1 + \frac{t}{\tparam{\lambda}_p}
+        \right )^{-\tparam{\alpha}_p}
+    \right ]
+    \left [
+        \sum_{j \in \cand} \frac{\tparam{\alpha}_j}{\tparam{\lambda}_j + t}
+    \right ]\,.
+\end{equation}
+Using \Cref{eq:par_joint_cand_density}, we can derive the joint likelihood $\likelihood$ for a masked system failure sample $\mfs_n$,
+\begin{equation}
+\likelihood(\vec\theta \given \mfs_n) =
+    \left [ {{m-1} \choose {w-1}} \right ]^{-n}
+    \prod_{i=1}^{n}
+    \left \{
+        \left [
+            \prod_{p=1}^{m}
+            \left (
+                1 + \frac{t_i}{\tparam{\theta}_p}
+            \right )^{-\tparam{\alpha}_p}
+        \right ]
+        \left [
+            \sum_{j \in \cand} \frac{\tparam{\alpha}_j}{\tparam{\lambda}_j + t}
+        \right ]
+    \right \}\,.
+\end{equation}
+Thus, the log-likelihood $\ell$ is given by
+\begin{equation}
+\begin{split}
+    \ell(\vec{\theta} \given \mfs_n) &=
+        -n \log {{m-1} \choose {w-1}}
+        -\sum_{i=1}^{n} \sum_{p=1}^{m} \alpha_p \log(\lambda_p + t_i)\\
+        &\qquad + n \sum_{p=1}^{m} \alpha_p \log \lambda_p
+        + \sum_{i=1}^{n} \log \left ( \sum_{j \in \cand_i}
+        \frac{\alpha_j}{\lambda_j + t_i} \right )\,.
+\end{split}
+\end{equation}
+
+In our implementation of the MLE solver, we use a variation of gradient ascent as described in \Cref{appendix:numerical_solution}. Thus, we will need the gradient of the log-likelihood $\ell$.
+\begin{corollary*}
+\label{cor:par_log_like_grad}
+The gradient of the $\mfs_n$ log-likelihood function $\ell$ is given by
+\begin{equation}
+    \nabla_{\vec\theta} \ell(\vec\theta) = \left (
+        \ppderivative{\ell}{\lambda_1},
+        \ppderivative{\ell}{\alpha_1},
+        \ldots,
+        \ppderivative{\ell}{\lambda_m},
+        \ppderivative{\ell}{\alpha_m}
+    \right )
+\end{equation}
+where
+\begin{align}
+    \ppderivative{\ell}{\alpha_r} &=
+        n \log \lambda_r -
+        \sum_{i=1}^{n} \log(\lambda_r + t_i) +
+        \sum_{i \in \mathrm{R}} \left [
+            \frac{1}{\lambda_r + t_i} 
+            \left (
+                \sum_{j \in \cand_i} \frac{\alpha_j}{\lambda_j + t_i}
+            \right )^{-1}
+        \right ]\,,\\
+    \ppderivative{\ell}{\lambda_r} &=
+        \frac{n \alpha_r}{\lambda_r} -
+        \sum_{i=1}^{n} \frac{\alpha_r}{\lambda_r + t_i} -
+        \sum_{i \in \mathrm{R}} \left [
+            \frac{\alpha_r}{(\lambda_r + t_i)^2}
+            \left (
+                \sum_{j \in \cand_i} \frac{\alpha_j}{\lambda_j + t_i}
+            \right)^{-1}
+        \right ]\,,
+\end{align}
+and $\mathrm{R} = \left \{ k : k \in \{1, \ldots, n \} \wedge r \in \cand_k \right \}$ is the set of indexed observations in the $\mfs_n$ sample in which the corresponding candidate sets contain component index $r$.
+\end{corollary*}
+
+As discussed in \Cref{sec:covariance}, to estimate the accuracy of the MLE $\estimator{\vec\theta}_n$, we may either estimate the covariance matrix $\covmatrix$ with respect to the information matrix or the bootstrap sample covariance matrix.
+
+First, we consider the information matrix approach. As described in \Cref{}, we could construct the information matrix $\infomatrx$ by taking the proper expectation, but unlike the series system with exponentially distributed components, there is no simple closed form solution. Rather, we would need to estimate the expectation using numerical techniques. Since this may be an expensive operation, instead we resort to the observed information matrix $\observed_n$, which computes the covariance of $\estimator{\vec\theta}_n$ conditioned on an observed $\mfs_n$ sample. It is given by
+\begin{equation}
+\label{info_matrix_lom}
+    \observed_n(\tparam{\vec\theta} \given \mfs_n) = -
+    \begin{bmatrix}
+        \frac{\partial^2} {\partial \lambda_1^2} &
+        \frac{\partial^2} {\partial \lambda_1 \partial \alpha_1 } &
+        \cdots &
+        \frac{\partial^2} {\partial \lambda_1 \partial \lambda_m } &
+        \frac{\partial^2} {\partial \lambda_1 \partial \alpha_m }\\
+        \frac{\partial^2} {\partial \alpha_1 \partial \lambda_1 } &
+        \frac{\partial^2} {\partial \alpha_1^2} &
+        \cdots &
+        \frac{\partial^2} {\partial \alpha_1 \partial \lambda_m } &
+        \frac{\partial^2} {\partial \alpha_1 \partial \alpha_m }\\
+        \vdots &    \vdots &    \vdots &    \vdots &    \vdots\\
+        \frac{\partial^2} {\partial \lambda_m \partial \lambda_1 } &
+        \frac{\partial^2} {\partial \lambda_m \partial \alpha_1 } &
+        \cdots &
+        \frac{\partial^2} {\partial \lambda_m^2} &
+        \frac{\partial^2} {\partial \lambda_m \partial \alpha_m}\\
+        \frac{\partial^2} {\partial \alpha_m \partial \lambda_1 } &
+        \frac{\partial^2} {\partial \alpha_m \partial \alpha_1 } &
+        \cdots &
+        \frac{\partial^2} {\partial \alpha_m \partial \lambda_m} &
+        \frac{\partial^2} {\partial \alpha_m^2}
+    \end{bmatrix} \ell(\tparam{\vec\theta} \given \mfs_n)\,,
+\end{equation}
+where
+\begin{align}
+    \frac{\partial^2 \ell} {\partial \lambda_r^2} &=
+        - \sum_{i \in \mathrm{R}}
+        \left (
+            \sum_{j \in \cand_i} \frac{\alpha_j}{\lambda_j + t_i} 
+        \right )^{-2}
+        \frac{\alpha_r^2}{(\lambda_r+t_i)^4}\\&\qquad+
+        \sum_{i \in \mathrm{R}}
+        \left (
+            \sum_{j \in \cand_i} \frac{\alpha_j}{\lambda_j + t_i} 
+        \right )^{-1}
+        \frac{2 \alpha_r}{(\lambda_r+t_i)^3}\\&\qquad+
+        \sum_{i=1}^{n} \frac{\alpha_r}{(\lambda_r + t_i)^2} -
+        \frac{n \alpha_r}{\lambda_r^2}\,,\\
+    \frac{\partial^2 \ell} {\partial \lambda_s \partial \lambda_r} =
+        \frac{\partial^2 \ell} {\partial \lambda_r \partial \lambda_s} &=
+        -\sum_{i \in \mathrm{R} \cap \mathrm{S}} \left (
+        \sum_{j \in \cand_i} \frac{\alpha_j}{\lambda_j + t_i} \right )^{-2}
+        \frac{\alpha_r \alpha_s}{(\lambda_r + t_i)^2 (\lambda_s + t_i)^2}\,,\\
+    \frac{\partial^2 \ell} {\partial \alpha_r^2} &=
+        -\sum_{i \in \mathrm{R}} \left ( \sum_{j \in \cand_i}
+        \frac{\alpha_j}{\lambda_j + t_i} \right )^{-2} \frac{1}{(\lambda_r + t_i)^2}\,,\\
+    \frac{\partial^2 \ell} {\partial \alpha_s \partial \alpha_r} = \frac{\partial^2 \ell} {\partial \alpha_r \partial \alpha_s} &=
+        -\sum_{i \in \mathrm{R} \cap \mathrm{S}} \left ( \sum_{j \in \cand_i}
+        \frac{\alpha_j}{\lambda_j + t_i} \right )^{-2} \frac{1}{(\lambda_r + t_i)(\lambda_s + t_i)}\,,\\
+    \frac{\partial^2 \ell} {\partial \lambda_s \partial \alpha_r} = \frac{\partial^2 \ell} {\partial \alpha_r \partial \lambda_s} &=
+        \sum_{i \in \mathrm{R} \cap \mathrm{S}}
+        \left (
+            \sum_{j \in \cand_i} \frac{\alpha_j}{\lambda_j + t_i}
+        \right )^{-2}
+        \frac{\alpha_s}{(\lambda_s + t_i)^2 (\lambda_r + t_i)}\,,\\
+    \frac{\partial^2 \ell} {\partial \lambda_r \partial \alpha_r} = \frac{\partial^2 \ell} {\partial \alpha_r \partial \lambda_r} &=
+        \sum_{i \in \mathrm{R}}
+        \left (
+            \sum_{j \in \cand_i} \frac{\alpha_j}{\lambda_j + t_i}
+        \right )^{-2}
+        \frac{1}{(\lambda_r + t_i)^2}\\&\qquad-
+        \sum_{i \in \mathrm{R}}
+        \left (
+            \sum_{j \in \cand_i} \frac{\alpha_j}{\lambda_j + t_i}
+        \right )^{-1}
+        \frac{\alpha_r}{(\lambda_r + t_i)^3}\\&\qquad-
+        \sum_{i=1}^{n}
+        \left (
+            {\lambda_r + t_i}
+        \right )^{-1} -
+        \frac{n}{\lambda_r}\,,
+\end{align}
+$\ell$ is the log-likelihood for an $\mfs_n$ sample, $\mathrm{R} = \left \{ k : k \in \{1, \ldots, n \} \wedge r \in \cand_k \right \}$, and $\mathrm{S} = \left \{ k : k \in \{1, \ldots, n \} \wedge s \in \cand_k \right \}$.
+
+The parametric bootstrap sampling covariance matrix approach is quite a bit more straightforward but computationally more demanding. To perform the parametric bootstrap, we need to generate samples of size $n$ from $\pdf{f_{\rvcand_1, \ldots, \rvcand_n, \sv_1, \ldots, \sv_n}}(\cdot \given \tparam{\vec\theta})$, which means we need to explicitly define the generative model.
+
+The conditional probability that component $j$ is the cause of ae system failure at time $t$ is given by
+\begin{equation}
+\label{eq:pareto_cond_prob}
+    \pmf_{\rv{K} \given \sv}(k \given t, \tparam{\vec\theta}) =
+    \frac{ \tparam{\alpha}_k }{ \tparam{\lambda}_k + t }
+    \left [
+        \sum_{j=1}^{m} \frac{ \tparam{\alpha}_j }{ \tparam{\lambda}_j + t }
+    \right ]^{-1}
+    \,,
+\end{equation}
+where $\tparam{\vec\theta}$ is the true parameter value of the $m$-out-of-$m$ system. The proof follows from \Cref{eq:general_cond_prob_failure_rate}.
+
+\begin{equation}
+\label{eq:pareto_cond_cand_prob}
+    \pmf_{\rvcand \given \sv}(\cand \given t, \tparam{\vec\theta}) =
+    \sum_{j \in \cand} \frac{ \tparam{\alpha}_j }{ \tparam{\lambda}_j + t }
+    \left [
+        {{m-1} \choose {w-1}}
+        \sum_{j=1}^{m} \frac{ \tparam{\alpha}_j }{ \tparam{\lambda}_j + t }
+    \right ]^{-1}
+    \,,
+\end{equation}
+where $\tparam{\vec\theta}$ is the true parameter value of the $m$-out-of-$m$ system.
+The proof follows from Bayes law, in which
+\begin{equation}
+    \pmf_{\rvcand \given \sv}(\cand \given t, \tparam{\vec\theta}) =
+    \frac{\pdf{f_{\rvcand, \sv}}(\cand, t \given \tparam{\vec\theta})}
+    { \pdf{f_{\sv}}(t \given \vec\theta)}\,.
+\end{equation}
+
+To find the sample covariance matrix, we need to find the MLE $\estimator{\vec\theta}_n$ of a sample, and then use that estimate to generate $r$ $\mfs_n$ samples from $(\rvcand, \sv) \sim \pdf{f_{\rvcand, \sv}}(\cand, t \given \e\vec\theta)$, as described in \Cref{sec:covariance} on the bootstrap. For each such sample, we may then find the MLE $\estimator{\vec\theta}_n^{i}$ for $i=1,\ldots,r$, and then compute its sample covariances.
+
+[I am thinking about using this approach instead, since the covariance matrix using the inverse of the information matrix is giving me negative values along the diagonal, i.e., it's not semi-positive definite. Maybe I'm just not finding good MLE solutions -- my hand-coded routines may be failing. I have another solution for this coded up, but I have yet to apply it. I'll continue to work on this.]
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\appendix
+
+\addcontentsline{toc}{chapter}{Appendix}
+
+\chapter{Alternative proof of equation~\ref{eq:general_joint_density}}
+\label{appendix:alternative_joint_proof}
+\Cref{eq:general_joint_density} on page \pageref{eq:general_joint_density} asserts that
+\begin{equation*}
+    \pdf_{\RV{K}, \sv}(k, t \given \tparam\sysparam) = \pdf_k(t \given \tparam{\sysparam}_k) \prod_{\substack{j=1\\j \neq k}}^{m} \srv_j(t \given \tparam{\sysparam}_j)\,. %\tag{\ref{eq:general_joint_density} revisited}
+\end{equation*}
+\begin{proof}
+First, note that $\pdf_{\RV{K}, \sv}(k, t \given \tparam\sysparam)$ is a proper density since
+\begin{equation}
+    \int_{0}^{\infty} \sum_{j=1}^{m} \pdf_{\RV{K}, \sv}(j, t \given \tparam\sysparam) \dif t = \int_{0}^{\infty} \spdf(t \given \tparam\sysparam) \dif t = 1\,.
+\end{equation}
+
+Consider a $3$-out-of-$3$ system. By \cref{asm:indep}, $\cv_1$, $\cv_2$, and $\cv_3$ are mutually independent. Thus, the joint density that $\cv_1 = t_1$, $\cv_2 = t_2$, and $\cv_3 = t_3$ is given by
+\begin{equation}
+    \pdf_{\cv_1, \cv_2, \cv_3}(t_1, t_2, t_3 \given \tparam\sysparam) =
+        \prod_{p=1}^{3} \pdf_p(t_p \given \tparam{\sysparam}_p)\,.
+\end{equation}
+
+Component $1$ causes a system failure during the interval $(0, t)$, $t > 0$, if component $1$ fails during the given interval and components $2$ and $3$ survive longer than component $1$. That is, $0 < \cv_1 < t$, $\cv_1 < \cv_2$, and $\cv_1 < \cv_3$.
+
+Let $p(t)$ denote the probability that component $1$ causes a system failure during the interval $(0, t)$,
+\begin{equation}
+    p(t) = \Prob{0 < \cv_1 < t \cap \cv_1 < \cv_2 \cap \cv_1 < \cv_3}\,.
+\end{equation}
+This probability is given by
+\begin{equation}
+    p(t) = \int_{t_1=0}^{t_1=t} \int_{t_2=t_1}^{t_2=\infty} \int_{t_3=t_1}^{t_3=\infty}
+    \prod_{p=1}^{3} \pdf_p(t_p \given \tparam{\sysparam}_p) \dif t_3 \dif t_2 \dif t_1\,.
+\end{equation}
+Performing the integration over $t_3$ results in
+\begin{equation}
+    p(t) = \int_{t_1=0}^{t_1=t} \int_{t_2=t_1}^{t_2=\infty}
+    \prod_{p=1}^{2} \pdf_p(t_p \given \tparam{\sysparam}_p)
+    \srv_3(t_1 \given \tparam{\sysparam}_3) \dif t_2 \dif t_1\,.
+\end{equation}
+Performing the integration over $t_2$ results in
+\begin{equation}
+    p(t) = \int_{t_1=0}^{t_1=t} \pdf_1(t_1 \given \tparam{\sysparam}_1)
+    \prod_{p=2}^{3} \srv_p(t_1 \given \tparam{\sysparam}_p) \dif t_1\,.
+\end{equation}
+Taking the derivative of $p(t)$ with respect to $t$ produces the density of probability near $t$. By the Second Fundamental Theorem of Calculus,
+\begin{equation}
+    \od{p}{t} = \pdf_1(t \given \tparam{\sysparam}_1) \prod_{p=2}^{3} \srv_p(t \given \tparam{\sysparam}_p)\,.
+\end{equation}
+The probability density $\od{p}{t}$ is equivalent to the joint density that $\RV{K} = 1$ and $\sv = t$ as given by \cref{thm:general_joint_density}, i.e., $\od{p}{t} = \pdf_{\RV{K}, \sv}(1, t \given \tparam{\sysparam})$. Generalizing from this completes the proof.
+\end{proof}
+
+\chapter{Alternative proof of equation~\ref{dummyref}}
+By \cref{asm:W_S_indep}, $\sv$ and $\RV{W}$ are independent and the marginal distribution of $\RV{W}$ is independent of $\tparam\sysparamvec$, thus the likelihood of observing a particular realization, $\mfs = \mfso$, is given by
+\begin{equation}
+\begin{split}
+    \pdf_{\mfs}(\mfso \given \tparam{\sysparamvec})
+        &= \prod_{i=1}^{n} \jointpdf\!\left(\cand_i, \ti_i \mathlarger{\given} \Card{\cand_i}, \tparam\sysparamvec\right) \pmf_{\RV{W}}\!\left(\Card{\cand_i}\right)\\
+        &= \left[\prod_{i=1}^{n} \jointpdf\!\left(\cand_i, \ti_i \mathlarger{\given} \Card{\cand_i}, \tparam\sysparamvec\right)\right]\left[\prod_{i=1}^{n} \pmf_{\RV{W}}\!\left(\Card{\cand_i}\right)\right]\,.
+\end{split}
+\end{equation}
+If we fix $\mfso$ and allow the parameter $\sysparamvec$ to change, we have the likelihood function
+\begin{equation}
+    \likelihood\left(\sysparamvec \given \mfso\right) = c \prod_{i=1}^{n} \jointpdf\!\left(\cand_i, \ti_i \mathlarger{\given} \Card{\cand_i}, \tparam\sysparamvec\right)\,,
+\end{equation}
+where the product over $\pmf_{\RV{W}}(\;\cdot\;)$ is constant with respect to $\sysparamvec$ and has been relabeled as $c$. The log-likelihood with respect to $\sysparamvec$ then is given by
+\begin{equation}
+\begin{split}
+    \ell(\sysparamvec \given \mfso)
+        &= \ln c + \sum_{i=1}^{n} \ln \jointpdf(\cand_i,\ti_i \mathlarger{\given} \Card{\cand_i}, \sysparamvec)\\
+        &= c' + \sum_{w=1}^{m-1} \left[\sum_{i \in \mathbb{A}(w)}\ln \jointpdf(\cand_i,\ti_i \given w, \sysparamvec)\right]\,,
+\end{split}
+\end{equation}
+where $\mathbb{A}(w) = \{i \in \{1,\,\ldots\,,n\} \colon \Card{\cand_i} = w\}$. Let $\mfsoi{n_w} = \{(\cand_i, \ti_i) \colon i \in \mathbb{A}(w)\}$. The part in brackets is the log-likelihood $\ell(\sysparamvec \given \mfsoi{n_w})$. Performing this substitution yields
+\begin{equation}
+    \ell(\sysparamvec \given \mfso) = \ln c + \sum_{w=1}^{m-1} \ell(\sysparamvec \given \mfsoi{n_w})\,.
+\end{equation}
+The score function is given by
+\begin{equation}
+\label{eq:scoreu}
+    \score\left(\sysparamvec \given \mfso\right) = \sum_{w=1}^{m-1} \score\left(\sysparamvec \given w, \mfsoi{n_w}\right)\,,
+\end{equation}
+The information matrix may be computed by taking the negative of the expectation of the Jacobian of the score over the true joint distribution of $\sv$, $\rvcand$, and $\RV{W}$, giving
+\begin{equation}
+    \infomatrx\left(\tparam\sysparamvec\right) = -\expectation_{\tparam\sysparamvec}\left[\eval{\jacobian\left(\score\left(\sysparamvec \given \mfsn{1}\right)\right)}_{\sysparamvec=\tparam\sysparamvec}\right]\,.
+\end{equation}
+Substituting \cref{eq:scoreu} with its definition gives
+\begin{equation}
+    \infomatrx\left(\tparam\sysparamvec\right) = -\expectation_{\tparam\sysparamvec}\left[\eval{\jacobian\left(\sum_{w=1}^{m-1} \score\left(\sysparamvec \given w, \mfsi{1}\right)\right)}_{\sysparamvec = \tparam\sysparamvec}\right]\,.
+\end{equation}
+The Jacobian is a linear operator so it can be moved inside the summation, giving
+\begin{equation}
+    \infomatrx\left(\tparam\sysparamvec\right) = 
+    -\expectation_{\tparam\sysparamvec}\left[\sum_{w=1}^{m-1} \eval{\jacobian\left(\score\left(\sysparamvec \given w, \mfsi{1}\right)\right)}_{\sysparamvec=\tparam\sysparamvec}\right]\,.
+\end{equation}
+The Jacobian of $\score$ is the Hessian of $\ell$. Performing this substitution gives
+\begin{equation}
+    \infomatrx\left(\tparam\sysparamvec\right) = -\expectation_{\tparam\sysparamvec}\left[\sum_{w=1}^{m-1} \eval{\hessian\left(\ell\left(\sysparamvec \given w, \mfsi{1}\right)\right)}_{\sysparamvec=\tparam\sysparamvec}\right]\,.
+\end{equation}
+The expectation is a linear operator so it may be moved inside the summation, giving
+\begin{equation}
+    \infomatrx\left(\tparam\sysparamvec\right) = -\sum_{w=1}^{m-1} \expectation_{\tparam\sysparamvec}\left[\eval{\hessian\left(\ell\left(\sysparamvec \given w, \mfsi{1}\right)\right)}_{\sysparamvec=\tparam\sysparamvec}\right]\,.
+\end{equation}
+The expectation sums over the probability mass function $\RV{W} \sim \pmf_{\RV{W}}(\;\cdot\;)$, giving
+\begin{equation}
+    \infomatrx\left(\tparam\sysparamvec\right)
+        = -\sum_{w=1}^{m-1} \pmf_{\RV{W}}(w) \expectation_{\tparam\sysparamvec}\left[\hessian\left(\ell\left(\sysparamvec \given w, \mfsi{1}\right)\right)\right]\,,
+\end{equation}
+where the expectation is now over the true marginal joint distribution of $\rvcand$ and $\sv$ given $\RV{W} = w$. The expectation of the Hessian of $\ell$ is equivalent to the negative of $\infomatrx(\tparam\sysparamvec \given w, \mfsi{1})$. Performing this substitution gives
+\begin{equation}
+    \infomatrx\left(\tparam\sysparamvec\right) = \sum_{w=1}^{m-1} \pmf_{\RV{W}}(w) \infomatrx\left(\tparam\sysparamvec \given w\right)\,.
+\end{equation}
+\qed
+
+
+\chapter{Proof of corollary~\ref{cor:K_given_S_indep_W_A_C}}
+\label{app:K_given_S_indep_W_A_C}
+\Cref{cor:K_given_S_indep_W_A_C} on \cpageref{cor:K_given_S_indep_W_A_C} asserts that $\RV{K}$ given $\sv$ is conditionally independent of $\rvcand$, $\RV{W}$, and $\RV{A}$.
+
+\begin{proof}
+	By the laws of probability,
+	\begin{equation}
+	\pmf_{\RV{K} \Given \rvcand, \sv, \RV{W}, \RV{A}}(k \Given \cand, t, w, \alpha, \tparam\sysparam) =
+	\frac{\pdf_{\RV{K}, \rvcand, \sv \Given \RV{W}, \RV{A}}(k, \cand, t \Given w, \alpha, \tparam\sysparam)}
+	{\pdf_{\rvcand,\sv \Given \RV{W},\RV{A}}(\cand,t \Given w, \alpha, \tparam\sysparam)}
+	\end{equation}
+	which may be rewritten as
+	\begin{equation}
+	\pmf_{\RV{K} \Given \rvcand, \sv, \RV{W}, \RV{A}}(k \Given \cand, t, w, \alpha, \tparam\sysparam) =
+	\frac{\pmf_{\rvcand \Given \RV{K}, \sv, \RV{W}, \RV{A}}(\cand \Given k, t, w, \alpha, \tparam\sysparam) \pdf_{\RV{K},\sv \Given \RV{W},\RV{A}}(k,t \Given w,\alpha, \tparam\sysparam)}
+	{\pdf_{\rvcand,\sv \Given \RV{W},\RV{A}}(\cand,t \Given w, \alpha, \tparam\sysparam)}\,.
+	\end{equation}
+	By \cref{asm:indep_W_S,asm:indep_C_given_K_S}, we may simplify the above equation to
+	\begin{equation}
+	\pmf_{\RV{K} \Given \rvcand, \sv, \RV{W}, \RV{A}}(k \Given \cand, t, w, \alpha, \tparam\sysparam) =
+	\frac{\pmf_{\rvcand \Given \RV{K}, \RV{W}, \RV{A}}(k \Given \cand, w, \alpha) \pdf_{\RV{K},\sv}(k,t \Given \tparam\sysparam)}
+	{\pdf_{\rvcand,\sv \Given \RV{W},\RV{A}}(\cand,t \Given w, \alpha, \tparam\sysparam)}\,.
+	\end{equation}	
+	By \cref{eq:rvcand_given_k_w_a,eq:k_s_haz}, the above equation may be rewritten as
+	\begin{equation}
+	\mathsmaller{
+		\pmf_{\RV{K} \Given \rvcand, \sv, \RV{W}, \RV{A}}(k \Given \cand, t, w, \alpha, \tparam\sysparam) =
+		\frac{
+			\frac{\srv_{\sv}(t \Given \tparam\sysparam)}{\binom{m-1}{w}}	
+			\left((1-\alpha) \haz_{\sv}(t \Given \tparam\sysparam) - (1-\alpha\frac{m}{w}) \sum_{j \in \cand} \haz_j(t \Given \tparam\sysparam_j)\right)
+			\haz_k(t \Given \tparam{\sysparam}_k)
+		}
+		{
+			\frac{
+				\srv_{\sv}(t \Given \tparam\sysparam)}{\binom{m-1}{w}}
+			\left(
+			(1-\alpha) \haz_{\sv}(t \Given \tparam\sysparam) - \left(1-\alpha \frac{m}{w}\right) \sum_{k \in \cand} \haz_k(t \Given \tparam\sysparam_k)
+			\right) \haz_{\sv}(t \Given \tparam\sysparam)
+	}}\,.
+	\end{equation}
+	The above equation may be simplified to
+	\begin{equation}
+	\pmf_{\RV{K} \Given \rvcand, \sv, \RV{W}, \RV{A}}(k \Given \cand, t, w, \alpha, \tparam\sysparam) =
+	\frac
+	{
+		\haz_k(t \Given \tparam{\sysparam}_k)
+	}
+	{
+		\haz_{\sv}(t \Given \tparam\sysparam)
+	}
+	\end{equation}
+	which is the same as $\pmf_{\RV{K} \Given \sv}(k \Given t, \tparam\sysparam)$ and thus $\RV{K}$ given $\sv$ is conditionally independent of $\rvcand$, $\RV{W}$, and $\RV{A}$.
+\end{proof}
+
+
+\chapter{Numerical solutions to the MLE}
+\label{appendix:numerical_solution}
+The function $\ell(\sysparamvec \given w, \mfso)$ is the log-likelihood with respect to $\sysparamvec \in \Omega$ where $\Omega \subset \mathbb{R}^{m \cdot q}$. This function has a surface in an $(m \cdot q+1)$ dimensional space, where a particular point on this surface represents the log-likelihood of observing $\mfso$ with respect to $\sysparamvec$. By \cref{def:general_mle}, $\mle$ is the point on this surface that is at a maximum,
+\begin{equation*}
+    \mle = \argmax_{\sysparamvec \in \Omega} \ell(\sysparamvec \given w, \mfso)
+    \tag{\ref{eq:general_mle} revisited}\,.
+\end{equation*}
+Generally there is no closed-form solution that solves $\mle$, in which case iterative search methods may be used to numerically approximate a solution.
+
+The general version of iterative search that numerically approximates a solution to \cref{eq:score_zero}, subject to the constraint $\tparam\sysparamvec \in \Omega$, is shown in \cref{alg:mle_search}. Since iterative search is a local search method, it may fail to converge to a global maximum.
+\begin{algorithm}[h]
+\DontPrintSemicolon
+\KwResult{an approximate solution to the stationary points of the maximum likelihood equation}
+\KwIn{\\
+    $\qquad\tparam\sysparam$, the true parameter index.}
+\KwOut{\\
+    $\qquad \mle$, an approximation of the maximum likelihood estimate.}
+\BlankLine
+\SetKwProg{func}{Model}{}{}
+\func{$\findmle${}{$(\mfso)$}}
+{
+    $\mlei{0} \gets \text{an initial starting point in $\Omega$}$\\
+    $i \gets 0$\\
+    \While{\emph{stopping criteria} not satisfied}
+    {
+        $\mlei{i+1} \gets \proj\left(\mlei{i} + \alpha^{(i)} \vec{d^{(i)}}, \Omega\right)$\\
+        $i \gets i + 1$\\
+    }
+    \KwRet{$\mlei{i}$}
+}
+\caption{Iterative maximum likelihood search}
+\label{alg:mle_search}
+\end{algorithm}
+
+Assume parameter space $\Omega$ is convex. Then, the function $\proj(\sysparamvec, \Omega)$ in \cref{alg:mle_search} projects any point $\sysparamvec$ to the nearest point in the parameter space $\Omega$ as depicted by \cref{fig:convex_proj}. Thus, the search method is restricted to searching over the feasible parameter space.
+\begin{figure}
+    \caption{Projection onto convex set $\Omega$.}  
+    \centering
+    \label{fig:convex_proj}
+    \begin{tikzpicture}
+        \draw [thin, draw=black, fill=gray, opacity=0.2] (0,0) -- (.25,2.2) -- (3,1.7) -- (3.4,1) -- (2,0) -- cycle;
+        \node [anchor=west] at (.25,.5) {$\mlei{i}$};
+        \node (a) at (.25,.5){};
+        \filldraw[black] (.25,.5) circle (2pt);
+        \node [anchor=east] at (-.5,1.8) {$\mlei{i} + \alpha^{(i)} \vec{d}^{(i)}$};
+        \node (b) at (-.5, 1.8){};
+        \filldraw[gray] (-.5, 1.8) circle (2pt);
+        \node (c) at (0.195563, 1.72096) {};
+        \filldraw[black] (0.195563, 1.72096) circle (2pt);
+        \node [anchor=west] at (0.195563, 1.72096) {$\mlei{i+1}$};
+        \node at (2, 1.05) {$\mathlarger{\mathlarger{\Omega}}$};
+        \draw[->] (b) to (c);
+        \draw[->] (a) to (b);
+    \end{tikzpicture}
+\end{figure}
+
+In \cref{alg:mle_search}, $\vec{d}^{(i)}$ is a unit vector denoting a \emph{promising} direction in which to search for a better solution than $\mlei{i}$. The Fisher scoring algorithm is a slight variation of Newton-Raphson\footnote{If the \emph{observed} information matrix is used instead of the \emph{expected} information matrix, the Fisher scoring algortihm is equivalent to Newton-Raphson.} in which
+\begin{equation}
+    \vec{d}^{(i)} = \infomatrx^{-1}\left(\mlei{i} \right) \score\left( \mlei{i} \right)\,.
+\end{equation}
+The scalar $\alpha^{(i)} > 0$ is the distance to move from point $\mlei{i}$ to generate the next point, $\mlei{i+1}$. Most naturally, the solution to
+\begin{equation}
+    \alpha^{(i)} = \argmax_{\alpha > 0} \ell(\mlei{i} + \alpha \cdot \vec{d}^{(i)})    
+\end{equation}
+is desired, e.g., using \emph{Golden Section} line search to find an approximate solution. Finally, the iterations are repeated until some \emph{stopping criteria} is satisfied. Most naturally, this is given by
+\begin{equation}
+    \| \score(\mlei{i}) \| < \epsilon\,,
+\end{equation}
+signifying a stationary point has been reached.
+
+\chapter{General joint distribution}
+\label{appendix:generalized_general_joint_likelihood_cand}
+By the axioms of probability, the joint distribution of $\rvcand$, $\sv$, $\RV{W}$, and $\RV{A}$ may be decomposed into the chain
+\begin{equation}
+\begin{split}
+\pdf_{\rvcand, \sv, \RV{W}, \RV{A}}(\cand, t, w, \alpha \Given \tparam\sysparamvec) &=\\ &\!\!\!\!\!\!\pmf_{\rvcand \Given \sv, \RV{W}, \RV{A}}(\cand \Given t, w, \alpha, \tparam\sysparamvec) \pmf_{\RV{W}, \RV{A} \Given \sv}(w, \alpha \Given t, \tparam\sysparam) \spdf(t \Given \tparam\sysparam)\,.
+\end{split}
+\end{equation}
+
+If we remove \cref{asm:?}, the distribution of $\RV{W}$ and $\RV{A}$ may be dependent on $\sv$ but we still they do not carry information about the true parameter index $\tparam\sysparamvec$, thus we may rewrite the above equation as
+\begin{equation}
+\pdf_{\rvcand, \sv, \RV{W}, \RV{A}}(\cand, t, w, \alpha \Given \tparam\sysparamvec) = \pmf_{\rvcand \Given \sv, \RV{W}, \RV{A}}(\cand \Given t, w, \alpha, \tparam\sysparamvec) \pmf_{\RV{W}, \RV{A} \Given \sv}(w, \alpha \Given t) \spdf(t \Given \tparam\sysparamvec)\,.
+\end{equation}
+
+Since $\RV{W}$ and $\RV{A}$ carry no information about the true parameter index $\tparam\sysparamvec$, the maximum likelihood estimate $\mleu$ is independent of the distribution of $\RV{W}$ and $\RV{A}$.
+\begin{proof}
+\begin{equation}
+\begin{split}
+    \mleu &= \argmax_{\sysparamvec}
+        \ell_n(\sysparamvec)\\
+        &= \argmax_{\sysparamvec} \Biggl[ \sum_{i=1}^{n}
+        \ln \pmf_{\rvcand \Given \sv, \RV{W}, \RV{A}}(\cand_i \Given t_i, w_i, \alpha_i, \sysparamvec)\\
+        &\qquad+ \sum_{i=1}^{n} \ln \spdf(t_i \Given \sysparamvec) + \underbrace{\sum_{i=1}^{n} \ln \pmf_{\RV{W}, \RV{A} \Given \sv}(w_i, \alpha_i \Given t_i)}_{\text{constant}}\Biggr]\,,
+\end{split}
+\end{equation}
+where $w_i = \Card{\cand_i}$ and the last term is constant with respect to $\sysparamvec$ and thus may be dropped from the maximum likelihood equation without changing the point that maximizes the likelihood.
+\end{proof}
+
+The sampling distribution of $\mleu$ is a function of $\mfs$ (as opposed to a particular realization), and since $\mfs$ is a function of $\RV{W}$ and $\RV{A}$, the sampling distribution of $\mleu$ is also a function of $\RV{W}$ and $\RV{A}$.
+
+Given a statistical model, the asymptotic sampling distribution of the maximum likelihood estimator is nearly automatic. The most taxing (and uncertain) part is the \emph{model selection}. Since we may not have much confidence in any particular model of the joint distribution of $\RV{W}$ and $\sv$, the \emph{expected} information matrix is sketchy. In general, the \emph{observed} information matrix is preferred. The sampling distribution of $\mleu$ converges in distribution to a multivariate normal with a mean given by $\tparam\sysparamvec$ and a variance-covariance given by the inverse of the \emph{observed} information matrix, written
+\begin{equation}
+    \sampdu \xrightarrow{d} \mvn\left(\tparam\sysparamvec, \matrx{J}_{\matrx{n}}^{-1}\!\left(\tparam\sysparamvec\right)\right)\,.
+\end{equation}
+
+If an accurate distribution of $\RV{W}$ and $\RV{A}$ given $\sv$ could be constructed such that it is dependent on $\tparam\sysparamvec$, then the distribution of $\RV{W}$ and $\RV{A}$ in a sample carries extra information about $\tparam\sysparamvec$.
+A plausible model may depend upon $\entropy(\RV{K} \Given \sv = t)$.
+
+\chapter{Sampling distribution of functions of parameters}
+\label{sec:app}
+Suppose we have a characteristic of interest $\vecstat \colon \mathbb{R}^{m \cdot q} \mapsto \mathbb{R}^{p}$ that is a function of the parametric model.
+The \emph{true} value of the characteristic is given by $\vecstat(\tparam\sysparamvec)$.
+By the invariance property of maximum likelihood estimators, if $\mleu$ is the maximum likelihood estimator of $\tparam\sysparamvec$ then $\vecstat(\mleu)$ is the maximum likelihood estimator of $\vecstat(\tparam\sysparamvec)$.
+
+By \cref{def:converge_in_dist}, $\sampdu$ is a random vector drawn from a multivariate normal distribution,
+\begin{equation*}
+\sampdu \sim \mvn\left(\tparam\sysparamvec, \var\left[\sampdu\right]\right)\,,
+\tag{\text{\ref{eq:converge_in_dist_weighted} revisited}}
+\end{equation*}
+therefore $\vecstat\left(\sampdu\right)$ is a random vector. Under the regularity conditions (see \cref{def:reg_cond}), $\vecstat\left(\sampdu\right)$ is asymptotically normally distributed with a mean given by $\vecstat(\tparam\sysparamvec)$ and a variance-covariance given by $\var\left[\vecstat(\sampdu)\right]$, written
+\begin{equation}
+\vecstat\left(\sampdu\right) \xrightarrow{d} \mvn\left(\vecstat\left(\tparam\sysparamvec\right), \var\left[\vecstat(\sampdu)\right]\right)\,.
+\end{equation}
+
+The generative model may be used to generate samples of statistics that are functions of the true parameter index $\tparam\sysparamvec$.
+A sample drawn from $\vecstat(\sampdu)$ may be generated by drawing $r$ maximum likelihood estimates from the sampling distribution
+\begin{equation}
+\Tuple{\mleui{1}, \ldots, \mleui{r}}\,,
+\end{equation}
+and applying $\vecstat$ to each, resulting in the sample
+\begin{equation}
+\label{eq:phi_sample}
+\Tuple{
+\vecstat\left(\mleui{1}\right),
+\ldots,
+\vecstat\left(\mleui{r}\right)}\,.
+\end{equation}
+An estimate of the variance-covariance $\var\left[\vecstat(\sampdu\right]$ is given by the sample covariance
+\begin{equation}
+\begin{split}
+\estimator{\var}\left[\vecstat\left(\sampdu\right)\right] &=\\
+& \!\!\!\! \frac{1}{r} \sum_{i=1}^{r}
+\left(\vecstat\left(\mleui{i}\right) - \vecstat(\mleu)\right)
+\left(\vecstat\left(\mleui{i}\right) - \vecstat(\mleu)\right)^\intercal\,.
+\end{split}
+\end{equation}
+Thus,
+\begin{equation}
+\vecstat\left(\sampdu\right) \sim \mvn\left(\vecstat\left(\mleu\right), \estimator{\var}\left[\sampdu\right] \right)\,.
+\end{equation}
+
+
+\chapter{Bootstrap of sample covariance}
+Another estimator of the variance-covariance of $\sampdu$ is given by the sample covariance.
+\begin{definition}
+	Given a sample of $r$ maximum likelihood estimates, $\mleui{1}, \ldots, \mleui{r}$, the maximum likelihood estimator of the variance-covariance of the sampling distribution of $\mleu$ is given by the sample covariance,
+	\begin{align}
+	\label{eq:sample_var_sampd}
+	\estimator{\var}\left[\sampdu\right] = \frac{1}{r}
+	\sum_{i=1}^{r}
+	\left(\mleui{i} - \tparam\sysparamvec\right) \cdot
+	\left(\mleui{i} - \tparam\sysparamvec\right)^{\intercal}\,.
+	\end{align}
+\end{definition}
+The sample covariance depends upon a random sample of maximum likelihood estimates, and thus the sample covariance is a random matrix. However, by the property that maximum likelihood estimators converge in probability to the true value,
+\begin{equation}
+\estimator\var\left[\sampdu\right] \xrightarrow{P} \var\left[\sampdu\right]\,,
+\end{equation}
+it follows that
+\begin{equation}
+\sampdu \xrightarrow{d} \mvn\left(\tparam\sysparamvec, \estimator\var\left[\sampdu\right]\right)\,.
+\end{equation}
+If only one maximum likelihood estimate is realized, $\sampdu = \mleu$, then 
+the sample covariance given by \cref{eq:sample_var_sampdu} cannot be computed. 
+In the \emph{parametric Bootstrap}, the sample covariance is approximated by 
+using $\mleu$ as an estimate of $\tparam\sysparamvec$ in the generative model 
+described by \cref{dummyref}, i.e.,
+\begin{equation}
+\mleui{1}, \ldots, \mleui{r} \gets \genSampleMLE\left(\mleu\right)\,,
+\end{equation}
+and the sample covariance of these approximate maximum likelihood estimates is an asymptotically unbiased estimator of $\var\left[\sampdu\right]$.
+
+\begin{algorithm}
+	\DontPrintSemicolon
+	\KwIn{\\
+		$\qquad \mleu$, an estimate of $\tparam\sysparamvec$.
+	}
+	\KwOut{\\
+		$\qquad$sample covariance of a bootstrapped sample of maximum likelihood estimates.
+	}
+	\BlankLine
+	\SetKwProg{func}{Model}{}{}
+	\func{BoostrapCovariance}{$(\mleu)$}
+	{
+		\For{$i=1$ to $r$}
+		{
+			$\mleui{i} \gets \genSampleMLE(\mleu)$\;
+		}
+		\KwRet{sample covariance of $\mleui{1},\,\ldots\,,\mleui{r}$}
+	}
+	\caption{Sample covariance of a bootstrapped sample of maximum likelihood estimates.}
+	\label{alg:samp_du_gen_model}
+\end{algorithm}
+
+
+\chapter{Optimal node inspection order}
+In \Cref{sec:distribution_inspection_counts}, we considered the optimal inspection order to minimize the expected number of inspections required to identify a failed component. Again, consider order policy $\orderfunc$, a one-to-one function that maps each inspection order $n \in \{1, \ldots, m\}$ to a unique component index $j \in \{1, \ldots, m\}$. In what follows, we demonstrate how to compute the utility of a particular order policy, where the utility is characterized by a utility function $\operatorname{u}$.
+\begin{definition}
+The expected utility of order policy $\orderfunc$ given a probability mass function $\pmf_{\tparam{\vec\theta}}(k \given t)$ and a utility function $\operatorname{u}$ is
+\begin{equation}
+\label{eq:expected_utility}
+    \exputility[\orderfunc] = \sum_{n=1}^{m} \operatorname{u}(\orderfunc(n), n)
+        \cdot \pmf_{\tparam{\vec\theta}}(\orderfunc(n) \given t)
+\end{equation}
+where $\operatorname{u}$ is a utility function that takes as its first argument a component index and as its second argument an inspection order and returns the value of assigning the given inspection order to the given component index.
+\end{definition}
+The utility function $\operatorname{u}$ can take on many different forms. For instance, components may have different inspection costs, and thus given two components, all things else being equal the component that is less costly to inspect should be inspected before the component that is more costly to inspect in order to minimize the expected utility cost.
+
+Let the optimal order policy $\orderfunc^{*}$ be defined as the order policy that maximizes the expected utility.
+\begin{definition}
+The optimal order policy $\orderfunc^{*}$ given utility function $\operatorname{u}$ is
+\begin{equation}
+    \orderfunc^{*} = \argmax_{\orderfunc} \exputility[\orderfunc]\,.
+\end{equation}
+\end{definition}
+
+\chapter{Maximum likelihood estimator: Newton-Raphson}
+In \cref{appendix:numerical_solution}, we discussed the general MLE projection search function. Newton-Raphson is another popular way of choosing a direction $\vec{d}^{(i)}$. In this particular maximization problem, $\alpha^{(i)} \cdot \vec{d}^{(i)}$ is equivalent to $\observed^{-1}_{n}\left(\vec\theta^{(i)}\right) \cdot \nabla \ell \left(\vec\theta^{(i)}\right)$, where $\observed^{-1}_{n}\left(\vec\theta^{(i)}\right)$ denotes the inverse (or pseudoinverse) of the observed information matrix.
+
+This particular choice derives from the fact that it is generalization of Newton's method to higher dimensions. Consider the following proof.
+\begin{proof}
+At a local maximum, the gradient of $\ell(\vec\theta \given \mfs_n)$ is zero,
+\begin{equation*}
+\nabla \ell(\vec\theta \given \mfs_n) = \vec{0}.
+\end{equation*}
+Solutions satisfying this system of equations are known as the stationary points of the function $\ell$. To solve this system of equations, we first solve an easier linear system of equations that approximates $\nabla \ell(\vec\theta \given \mfs_n) = \vec{0}$. 
+Let the current solution be $\vec\theta^{i}$. Let $\operatorname{g}(\vec\theta)$ be the linear approximation of $\nabla \ell(\vec\theta \given \mfs_n)$ at $\vec\theta^{i}$,
+\begin{align*}
+    \operatorname{g}(\vec\theta \given \mfs_n)
+        &= \nabla^2 \ell \left(\vec\theta^{(i)} \given \mfs_n \right)\left(\vec\theta - \vec\theta^{(i)} \right) + \nabla \ell \left(\vec\theta^{(i)} \given \mfs_n \right)\\
+        &= \hessian \left ( \ell \left(\vec\theta^{(i)} \given \mfs_n \right) \right ) \left(\vec\theta - \vec\theta^{(i)} \right) + \nabla \ell \left(\vec\theta^{(i)} \given \mfs_n \right),
+\end{align*}
+which is a reasonable approximation of $\ell(\vec\theta \given \mfs_n)$ if $\vec\theta \approx \vec\theta^{(i)}$. Solving the roots of this linear equation,
+\begin{align*}
+    \vec{0} &= \hessian \left(\ell \left(\vec\theta^{(i)}\right)\right) \left(\vec\theta - \vec\theta^{(i)} \right) + \nabla \ell \left(\vec\theta^{(i)}\right)\\
+    \hessian \left ( \ell \left(\vec\theta^{(i)}\right) \right ) \cdot \vec\theta &= \hessian \left ( \ell \left(\vec\theta^{(i)}\right) \right ) \cdot \vec\theta^{(i)} - \nabla \ell \left(\vec\theta^{(i)}\right)\\
+    \hessian^{-1}\left ( \ell \left(\vec\theta^{(i)}\right) \right ) \hessian \left ( \ell \left(\vec\theta^{(i)}\right) \right ) \cdot \vec\theta &= \hessian^{-1} \left( \ell \left(\vec\theta^{(i)}\right) \right ) \big ( \hessian \left ( \ell \left(\vec\theta^{(i)}\right) \right ) \cdot \vec\theta^{(i)} - \nabla \ell \left(\vec\theta^{(i)}\right) \big )\\
+    \vec\theta &= \vec\theta^{(i)} - \hessian^{-1} \left( \ell \left(\vec\theta^{(i)}\right) \right ) \nabla \ell \left(\vec\theta^{(i)}\right)
+\end{align*}
+Notice that $\hessian^{-1} \left( \ell \left(\vec\theta^{(i)}\right) \right )$ is the observed information matrix evaluated at $\vec\theta^{(i)}$. Performing this substitution we arrive at
+\begin{equation*}
+    \vec\theta = \vec\theta^{(i)} + \observed^{-1}_n \left(\vec\theta^{(i)}\right ) \nabla \ell \left(\vec\theta^{(i)}\right)
+\end{equation*}
+where $\observed_n$ is the observed information matrix and $\nabla \ell$ is the gradient of $\ell$ with respect to $\vec\theta$. Thus, the direction $\alpha^{(i)} \cdot \vec{d}^{(i)}$ is a function of the gradient and the Hessian.
+\end{proof}
+
+\end{document}
