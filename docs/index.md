@@ -17,7 +17,7 @@ This work provides the first complete analytical treatment of maximum likelihood
 
 For a system with $m$ components where each observation identifies a candidate set of size $w$:
 
-1. The **minimal sufficient statistics** are the mean system lifetime $\bar{t}$ and the candidate set frequency vector $\boldsymbol{\omega}$
+1. The **minimal sufficient statistics** are the mean system lifetime $\bar{t}$ and the candidate set frequency vector $\mathbf{\omega}$
 
 2. The **Fisher information matrix** has closed-form expression depending only on $w$, not on the specific masking pattern
 

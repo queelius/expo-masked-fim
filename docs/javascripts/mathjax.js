@@ -1,9 +1,12 @@
 window.MathJax = {
   tex: {
-    inlineMath: [["\\(", "\\)"]],
-    displayMath: [["\\[", "\\]"]],
+    inlineMath: [["\\(", "\\)"], ["$", "$"]],
+    displayMath: [["\\[", "\\]"], ["$$", "$$"]],
     processEscapes: true,
-    processEnvironments: true
+    processEnvironments: true,
+    macros: {
+      boldsymbol: ["\\mathbf{#1}", 1]
+    }
   },
   options: {
     ignoreHtmlClass: ".*|",
