@@ -4,7 +4,7 @@
 
 The simulation code for numerical validation and MLE computation is available in a separate repository:
 
-[:material-github: View on GitHub](https://github.com/queelius/series_system_estimation){ .md-button .md-button--primary }
+[View on GitHub](https://github.com/queelius/series_system_estimation){ .md-button .md-button--primary }
 
 ## Features
 
