@@ -27,11 +27,14 @@
 # Build directories
 /build*/
 /_minted*/
+/site/
+/docs/paper/
 
 # Editor/IDE files
 .*
 !/.gitignore
 !/.gitmodules
+!/.github/
 
 # OS files
 .DS_Store
