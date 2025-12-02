@@ -29,25 +29,8 @@ where $\{j,k,\ell\} = \{1,2,3\}$
 
 ## Resources
 
-<div class="grid cards" markdown>
-
--   :material-file-pdf-box:{ .lg .middle } **Paper (PDF)**
-
-    ---
-
-    Full paper with proofs and numerical validation
-
-    [:octicons-download-16: Download PDF](paper/main.pdf)
-
--   :material-github:{ .lg .middle } **Source Code**
-
-    ---
-
-    Simulation code and numerical experiments
-
-    [:octicons-link-external-16: GitHub Repository](https://github.com/queelius/series_system_estimation)
-
-</div>
+- **Paper (PDF)**: [Download PDF](paper/main.pdf) - Full paper with proofs and numerical validation
+- **Source Code**: [GitHub Repository](https://github.com/queelius/series_system_estimation) - Simulation code and numerical experiments
 
 ## Citation
 

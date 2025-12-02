@@ -5,7 +5,7 @@
 **Author:** Alexander Towell
 **Email:** atowell@siue.edu
 
-[:material-file-pdf-box: Download PDF](paper/main.pdf){ .md-button .md-button--primary }
+[Download PDF](paper/main.pdf){ .md-button .md-button--primary }
 
 ## Abstract
 
