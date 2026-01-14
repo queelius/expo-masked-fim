@@ -121,7 +121,7 @@ The problem arises in two common scenarios: (1) diagnostic limitations where ide
 
 \subsection{Related Work}
 
-The analysis of masked failure data has its roots in competing risks theory. Cox~\cite{cox1959} introduced the latent failure times model for analyzing exponentially distributed lifetimes with multiple failure types, establishing the foundational framework for modeling situations where multiple competing causes may lead to system failure. This work demonstrated that under exponential assumptions, the failed component identity and system lifetime can be independent random variables, a property that proves crucial for the analysis in this paper.
+The analysis of masked failure data has its roots in competing risks theory. Cox~\cite{cox1959} introduced the latent failure time model for analyzing exponentially distributed lifetimes with multiple failure types, establishing the foundational framework for modeling situations where multiple competing causes may lead to system failure. This work demonstrated that under exponential assumptions, the failed component identity and system lifetime can be independent random variables, a property that proves crucial for the analysis in this paper.
 
 Miyakawa~\cite{miyakawa1984} pioneered the application of competing risks methods specifically to masked system failure data, deriving closed-form maximum likelihood estimates for a two-component series system with exponential component lifetimes. Usher and Hodgson~\cite{usher1988} extended this approach, introducing general maximum likelihood methods for estimating component reliability from masked system life-test data and providing computational procedures for series systems. Lin et al.~\cite{exactmle} further developed exact maximum likelihood estimation procedures for three-component systems under more general masking scenarios.
 
@@ -151,14 +151,14 @@ This paper provides the first complete analytical treatment of maximum likelihoo
 
     \item \textbf{Sufficient statistics}: The mean system lifetime and candidate set frequency vector constitute sufficient statistics, reducing the data to $1 + \binom{m}{w}$ real numbers
 
-    \item \textbf{Closed-form MLE for three-component systems with pairwise masking}: For the important special case of $m=3$ components with candidate sets of size $w=2$, we derive an explicit closed-form solution to the likelihood equations, eliminating the need for numerical optimization. This represents the first known closed-form MLE for non-trivial masking scenarios
+    \item \textbf{Closed-form MLE for $w=m-1$ masking}: For masking cardinality $w = m-1$ (where each candidate set excludes exactly one component), we derive an explicit closed-form solution to the likelihood equations for arbitrary $m$, eliminating the need for numerical optimization. This represents the first known closed-form MLE for non-trivial masking scenarios. The three-component case ($m=3$, $w=2$) is developed in detail
 
     \item \textbf{Asymptotic distribution theory}: We characterize the asymptotic sampling distribution of the MLE and provide Wald-type confidence intervals with explicit formulas for coverage
 
     \item \textbf{Numerical validation}: We provide Monte Carlo evidence confirming the theoretical asymptotic covariance matches empirical behavior for finite samples
 \end{enumerate}
 
-The closed-form results for $m=3$, $w=2$ are particularly significant because this configuration represents the simplest non-degenerate masking scenario: when $w=1$ there is no masking (exact cause identification), and when $w=m$ there is complete masking (no diagnostic information). The $w=2$ case captures the essential statistical structure of masked data while admitting analytical solutions.
+The closed-form results for $w=m-1$ are particularly significant because this configuration represents the simplest non-degenerate masking scenario: when $w=1$ there is no masking (exact cause identification), and when $w=m$ there is complete masking (no diagnostic information). The $w=m-1$ case captures the essential statistical structure of masked data while admitting analytical solutions.
 
 \subsection{Paper organization}
 
@@ -258,7 +258,7 @@ The masking mechanism (which components are included in $\cand$) is independent 
 This assumption implies that the masking quality does not depend on when the failure occurred, only on which component failed and the diagnostic capabilities of the inspection process.
 
 \begin{definition}
-A \emph{masked system failure time} is a triple $(\ti, \cand, w)$ where $\ti$ is the observed system failure time, $\cand$ is the candidate set of cardinality $w$.
+A \emph{masked system failure time} is a pair $(\ti, \cand)$ where $\ti$ is the observed system failure time and $\cand$ is the candidate set. When the masking cardinality $w = |\cand|$ is fixed by experimental design, we condition on $w$ throughout.
 \end{definition}
 
 \subsection{Parametric Families}
@@ -377,11 +377,27 @@ The system PDF is:
 \spdf(t | \tparam{\vec{\lambda}}) = \left(\sum_{j=1}^{m} \tparam{\lambda}_j\right) \exp\left(-\left[\sum_{j=1}^{m} \tparam{\lambda}_j\right] t\right)
 \end{equation}
 
-An important property of exponential series systems is that $\RV{K}$ and $\sv$ are independent:
+\begin{proposition}
+\label{prop:expo_K_indep_S}
+For exponential series systems, the failed component $\RV{K}$ and system lifetime $\sv$ are independent. The marginal distribution of $\RV{K}$ is:
 \begin{equation}
 \label{eq:expo_K_indep_S}
 \pmf_{\RV{K}}(k | \tparam{\vec{\lambda}}) = \frac{\tparam{\lambda}_k}{\sum_{j=1}^{m} \tparam{\lambda}_j}
 \end{equation}
+\end{proposition}
+
+\begin{proof}
+Let $\Lambda = \sum_{j=1}^{m} \tparam{\lambda}_j$. We compute:
+\begin{align}
+\Prob{\RV{K} = k, \sv \leq t} &= \int_0^t \tparam{\lambda}_k \exp(-\Lambda s) \, ds = \frac{\tparam{\lambda}_k}{\Lambda}\left(1 - e^{-\Lambda t}\right) \nonumber\\
+&= \Prob{\RV{K} = k} \cdot \Prob{\sv \leq t}
+\end{align}
+since $\Prob{\RV{K} = k} = \tparam{\lambda}_k/\Lambda$ and $\Prob{\sv \leq t} = 1 - e^{-\Lambda t}$.
+\end{proof}
+
+\begin{remark}
+Intuitively, the memoryless property of exponential distributions means that at any instant, each component has the same probability of being the next to fail, proportional to its rate $\lambda_j$. The \emph{when} (system lifetime) and \emph{which} (failed component) are determined by independent processes. This independence is specific to exponential distributions; for Weibull or other distributions with time-varying hazard rates, $\RV{K}$ and $\sv$ are generally dependent.
+\end{remark}
 
 The joint density is:
 \begin{equation}
@@ -430,9 +446,9 @@ In general, this requires numerical solution. However, for specific cases (notab
 \label{thm:sufficient_stats}
 For masked system failure times from exponentially distributed series systems, the statistics
 \begin{equation}
-\bar{t} = \frac{1}{n} \sum_{i=1}^{n} \ti_i \quad \text{and} \quad \cntsymb = \{\cntsymb_{\cand} : \cand \in [\{1, \ldots, m\}]^w\}
+\bar{t} = \frac{1}{n} \sum_{i=1}^{n} \ti_i \quad \text{and} \quad \cntsymb = (\cntsymb_{\cand})_{\cand}
 \end{equation}
-where $\cntsymb_{\cand} = \sum_{i=1}^{n} \SetIndicator{\cand}(\cand_i)$ are jointly sufficient for $\tparam{\vec{\lambda}}$.
+where $\cntsymb_{\cand}$ denotes the count of observations with candidate set $\cand$, for each of the $\binom{m}{w}$ possible candidate sets, are jointly sufficient for $\tparam{\vec{\lambda}}$.
 \end{theorem}
 
 \begin{proof}
@@ -502,6 +518,24 @@ Therefore:
 This completes the derivation of equation~\eqref{eq:expo_fisher_element}.
 \end{proof}
 
+\begin{remark}[Combining Estimates from Variable Masking Cardinality]
+\label{rem:variable_w}
+In practice, diagnostic quality may vary across observations, resulting in data with different masking cardinalities. Suppose the sample is partitioned into $G$ groups, where group $g$ has $n_g$ observations with masking cardinality $w_g$. Each group yields an MLE $\estimator{\vec{\lambda}}^{(g)}$ with asymptotic covariance $\frac{1}{n_g}\infomatrx^{-1}(\tparam{\vec{\lambda}} | w_g)$.
+
+The optimal combined estimator under independence is the inverse-variance weighted average:
+\begin{equation}
+\label{eq:combined_mle}
+\estimator{\vec{\lambda}}_{\text{combined}} = \left(\sum_{g=1}^{G} n_g \infomatrx(\tparam{\vec{\lambda}} | w_g)\right)^{-1} \left(\sum_{g=1}^{G} n_g \infomatrx(\tparam{\vec{\lambda}} | w_g) \estimator{\vec{\lambda}}^{(g)}\right)
+\end{equation}
+with asymptotic covariance
+\begin{equation}
+\label{eq:combined_cov}
+\mathrm{Cov}(\estimator{\vec{\lambda}}_{\text{combined}}) = \left(\sum_{g=1}^{G} n_g \infomatrx(\tparam{\vec{\lambda}} | w_g)\right)^{-1}
+\end{equation}
+
+This combined estimator achieves minimum variance among all linear unbiased combinations. In practice, the true parameter $\tparam{\vec{\lambda}}$ in the information matrices is replaced by the combined estimate $\estimator{\vec{\lambda}}_{\text{combined}}$, yielding a feasible estimator.
+\end{remark}
+
 \subsection{Asymptotic Sampling Distribution}
 
 The following regularity conditions ensure consistency and asymptotic normality of the MLE:
@@ -539,9 +573,42 @@ We provide detailed analysis for systems with $m=3$ components, which admits sev
 
 \subsection{Candidate Sets of Size Two}
 
-Consider observations where each candidate set has cardinality $w=2$. The three possible candidate sets are $\{1,2\}$, $\{1,3\}$, and $\{2,3\}$.
+Consider observations where each candidate set has cardinality $w=m-1$, meaning exactly one component is excluded from each candidate set. For general $m$, a closed-form MLE exists.
 
-The log-likelihood is:
+\begin{theorem}
+\label{thm:mle_general_wm1}
+For $m$-component systems with masking cardinality $w = m-1$, define for each component $j$:
+\begin{itemize}
+\item $A_j = \sum_{\cand \ni j} \cntsymb_{\cand}$: the sum of candidate set counts containing component $j$
+\item $B_j = \cntsymb_{\{1,\ldots,m\} \setminus \{j\}}$: the count for the unique candidate set excluding component $j$
+\end{itemize}
+The MLE has the closed-form solution:
+\begin{equation}
+\label{eq:expo_mle_general_wm1}
+\estimator{\lambda}_j = \frac{A_j - (m-2)B_j}{n\bar{t}}
+\end{equation}
+\end{theorem}
+
+For three-component systems ($m=3$) with $w=2$, the candidate sets are $\{1,2\}$, $\{1,3\}$, and $\{2,3\}$.
+
+\begin{corollary}
+\label{cor:mle_3comp_w2}
+For three-component systems with $w=2$, the MLE has the closed-form solution:
+\begin{equation}
+\label{eq:expo_mle_3comp_w2}
+\expomle = \frac{1}{n\bar{t}} \begin{pmatrix}
+\cnt{1,2} + \cnt{1,3} - \cnt{2,3}\\
+\cnt{1,2} - \cnt{1,3} + \cnt{2,3}\\
+-\cnt{1,2} + \cnt{1,3} + \cnt{2,3}
+\end{pmatrix}.
+\end{equation}
+\end{corollary}
+
+\begin{proof}[Proof of Corollary~\ref{cor:mle_3comp_w2}]
+For $m=3$: $A_1 = \cnt{1,2} + \cnt{1,3}$, $B_1 = \cnt{2,3}$, and $(m-2) = 1$. Applying Theorem~\ref{thm:mle_general_wm1}: $\estimator{\lambda}_1 = (A_1 - B_1)/(n\bar{t}) = (\cnt{1,2} + \cnt{1,3} - \cnt{2,3})/(n\bar{t})$. The formulas for $\estimator{\lambda}_2$ and $\estimator{\lambda}_3$ follow symmetrically.
+\end{proof}
+
+The log-likelihood for the three-component case is:
 \begin{equation}
 \ell(\vec{\lambda} | \bar{t}, \cntsymb) = \cnt{1,2} \ln(\lambda_1 + \lambda_2) + \cnt{1,3} \ln(\lambda_1 + \lambda_3) + \cnt{2,3} \ln(\lambda_2 + \lambda_3) - n\bar{t}(\lambda_1 + \lambda_2 + \lambda_3)
 \end{equation}
@@ -555,20 +622,9 @@ The score equations are:
 \end{pmatrix} - n\bar{t} \begin{pmatrix} 1\\1\\1 \end{pmatrix} = \vec{0}
 \end{equation}
 
-\begin{theorem}
-\label{thm:mle_3comp_w2}
-For three-component systems with $w=2$, the MLE has the closed-form solution:
-\begin{equation}
-\label{eq:expo_mle_3comp_w2}
-\expomle = \frac{1}{n\bar{t}} \begin{pmatrix}
-\cnt{1,2} + \cnt{1,3} - \cnt{2,3}\\
-\cnt{1,2} - \cnt{1,3} + \cnt{2,3}\\
--\cnt{1,2} + \cnt{1,3} + \cnt{2,3}
-\end{pmatrix}
-\end{equation}
-\end{theorem}
+\begin{proof}[Proof of Theorem~\ref{thm:mle_general_wm1} for $m=3$]
+We demonstrate the result for the three-component case; the extension to arbitrary $m$ follows by analogous algebra. The key insight is that pairwise subtraction of score equations yields proportionality relations among candidate set sums.
 
-\begin{proof}
 Setting the score equations to zero:
 \begin{align}
 \frac{\cnt{1,2}}{\lambda_1 + \lambda_2} + \frac{\cnt{1,3}}{\lambda_1 + \lambda_3} &= n\bar{t} \label{eq:score1}\\
@@ -630,11 +686,30 @@ Solving: $\lambda_1 = (\sigma_1 + \sigma_2 - \sigma_3)/2$, $\lambda_2 = (\sigma_
 \hat{\lambda}_3 &= \frac{1}{n\bar{t}}(-\cnt{1,2} + \cnt{1,3} + \cnt{2,3})
 \end{align}
 
-This completes the derivation of equation~\eqref{eq:expo_mle_3comp_w2}.
+This completes the derivation of equation~\eqref{eq:expo_mle_3comp_w2}. The general case follows the same pattern: pairwise subtraction of the $m$ score equations reveals that all $(m-1)$-wise sums are proportional to their candidate set counts, yielding a linear system solvable in closed form.
 \end{proof}
 
 \begin{remark}
-The closed-form solution exists because the score equations reduce to a linear system in the pairwise sums $\sigma_i$. This algebraic structure is specific to the three-component, $w=2$ case and does not generalize to arbitrary $m$ and $w$.
+The closed-form solution exists because the score equations reduce to a linear system in the $(m-1)$-wise sums. For $m=3$, these are pairwise sums $\sigma_i = \lambda_j + \lambda_k$. The same algebraic structure persists for arbitrary $m$ when $w = m-1$: pairwise subtraction of score equations reveals that all $(m-1)$-wise sums are proportional to their corresponding candidate set counts. However, for $w < m-1$, the score equations do not admit this linearization and closed-form solutions generally do not exist.
+\end{remark}
+
+\begin{remark}[Boundary Estimates]
+\label{rem:boundary_estimates}
+The closed-form MLE is the unconstrained solution to the score equations. For extreme candidate set distributions (e.g., $\cnt{2,3} > \cnt{1,2} + \cnt{1,3}$), the formula may yield $\estimator{\lambda}_1 < 0$, which is outside the parameter space $(0,\infty)^m$.
+
+Under the uniform masking model, $\Prob{\estimator{\lambda}_j < 0} \to 0$ as $n \to \infty$ when $\tparam{\lambda}_j > 0$. Negative estimates in finite samples suggest either:
+\begin{enumerate}
+\item Small sample size (insufficient averaging over candidate sets)
+\item True parameter near zero (component rarely fails)
+\item Potential model misspecification (uniform masking assumption violated)
+\end{enumerate}
+
+When negative estimates occur, the constrained MLE (setting $\lambda_j = 0$ and re-solving for remaining components) also has closed form. For example, with $\lambda_1 = 0$:
+\begin{equation}
+\estimator{\lambda}_2 = \frac{\cnt{1,2}}{(\cnt{1,2} + \cnt{1,3})\bar{t}}, \quad
+\estimator{\lambda}_3 = \frac{\cnt{1,3}}{(\cnt{1,2} + \cnt{1,3})\bar{t}}
+\end{equation}
+This corresponds to the two-component system where component 1 never fails.
 \end{remark}
 
 The Fisher information matrix is:
@@ -757,7 +832,7 @@ For $n=100$, the asymptotic approximation shows $3$-$5\%$ relative error, which 
 
 \subsubsection{Implementation Note}
 
-Detailed simulation code, including data generation, MLE computation via Theorem~\ref{thm:mle_3comp_w2}, and metric calculation, is available at \url{https://github.com/queelius/series_system_estimation}. The simulations were implemented in Python using NumPy for matrix operations and verified against independent R implementations.
+Detailed simulation code, including data generation, MLE computation via Corollary~\ref{cor:mle_3comp_w2}, and metric calculation, is available at \url{https://github.com/queelius/series_system_estimation}. The simulations were implemented in Python using NumPy for matrix operations and verified against independent R implementations.
 
 \section{Conclusion}
 \label{sec:conclusion}
@@ -768,7 +843,7 @@ The main practical insights are:
 \begin{enumerate}
 \item The information content of masked data is quantified by the Fisher information matrix, which depends on the masking cardinality $w$
 \item Minimal sufficient statistics are the mean system lifetime and candidate set frequencies
-\item For three-component systems with $w=2$, a closed-form MLE exists
+\item For $m$-component systems with $w=m-1$, a closed-form MLE exists (the three-component case is developed in detail)
 \item Asymptotic confidence intervals provide practical uncertainty quantification
 \end{enumerate}
 
@@ -825,7 +900,7 @@ Several extensions would broaden the applicability of this framework:
 \end{itemize}
 Such models sacrifice analytical tractability but more accurately reflect real diagnostic processes. The uniform masking results provide baseline comparisons and limiting cases.
 
-\item \textbf{Variable masking cardinality}: Allow $w$ to vary across observations, modeling scenarios where diagnostic quality varies by failure instance or by component
+\item \textbf{Variable masking cardinality}: Remark~\ref{rem:variable_w} provides the optimal combination formula when $w$ varies across observations. Further extensions could model $w$ as random, depending on diagnostic difficulty or component type
 
 \item \textbf{Non-exponential lifetime distributions}: Extend to Weibull (aging/wear-out), gamma (multi-stage failures), or lognormal (time-dependent hazards) distributions. Numerical methods will be required, but asymptotic theory remains applicable.
 
