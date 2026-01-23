@@ -35,6 +35,7 @@
 !/.gitignore
 !/.gitmodules
 !/.github/
+!/.zenodo.json
 
 # OS files
 .DS_Store
