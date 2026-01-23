@@ -7,7 +7,7 @@ authors:
     given-names: "Alexander"
     email: "atowell@siue.edu"
     affiliation: "Southern Illinois University Edwardsville"
-    orcid: "https://orcid.org/0000-0001-6443-0618"
+    orcid: "https://orcid.org/0000-0001-6443-9897"
 abstract: >-
   We consider the problem of estimating component failure rates in series
   systems when observations consist of system failure times paired with
@@ -28,8 +28,8 @@ keywords:
   - competing risks
 license: MIT
 repository-code: "https://github.com/queelius/expo-masked-fim"
-date-released: "2026-01-13"
-version: "3.0.0"
+date-released: "2026-01-23"
+version: "3.1.0"
 preferred-citation:
   type: article
   authors:
