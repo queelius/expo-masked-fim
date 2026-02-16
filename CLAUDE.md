@@ -30,8 +30,9 @@ paper/              # Main paper directory
 ├── main.pdf        # Generated PDF output
 └── html/           # HTML output (LaTeXML)
 docs/               # MkDocs documentation site
-research/           # Simulation code and data
-├── matrix_errors/  # C++ numerical validation code
+research/           # Simulation and validation code (R)
+├── validate_asymptotic_covariance.R  # Monte Carlo validation of asymptotic theory
+├── verify_mutual_information.R       # Mutual information verification
 img/                # TikZ diagram sources
 figures/            # Generated plots
 archive/            # Deprecated files (read-only)
@@ -68,12 +69,14 @@ mkdocs serve
 mkdocs build
 ```
 
-### Numerical Validation (C++)
+### Numerical Validation (R)
 
 ```bash
-g++ -std=c++17 -O2 research/matrix_errors/matrix_errors.cpp -o /tmp/matrix_errors
-cd research/matrix_errors && /tmp/matrix_errors
-gnuplot research/matrix_errors/errors.plt
+# Monte Carlo validation of asymptotic covariance (generates paper/fig_convergence.pdf)
+Rscript research/validate_asymptotic_covariance.R
+
+# Mutual information verification
+Rscript research/verify_mutual_information.R
 ```
 
 ## Key LaTeX Macros (paper/main.tex lines 23-82)
@@ -103,7 +106,7 @@ gnuplot research/matrix_errors/errors.plt
 
 1. **Working directory**: LaTeX compilation should be done from `paper/`
 2. **Use defined macros**: Always use macros from lines 23-82 rather than ad-hoc LaTeX
-3. **Core contribution**: Closed-form MLE for m=3, w=2 (Theorem 5.1) is the key novel result
+3. **Core contribution**: Closed-form MLE for w=m-1 with arbitrary m (Theorem 5.1); three-component case (Corollary 5.2) as illustration
 4. **Complete proofs**: All major theorems have full proofs; don't abbreviate them
 5. **Model assumptions**: The uniform masking assumption is explicitly acknowledged as unrealistic but analytically tractable
 6. **Graphics path**: Document searches `images/`, `../images/`, `../../images/`
