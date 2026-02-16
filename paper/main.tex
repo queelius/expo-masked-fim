@@ -12,7 +12,6 @@
 \usepackage{bbm}
 \usepackage{mathtools}
 \usepackage{etoolbox}
-\usepackage{pgfplots}
 \usepackage[linesnumbered,lined,ruled]{algorithm2e}
 \usepackage{caption}
 \usepackage{hyperref}
@@ -65,8 +64,6 @@
 
 % Operators
 \DeclareMathOperator{\MSE}{\mathrm{MSE}}
-\DeclareMathOperator{\trace}{tr}
-
 % Indicator function
 \newcommand{\SetIndicator}[1]{\mathbbm{1}_{#1}}
 
@@ -91,7 +88,9 @@
         masked system failure time,
         series systems,
         exponential distribution,
-        sufficient statistics},
+        sufficient statistics,
+        maximum entropy,
+        mutual information},
     colorlinks=true,
     linkcolor=blue,
     citecolor=green,
@@ -107,7 +106,7 @@
 \maketitle
 
 \begin{abstract}
-We consider the problem of estimating component failure rates in series systems when observations consist of system failure times paired with partial information about the failed component. For the case where component lifetimes follow exponential distributions, we derive closed-form expressions for the maximum likelihood estimator, the Fisher information matrix, and establish sufficient statistics. The asymptotic sampling distribution of the estimator is characterized and confidence intervals are provided. A detailed analysis of a three-component system demonstrates the theoretical results.
+We derive closed-form statistical inference for $m$-component series systems with exponentially distributed lifetimes when the failure cause is only partially observed. Under a uniform masking model---a tractable specialization of the general C1--C2--C3 masked-data likelihood framework---we characterize the score equations, Fisher information matrix, and sufficient statistics for arbitrary system dimension~$m$ and masking cardinality~$w$, and derive a closed-form MLE for the maximally uninformative identifiable case $w = m-1$. In this case the score equations linearize and the MLE admits a closed-form solution for general~$m$. We prove that uniform masking maximizes the conditional entropy of the candidate set among all symmetric (C2) masking models, and that diagnostic informativeness---measured by the mutual information $\mathrm{I}(K; C)$---decreases monotonically with~$w$ via a data processing inequality. The Fisher information matrix quantifies how diagnostic precision (smaller~$w$) translates into statistical efficiency, and its singularity at $w = m$ reflects the non-identifiability of completely masked data. Monte Carlo simulations confirm that the asymptotic covariance matches empirical behavior at rate $O(n^{-1/2})$ across diverse parameter configurations. The three-component system with $w = 2$ is developed in detail as an illustration.
 \end{abstract}
 
 \tableofcontents
@@ -131,7 +130,7 @@ The 1990s saw significant development of Bayesian approaches to masked data. Rei
 
 Flehinger et al.~\cite{flehinger1998,flehinger2002} contributed to the theoretical foundations by studying survival analysis with competing risks and masked failure causes, developing parametric models that accommodate general patterns of missing failure types. Sarhan~\cite{sarhan2001} provided both maximum likelihood and Bayes procedures for estimating component reliabilities in series systems with exponentially distributed lifetimes, focusing on practical implementation issues.
 
-More recent work has expanded the scope to include interval-censored data~\cite{reliability}, Bayesian modeling frameworks~\cite{kuo2007}, and applications to specific engineering contexts. The competing risks framework continues to provide a natural setting for masked data analysis~\cite{agustin}, connecting reliability engineering with survival analysis and biostatistics.
+More recent work has expanded the scope to include interval-censored data~\cite{reliability}, Bayesian modeling frameworks~\cite{kuo2007}, and applications to specific engineering contexts. The competing risks framework continues to provide a natural setting for masked data analysis~\cite{agustin}, connecting reliability engineering with survival analysis and biostatistics. Towell~\cite{towell2025masked} develops a distribution-agnostic likelihood framework under three conditions on the masking mechanism (C1--C2--C3) that enable the unknown masking distribution to be eliminated from the likelihood, and establishes formal identifiability conditions based on the combinatorial structure of the candidate sets. The present paper specializes that framework to exponential lifetimes under a stronger uniform masking assumption (see Remark~\ref{rem:c1c2c3_comparison} below), which enables the closed-form results that are the focus of this work.
 
 Despite this substantial body of work, \emph{closed-form analytical results remain limited}. Specifically:
 \begin{itemize}
@@ -145,24 +144,24 @@ This paper addresses these gaps by providing complete analytical results for the
 
 \subsection{Contributions}
 
-This paper provides the first complete analytical treatment of maximum likelihood estimation for series systems with masked failure data under exponential component lifetimes. Our main contributions are:
+This paper provides a complete analytical treatment of maximum likelihood estimation for general $m$-component series systems with masked failure data under exponential component lifetimes. While closed-form MLEs have been derived for specific small systems~\cite{miyakawa1984,exactmle}, complete results---including the Fisher information matrix, sufficient statistics, and asymptotic theory---have not previously been obtained for arbitrary $m$. Our main contributions are:
 \begin{enumerate}
     \item \textbf{Explicit Fisher information matrix}: We derive a closed-form expression for the Fisher information matrix under arbitrary masking patterns, enabling direct computation of asymptotic variances without numerical differentiation or Monte Carlo simulation
 
     \item \textbf{Sufficient statistics}: The mean system lifetime and candidate set frequency vector constitute sufficient statistics, reducing the data to $1 + \binom{m}{w}$ real numbers
 
-    \item \textbf{Closed-form MLE for $w=m-1$ masking}: For masking cardinality $w = m-1$ (where each candidate set excludes exactly one component), we derive an explicit closed-form solution to the likelihood equations for arbitrary $m$, eliminating the need for numerical optimization. This represents the first known closed-form MLE for non-trivial masking scenarios. The three-component case ($m=3$, $w=2$) is developed in detail
+    \item \textbf{Closed-form MLE for $w=m-1$ masking}: For masking cardinality $w = m-1$ (where each candidate set excludes exactly one component), we derive an explicit closed-form solution to the likelihood equations for arbitrary $m$, eliminating the need for numerical optimization. This extends prior closed-form results for two- and three-component systems~\cite{miyakawa1984,exactmle} to arbitrary system dimension $m$. The three-component case ($m=3$, $w=2$) is developed in detail
 
     \item \textbf{Asymptotic distribution theory}: We characterize the asymptotic sampling distribution of the MLE and provide Wald-type confidence intervals with explicit formulas for coverage
 
     \item \textbf{Numerical validation}: We provide Monte Carlo evidence confirming the theoretical asymptotic covariance matches empirical behavior for finite samples
 \end{enumerate}
 
-The closed-form results for $w=m-1$ are particularly significant because this configuration represents the simplest non-degenerate masking scenario: when $w=1$ there is no masking (exact cause identification), and when $w=m$ there is complete masking (no diagnostic information). The $w=m-1$ case captures the essential statistical structure of masked data while admitting analytical solutions.
+The closed-form results for $w=m-1$ are particularly significant because this is the \emph{maximally uninformative identifiable} masking configuration. The masking cardinality ranges from $w=1$ (exact cause identification, no masking) through $w=m$ (complete masking, non-identifiable). Each candidate set of size $w$ excludes $m-w$ components from suspicion, so larger $w$ means less diagnostic information per observation. At $w=m-1$, each observation excludes only a single component, retaining the minimum information needed for identifiability. The $w=m-1$ case therefore serves as a natural analytical worst-case bound: if closed-form inference is possible here, it establishes performance limits for the hardest identifiable masking scenario.
 
 \subsection{Paper organization}
 
-Section~\ref{sec:model} introduces the probabilistic model for series systems with masked failures. Section~\ref{sec:general_fim} develops the likelihood and Fisher information for general parametric families. Section~\ref{sec:exponential} presents the main results for exponentially distributed components, including the MLE, information matrix, and sufficient statistics. Section~\ref{sec:three_component} provides detailed analysis of three-component systems. Section~\ref{sec:conclusion} concludes with discussion.
+Section~\ref{sec:model} introduces the probabilistic model for series systems with masked failures. Section~\ref{sec:general_fim} develops the likelihood and Fisher information for general parametric families. Section~\ref{sec:exponential} presents the main results for exponentially distributed components, including the MLE, information matrix, and sufficient statistics. Section~\ref{sec:three_component} provides detailed analysis of three-component systems. Section~\ref{sec:conclusion} concludes with discussion. Appendix~A provides a Newton--Raphson algorithm for the general-$w$ case.
 
 \section{Probabilistic Model}
 \label{sec:model}
@@ -177,6 +176,7 @@ The component lifetimes $\cv_1, \ldots, \cv_m$ are mutually independent.
 \end{assumption}
 
 \begin{assumption}
+\label{asm:series}
 The system operates if and only if all components are functioning (series configuration).
 \end{assumption}
 
@@ -232,7 +232,7 @@ This is a \textbf{strong assumption} that is generally \emph{not satisfied in pr
 \end{remark}
 
 \begin{remark}[Justification for Uniform Masking]
-We adopt the uniform masking assumption because it enables \emph{analytical derivation} of closed-form expressions for the MLE, Fisher information matrix, and sufficient statistics. These analytical results provide:
+We adopt the uniform masking assumption because it enables \emph{analytical derivation} of the score equations, Fisher information matrix, and sufficient statistics---and, for $w = m-1$, a closed-form MLE. These analytical results provide:
 \begin{itemize}
 \item Direct insight into the information structure of masked failure data
 \item Closed-form asymptotic variance formulas (no Monte Carlo needed)
@@ -247,7 +247,55 @@ The uniform masking model is most appropriate when:
 \item No prior information about component reliabilities is used during diagnosis
 \end{itemize}
 
-Despite its limitations, the uniform masking model serves as a tractable \emph{reference model} for understanding masked failure data, analogous to how the exponential distribution serves as a reference for lifetime modeling despite the restrictive constant-hazard assumption.
+Despite its limitations, the uniform masking model with $w = m-1$ serves as a natural \emph{reference model} for masked failure data: it is the \emph{maximally uninformative identifiable} masking configuration, since each observation excludes only a single component from suspicion and retains the minimum diagnostic information needed for identifiability. In this sense, uniform masking at $w = m-1$ plays a role analogous to the exponential distribution in lifetime modeling---both are analytically tractable worst cases that provide baseline performance bounds, and both owe their tractability to a maximum-entropy--like property (constant hazard rate for the exponential; uniform inclusion probability for the masking model).
+\end{remark}
+
+The following result makes the ``maximum-entropy--like'' claim precise. It is distribution-free: it depends only on the masking mechanism, not on the component lifetime distributions.
+
+\begin{proposition}[Diagnostic Informativeness]
+\label{prop:mutual_info}
+Let $\RV{I}(\RV{K}; \cand_w)$ denote the mutual information between the failed component $\RV{K}$ and the candidate set $\cand$ under uniform masking with cardinality~$w$.
+\begin{enumerate}
+\item \textbf{Maximum conditional entropy.} For fixed~$w$, among all masking models satisfying \emph{C1} (containment) and \emph{C2} (symmetry), uniform masking maximizes the conditional entropy $\RV{H}(\cand | \RV{K})$.
+\item \textbf{Monotone information loss.} Under uniform masking, $\RV{I}(\RV{K}; \cand_w)$ is strictly decreasing in~$w$. Consequently, $w = m-1$ minimizes the diagnostic information among all identifiable ($w < m$) uniform masking configurations.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+For part~(1): under C2, $\Prob{\cand = c \mid \RV{K} = k} = \beta_c$ for all $k \in c$, with $\sum_{c \ni k} \beta_c = 1$ for each~$k$. The conditional entropy decomposes as $\RV{H}(\cand | \RV{K}) = \sum_k \Prob{\RV{K}=k}\, \RV{H}(\cand | \RV{K}=k)$, where each $\RV{H}(\cand | \RV{K}=k) = -\sum_{c \ni k} \beta_c \ln \beta_c$ is maximized by the uniform distribution $\beta_c = 1/\binom{m-1}{w-1}$. Since this choice satisfies the constraint for all~$k$ simultaneously, it maximizes every term.
+
+For part~(2): given $\cand_w$ (a uniform random size-$w$ set containing~$\RV{K}$), define $\cand_{w+1} = \cand_w \cup \{J\}$ where $J$ is drawn uniformly from $\{1,\ldots,m\} \setminus \cand_w$. The number of size-$w$ subsets of a given size-$(w+1)$ set $c'$ that contain~$\RV{K}$ is~$w$, giving
+\begin{equation*}
+\Prob{\cand_{w+1} = c' \mid \RV{K} = k} = \frac{w}{\binom{m-1}{w-1}(m-w)} = \frac{1}{\binom{m-1}{w}},
+\end{equation*}
+which is the uniform masking distribution with cardinality $w+1$. This establishes the Markov chain $\RV{K} \to \cand_w \to \cand_{w+1}$, and the data processing inequality yields $\RV{I}(\RV{K}; \cand_{w+1}) \leq \RV{I}(\RV{K}; \cand_w)$. Strict inequality holds because the channel $\cand_w \to \cand_{w+1}$ is not invertible.
+\end{proof}
+
+\begin{remark}
+In the symmetric case $\tparam{\lambda}_1 = \cdots = \tparam{\lambda}_m$, the mutual information has the explicit form $\RV{I}(\RV{K}; \cand_w) = \ln(m/w)$, which ranges from $\ln m$ (exact identification, $w=1$) through $\ln(m/(m-1))$ (maximum masking with identifiability, $w=m-1$) to $0$ (complete masking, $w=m$). Combined with the exponential lifetime assumption, the configuration $(w = m-1,\, \expdist)$ is thus doubly ``worst case'': exponential lifetimes maximize entropy among distributions with a given mean, and uniform masking at $w = m-1$ minimizes diagnostic information among identifiable masking models.
+\end{remark}
+
+\begin{remark}[Relationship to the C1--C2--C3 Framework]
+\label{rem:c1c2c3_comparison}
+The uniform masking model (Definition~\ref{def:uniform_masking}) implies the three standard conditions used in the general masked-data likelihood literature~\cite{towell2025masked}:
+\begin{itemize}
+\item[\textbf{C1.}] The candidate set contains the failed component: $\Prob{\RV{K} \in \cand} = 1$.
+\item[\textbf{C2.}] The candidate set probability is symmetric across components within the set: $\Prob{\cand = c \mid \RV{K} = j} = \Prob{\cand = c \mid \RV{K} = j'}$ for all $j, j' \in c$.
+\item[\textbf{C3.}] Masking probabilities do not depend on the system parameter $\sysparam$.
+\end{itemize}
+
+\noindent The uniform masking assumption is \emph{strictly stronger} than C1--C2--C3 in two respects:
+\begin{enumerate}
+\item \textbf{Fixed cardinality.} We require $|\cand| = w$ for every observation.  Under C1--C2--C3, the candidate set size may vary: different observations may have $|\cand_i| = 2, 3, \ldots$ The fixed cardinality is a design constraint (e.g., the diagnostic always reports a candidate set of a prespecified size).
+
+\item \textbf{Equal inclusion probability.} Each non-failed component is included in $\cand$ with the same probability $(w-1)/(m-1)$, independently.  C2 requires only that, \emph{given a particular candidate set $c$}, the probability of observing $c$ does not depend on which member of $c$ failed.  Uniform masking goes further: all $\binom{m-1}{w-1}$ candidate sets containing the failed component are equally likely.
+\end{enumerate}
+
+\noindent Under C1--C2--C3 alone, the masking probability $\beta_i = \Prob{\cand_i = c_i \mid \sv_i = t_i, \RV{K}_i = j}$ is an unknown nuisance parameter that factors out of the likelihood (C3) and thus does not affect the MLE.  The point estimates are therefore identical.  However, the closed-form Fisher information matrix and sufficient statistics derived in this paper \emph{do} require knowledge of the masking distribution: the FIM entries involve expected candidate set frequencies, which under uniform masking are determined by the known probability $1/\binom{m-1}{w-1}$.  Under C1--C2--C3 with unknown $\beta_i$, one obtains the same MLE but cannot compute asymptotic variances in closed form without additional modeling of the masking mechanism.
+
+\medskip
+\noindent\textbf{Connection to identifiability.}
+The identifiability theory for masked data~\cite{towell2025masked} shows that parameters are identifiable when the masking mechanism is \emph{separating}: for every pair of components $j \neq j'$, there exists a candidate set $c$ containing $j$ but not~$j'$.  Under uniform masking with cardinality $w < m$, every candidate set of size~$w$ occurs with positive probability, and in particular the set $\{1,\ldots,m\} \setminus \{j'\}$ separates $j$ from~$j'$ whenever $w \leq m-1$.  Thus uniform masking with $w \leq m-1$ is automatically separating, guaranteeing identifiability.  Conversely, when $w = m$ every candidate set is $\{1,\ldots,m\}$ and all component pairs are diagnostically confounded, explaining the Fisher information singularity at $w = m$ (see condition~R2 preceding Theorem~\ref{thm:asymptotic_normal}).
 \end{remark}
 
 \begin{assumption}
@@ -258,7 +306,7 @@ The masking mechanism (which components are included in $\cand$) is independent 
 This assumption implies that the masking quality does not depend on when the failure occurred, only on which component failed and the diagnostic capabilities of the inspection process.
 
 \begin{definition}
-A \emph{masked system failure time} is a pair $(\ti, \cand)$ where $\ti$ is the observed system failure time and $\cand$ is the candidate set. When the masking cardinality $w = |\cand|$ is fixed by experimental design, we condition on $w$ throughout.
+A \emph{masked system failure time} is a pair $(\ti, \cand)$ where $\ti$ is the observed system failure time and $\cand$ is the candidate set. Let $\RV{W} = |\cand|$ denote the \emph{masking cardinality}. When $\RV{W} = w$ is fixed by experimental design, we condition on $w$ throughout.
 \end{definition}
 
 \subsection{Parametric Families}
@@ -411,7 +459,10 @@ Under the uniform masking model (Definition~\ref{def:uniform_masking}), the join
 \pdf_{\rvcand, \sv | \RV{W}}(\cand, t | w, \tparam{\vec{\lambda}}) = \frac{1}{\binom{m-1}{w-1}} \left(\sum_{j \in \cand} \tparam{\lambda}_j\right) \exp\left(-\left[\sum_{j=1}^{m} \tparam{\lambda}_j\right] t\right)
 \end{equation}
 
-This follows directly from Proposition~\ref{prop:candidate_prob} by substituting the exponential PDFs and noting that for exponential distributions, $\prod_{k \neq j} \srv_k(t) = \exp(-\sum_{k \neq j} \tparam{\lambda}_k t)$.
+This follows directly from Proposition~\ref{prop:candidate_prob} by substituting the exponential PDFs and noting that for exponential distributions,
+\[
+\prod_{k \neq j} \srv_k(t) = \exp\!\left(-\sum_{k \neq j} \tparam{\lambda}_k t\right).
+\]
 
 \subsection{Maximum Likelihood Estimator}
 
@@ -434,11 +485,9 @@ The score function has $j$-th component:
 \end{equation}
 where $\SetIndicator{\cand}(j)$ is the indicator function equal to 1 if $j \in \cand$ and 0 otherwise.
 
-\begin{theorem}
-The maximum likelihood estimator $\expomle$ maximizes the log-likelihood~\eqref{eq:expo_loglik} and satisfies the score equation $\nabla \ell(\expomle | \mfs) = \vec{0}$.
-\end{theorem}
-
-In general, this requires numerical solution. However, for specific cases (notably three-component systems with $w=2$), closed-form solutions exist.
+\begin{remark}
+For general masking cardinality $w$, the score equations~\eqref{eq:expo_score} do not admit closed-form solutions and the MLE must be computed numerically; Appendix~A provides a Newton--Raphson algorithm. However, for $w = m-1$ the score equations linearize and a closed-form solution exists (Theorem~\ref{thm:mle_general_wm1}).
+\end{remark}
 
 \subsection{Sufficient Statistics}
 
@@ -464,12 +513,15 @@ We do not establish minimality: the likelihood is not a regular exponential fami
 
 \subsection{Fisher Information Matrix}
 
+\begin{proposition}
+\label{prop:expo_fisher}
 The $(j,k)$-th element of the Fisher information matrix for exponential series systems is:
 \begin{equation}
 \label{eq:expo_fisher_element}
 [\infomatrx(\tparam{\vec{\lambda}} | w)]_{jk} = \frac{\sum_{\cand} \left(\sum_{p \in \cand} \tparam{\lambda}_p\right)^{-1} \SetIndicator{\cand \times \cand}(j,k)}{\binom{m-1}{w-1} \sum_{p=1}^{m} \tparam{\lambda}_p}
 \end{equation}
-where the sum is over all candidate sets $\cand$ of cardinality $w$.
+where the sum is over all candidate sets $\cand$ of cardinality $w$ and $\SetIndicator{\cand \times \cand}(j,k) = \SetIndicator{\cand}(j)\SetIndicator{\cand}(k)$.
+\end{proposition}
 
 This formula reveals that information about the pair $(\lambda_j, \lambda_k)$ accrues only from candidate sets containing both components $j$ and $k$ (the indicator $\SetIndicator{\cand \times \cand}(j,k)$ ensures this). Each such candidate set contributes inversely to its total failure rate, so components with higher failure rates contribute less information per observation. The denominator scales with the total failure rate and the number of possible candidate sets.
 
@@ -520,13 +572,14 @@ This completes the derivation of equation~\eqref{eq:expo_fisher_element}.
 
 \begin{remark}[Combining Estimates from Variable Masking Cardinality]
 \label{rem:variable_w}
-In practice, diagnostic quality may vary across observations, resulting in data with different masking cardinalities. Suppose the sample is partitioned into $G$ groups, where group $g$ has $n_g$ observations with masking cardinality $w_g$. Each group yields an MLE $\estimator{\vec{\lambda}}^{(g)}$ with asymptotic covariance $\frac{1}{n_g}\infomatrx^{-1}(\tparam{\vec{\lambda}} | w_g)$.
+In practice, diagnostic quality may vary across observations, resulting in data with different masking cardinalities. Suppose the sample is partitioned into $G$ groups, where group $g$ has $n_g$ observations with masking cardinality $w_g$. Each group yields an MLE $\estimator{\vec{\lambda}}^{(g)}$ with asymptotic covariance $n_g^{-1}\infomatrx^{-1}(\tparam{\vec{\lambda}} | w_g)$.
 
 The optimal combined estimator under independence is the inverse-variance weighted average:
-\begin{equation}
+\begin{multline}
 \label{eq:combined_mle}
-\estimator{\vec{\lambda}}_{\text{combined}} = \left(\sum_{g=1}^{G} n_g \infomatrx(\tparam{\vec{\lambda}} | w_g)\right)^{-1} \left(\sum_{g=1}^{G} n_g \infomatrx(\tparam{\vec{\lambda}} | w_g) \estimator{\vec{\lambda}}^{(g)}\right)
-\end{equation}
+\estimator{\vec{\lambda}}_{\text{combined}} = \left(\sum_{g=1}^{G} n_g \infomatrx(\tparam{\vec{\lambda}} | w_g)\right)^{-1} \\
+ \times \left(\sum_{g=1}^{G} n_g \infomatrx(\tparam{\vec{\lambda}} | w_g) \estimator{\vec{\lambda}}^{(g)}\right)
+\end{multline}
 with asymptotic covariance
 \begin{equation}
 \label{eq:combined_cov}
@@ -545,7 +598,11 @@ The following regularity conditions ensure consistency and asymptotic normality 
 \item[(R3)] The observations $(\ti_i, \cand_i)_{i=1}^n$ are independent and identically distributed
 \end{enumerate}
 
-Condition (R1) excludes boundary cases where components have zero failure rate. Condition (R2) is satisfied when each component appears in at least one candidate set, ensuring all parameters are identifiable. Condition (R3) holds by the experimental design.
+Condition (R1) excludes boundary cases where components have zero failure rate. Condition (R2) is satisfied when $1 \leq w < m$: from Proposition~\ref{prop:expo_fisher}, the FIM decomposes as
+\begin{equation}
+\infomatrx(\tparam{\vec{\lambda}} | w) = \frac{1}{\binom{m-1}{w-1}\Lambda} \sum_{\cand: |\cand|=w} \frac{\vec{e}_{\cand}\vec{e}_{\cand}^\top}{\sum_{p \in \cand} \tparam{\lambda}_p}
+\end{equation}
+where $\vec{e}_{\cand} \in \{0,1\}^m$ is the indicator vector of $\cand$ and $\Lambda = \sum_j \tparam{\lambda}_j$. Each summand is positive semidefinite, so for any $\vec{v} \neq \vec{0}$ it suffices to show $\vec{e}_{\cand}^\top \vec{v} \neq 0$ for some $\cand$. Suppose $\vec{e}_{\cand}^\top \vec{v} = 0$ for all $|\cand| = w$. Any two components $j \neq k$ appear together in some size-$w$ subset (since $w \geq 1$ and $m \geq 2$); replacing one member by the other in such a set and subtracting gives $v_j = v_k$. Hence all entries of $\vec{v}$ are equal, and $w v_1 = 0$ forces $\vec{v} = \vec{0}$, a contradiction. At the boundary $w = m$, all observations share the single candidate set $\{1,\ldots,m\}$, the FIM has rank one, and only the total rate $\sum_j \lambda_j$ is identifiable. Condition (R3) holds by the experimental design.
 
 \begin{theorem}
 \label{thm:asymptotic_normal}
@@ -555,7 +612,7 @@ Under conditions (R1)--(R3), as $n \to \infty$,
 \end{equation}
 \end{theorem}
 
-This result follows from standard maximum likelihood theory~\cite{bickel}. The asymptotic variance-covariance matrix is the inverse of the Fisher information matrix.
+This result follows from standard maximum likelihood theory~\cite[Theorem~2.5.1]{bickel}. The asymptotic variance-covariance matrix is the inverse of the Fisher information matrix.
 
 \subsection{Confidence Intervals}
 
@@ -589,7 +646,44 @@ The MLE has the closed-form solution:
 \end{equation}
 \end{theorem}
 
-For three-component systems ($m=3$) with $w=2$, the candidate sets are $\{1,2\}$, $\{1,3\}$, and $\{2,3\}$.
+\begin{proof}
+When $w = m-1$, there are exactly $m$ candidate sets, each of size $m-1$, and each is the complement of a single component: $\cand_{\setminus j} = \{1,\ldots,m\} \setminus \{j\}$ for $j = 1, \ldots, m$. Let $\sigma_{\setminus j} = \sum_{k \neq j} \lambda_k$ denote the sum of rates over $\cand_{\setminus j}$.
+
+From equation~\eqref{eq:expo_score}, the score equation for component $j$ is:
+\begin{equation}
+\label{eq:score_general}
+\sum_{\substack{\cand : |\cand| = m-1 \\ j \in \cand}} \frac{\cntsymb_{\cand}}{\sigma_{\cand}} = n\bar{t}
+\end{equation}
+where $\sigma_{\cand} = \sum_{k \in \cand} \lambda_k$. Component $j$ appears in every candidate set except $\cand_{\setminus j}$, so the sum ranges over $m-1$ terms.
+
+Subtracting the score equation for component $j'$ from that of component $j$: all candidate sets containing both $j$ and $j'$ cancel, leaving
+\begin{equation}
+\frac{\cntsymb_{\cand_{\setminus j'}}}{\sigma_{\setminus j'}} - \frac{\cntsymb_{\cand_{\setminus j}}}{\sigma_{\setminus j}} = 0 \quad \Rightarrow \quad \frac{\cntsymb_{\cand_{\setminus j'}}}{\sigma_{\setminus j'}} = \frac{\cntsymb_{\cand_{\setminus j}}}{\sigma_{\setminus j}}
+\end{equation}
+for every pair $j, j'$. Thus there exists a constant $\gamma$ such that $\sigma_{\setminus j} = \cntsymb_{\cand_{\setminus j}} / \gamma$ for all $j$. Substituting into any one score equation: each of the $m-1$ terms equals $\gamma$, so $(m-1)\gamma = n\bar{t}$, giving $\gamma = n\bar{t}/(m-1)$ and
+\begin{equation}
+\label{eq:sigma_solution}
+\sigma_{\setminus j} = \frac{(m-1)\cntsymb_{\cand_{\setminus j}}}{n\bar{t}} \quad \text{for } j = 1, \ldots, m.
+\end{equation}
+
+To recover the individual $\lambda_j$, note that $\sigma_{\setminus j} = \Lambda - \lambda_j$ where $\Lambda = \sum_{k=1}^m \lambda_k$. Summing equation~\eqref{eq:sigma_solution} over $j$:
+\begin{equation}
+\sum_{j=1}^m \sigma_{\setminus j} = (m-1)\Lambda = \frac{(m-1)}{n\bar{t}} \sum_{j=1}^m \cntsymb_{\cand_{\setminus j}} = \frac{(m-1)n}{n\bar{t}}
+\end{equation}
+since $\sum_j \cntsymb_{\cand_{\setminus j}} = n$. Therefore $\Lambda = 1/\bar{t}$. Then:
+\begin{equation}
+\estimator{\lambda}_j = \Lambda - \sigma_{\setminus j} = \frac{1}{\bar{t}} - \frac{(m-1)\cntsymb_{\cand_{\setminus j}}}{n\bar{t}} = \frac{n - (m-1)B_j}{n\bar{t}}
+\end{equation}
+where $B_j = \cntsymb_{\cand_{\setminus j}}$. Since $n = A_j + B_j$ (every observation either contains $j$ or excludes it), we have $n - (m-1)B_j = A_j + B_j - (m-1)B_j = A_j - (m-2)B_j$, yielding equation~\eqref{eq:expo_mle_general_wm1}.
+\end{proof}
+
+\begin{remark}
+The closed-form solution exists because pairwise subtraction of score equations linearizes the system: all $(m-1)$-wise sums $\sigma_{\setminus j}$ are proportional to their candidate set counts. For $w < m-1$, each candidate set sum involves fewer than $m-1$ parameters, pairwise subtraction no longer isolates a single ratio, and the score equations do not admit this linearization. Closed-form solutions generally do not exist for $w < m-1$.
+\end{remark}
+
+\subsubsection{Illustration for Three Components}
+
+For $m=3$ with $w=2$, the candidate sets are $\{1,2\}$, $\{1,3\}$, and $\{2,3\}$, providing a concrete demonstration.
 
 \begin{corollary}
 \label{cor:mle_3comp_w2}
@@ -604,103 +698,29 @@ For three-component systems with $w=2$, the MLE has the closed-form solution:
 \end{equation}
 \end{corollary}
 
-\begin{proof}[Proof of Corollary~\ref{cor:mle_3comp_w2}]
+\begin{proof}
 For $m=3$: $A_1 = \cnt{1,2} + \cnt{1,3}$, $B_1 = \cnt{2,3}$, and $(m-2) = 1$. Applying Theorem~\ref{thm:mle_general_wm1}: $\estimator{\lambda}_1 = (A_1 - B_1)/(n\bar{t}) = (\cnt{1,2} + \cnt{1,3} - \cnt{2,3})/(n\bar{t})$. The formulas for $\estimator{\lambda}_2$ and $\estimator{\lambda}_3$ follow symmetrically.
 \end{proof}
 
 The log-likelihood for the three-component case is:
-\begin{equation}
-\ell(\vec{\lambda} | \bar{t}, \cntsymb) = \cnt{1,2} \ln(\lambda_1 + \lambda_2) + \cnt{1,3} \ln(\lambda_1 + \lambda_3) + \cnt{2,3} \ln(\lambda_2 + \lambda_3) - n\bar{t}(\lambda_1 + \lambda_2 + \lambda_3)
-\end{equation}
+\begin{multline}
+\ell(\vec{\lambda} | \bar{t}, \cntsymb) = \cnt{1,2} \ln(\lambda_1 + \lambda_2) + \cnt{1,3} \ln(\lambda_1 + \lambda_3) \\
+ + \cnt{2,3} \ln(\lambda_2 + \lambda_3) - n\bar{t}(\lambda_1 + \lambda_2 + \lambda_3)
+\end{multline}
 
-The score equations are:
-\begin{equation}
-\nabla \ell = \begin{pmatrix}
-\frac{\cnt{1,2}}{\lambda_1 + \lambda_2} + \frac{\cnt{1,3}}{\lambda_1 + \lambda_3}\\
-\frac{\cnt{1,2}}{\lambda_1 + \lambda_2} + \frac{\cnt{2,3}}{\lambda_2 + \lambda_3}\\
-\frac{\cnt{1,3}}{\lambda_1 + \lambda_3} + \frac{\cnt{2,3}}{\lambda_2 + \lambda_3}
-\end{pmatrix} - n\bar{t} \begin{pmatrix} 1\\1\\1 \end{pmatrix} = \vec{0}
-\end{equation}
-
-\begin{proof}[Proof of Theorem~\ref{thm:mle_general_wm1} for $m=3$]
-We demonstrate the result for the three-component case; the extension to arbitrary $m$ follows by analogous algebra. The key insight is that pairwise subtraction of score equations yields proportionality relations among candidate set sums.
-
-Setting the score equations to zero:
-\begin{align}
-\frac{\cnt{1,2}}{\lambda_1 + \lambda_2} + \frac{\cnt{1,3}}{\lambda_1 + \lambda_3} &= n\bar{t} \label{eq:score1}\\
-\frac{\cnt{1,2}}{\lambda_1 + \lambda_2} + \frac{\cnt{2,3}}{\lambda_2 + \lambda_3} &= n\bar{t} \label{eq:score2}\\
-\frac{\cnt{1,3}}{\lambda_1 + \lambda_3} + \frac{\cnt{2,3}}{\lambda_2 + \lambda_3} &= n\bar{t} \label{eq:score3}
-\end{align}
-
-Define the pairwise sums: $\sigma_1 = \lambda_1 + \lambda_2$, $\sigma_2 = \lambda_1 + \lambda_3$, $\sigma_3 = \lambda_2 + \lambda_3$. Then the score equations become:
-\begin{align}
-\frac{\cnt{1,2}}{\sigma_1} + \frac{\cnt{1,3}}{\sigma_2} &= n\bar{t} \label{eq:sigma1}\\
-\frac{\cnt{1,2}}{\sigma_1} + \frac{\cnt{2,3}}{\sigma_3} &= n\bar{t} \label{eq:sigma2}\\
-\frac{\cnt{1,3}}{\sigma_2} + \frac{\cnt{2,3}}{\sigma_3} &= n\bar{t} \label{eq:sigma3}
-\end{align}
-
-Subtracting equation~\eqref{eq:sigma2} from~\eqref{eq:sigma1}:
-\begin{equation}
-\frac{\cnt{1,3}}{\sigma_2} - \frac{\cnt{2,3}}{\sigma_3} = 0 \quad \Rightarrow \quad \cnt{1,3} \sigma_3 = \cnt{2,3} \sigma_2 \label{eq:relation1}
-\end{equation}
-
-Subtracting equation~\eqref{eq:sigma3} from~\eqref{eq:sigma1}:
-\begin{equation}
-\frac{\cnt{1,2}}{\sigma_1} - \frac{\cnt{2,3}}{\sigma_3} = 0 \quad \Rightarrow \quad \cnt{1,2} \sigma_3 = \cnt{2,3} \sigma_1 \label{eq:relation2}
-\end{equation}
-
-Subtracting equation~\eqref{eq:sigma3} from~\eqref{eq:sigma2}:
-\begin{equation}
-\frac{\cnt{1,2}}{\sigma_1} - \frac{\cnt{1,3}}{\sigma_2} = 0 \quad \Rightarrow \quad \cnt{1,2} \sigma_2 = \cnt{1,3} \sigma_1 \label{eq:relation3}
-\end{equation}
-
-From equations~\eqref{eq:relation1}, \eqref{eq:relation2}, \eqref{eq:relation3}, we can express $\sigma_2$ and $\sigma_3$ in terms of $\sigma_1$:
-\begin{align}
-\sigma_2 &= \frac{\cnt{1,3}}{\cnt{1,2}} \sigma_1 \quad \text{(from \eqref{eq:relation3})}\\
-\sigma_3 &= \frac{\cnt{2,3}}{\cnt{1,2}} \sigma_1 \quad \text{(from \eqref{eq:relation2})}
-\end{align}
-
-Substituting into equation~\eqref{eq:sigma1}:
-\begin{align}
-\frac{\cnt{1,2}}{\sigma_1} + \frac{\cnt{1,3} \cdot \cnt{1,2}}{\cnt{1,3} \sigma_1} &= n\bar{t} \nonumber\\
-\frac{\cnt{1,2} + \cnt{1,2}}{\sigma_1} &= n\bar{t} \nonumber\\
-\sigma_1 &= \frac{2\cnt{1,2}}{n\bar{t}}
-\end{align}
-
-Therefore:
-\begin{align}
-\sigma_1 &= \frac{2\cnt{1,2}}{n\bar{t}}, \quad \sigma_2 = \frac{2\cnt{1,3}}{n\bar{t}}, \quad \sigma_3 = \frac{2\cnt{2,3}}{n\bar{t}}
-\end{align}
-
-Now we recover the individual $\lambda_j$ from the system:
-\begin{align}
-\lambda_1 + \lambda_2 &= \sigma_1\\
-\lambda_1 + \lambda_3 &= \sigma_2\\
-\lambda_2 + \lambda_3 &= \sigma_3
-\end{align}
-
-Solving: $\lambda_1 = (\sigma_1 + \sigma_2 - \sigma_3)/2$, $\lambda_2 = (\sigma_1 - \sigma_2 + \sigma_3)/2$, $\lambda_3 = (-\sigma_1 + \sigma_2 + \sigma_3)/2$. Substituting the values of $\sigma_i$:
-\begin{align}
-\hat{\lambda}_1 &= \frac{1}{n\bar{t}}(\cnt{1,2} + \cnt{1,3} - \cnt{2,3})\\
-\hat{\lambda}_2 &= \frac{1}{n\bar{t}}(\cnt{1,2} - \cnt{1,3} + \cnt{2,3})\\
-\hat{\lambda}_3 &= \frac{1}{n\bar{t}}(-\cnt{1,2} + \cnt{1,3} + \cnt{2,3})
-\end{align}
-
-This completes the derivation of equation~\eqref{eq:expo_mle_3comp_w2}. The general case follows the same pattern: pairwise subtraction of the $m$ score equations reveals that all $(m-1)$-wise sums are proportional to their candidate set counts, yielding a linear system solvable in closed form.
-\end{proof}
-
-\begin{remark}
-The closed-form solution exists because the score equations reduce to a linear system in the $(m-1)$-wise sums. For $m=3$, these are pairwise sums $\sigma_i = \lambda_j + \lambda_k$. The same algebraic structure persists for arbitrary $m$ when $w = m-1$: pairwise subtraction of score equations reveals that all $(m-1)$-wise sums are proportional to their corresponding candidate set counts. However, for $w < m-1$, the score equations do not admit this linearization and closed-form solutions generally do not exist.
-\end{remark}
-
-\begin{remark}[Boundary Estimates]
+\begin{remark}[Boundary Estimates and the Triangle Inequality]
 \label{rem:boundary_estimates}
-The closed-form MLE is the unconstrained solution to the score equations. For extreme candidate set distributions (e.g., $\cnt{2,3} > \cnt{1,2} + \cnt{1,3}$), the formula may yield $\estimator{\lambda}_1 < 0$, which is outside the parameter space $(0,\infty)^m$.
+The closed-form MLE is the unconstrained solution to the score equations. From \eqref{eq:expo_mle_3comp_w2}, $\estimator{\lambda}_j > 0$ for all $j$ if and only if the candidate set counts satisfy the \emph{triangle inequality}:
+\begin{equation}
+\label{eq:triangle_ineq}
+\cnt{\cand_{\setminus j}} < \sum_{j' \neq j} \cnt{\cand_{\setminus j'}} \quad \text{for each } j = 1, 2, 3.
+\end{equation}
+For example, $\estimator{\lambda}_1 > 0$ requires $\cnt{2,3} < \cnt{1,2} + \cnt{1,3}$. This is the sample-level analogue of the separability condition~\cite{towell2025masked}: if the candidate set counts satisfy the triangle inequality, the observed data separate all component pairs.
 
-Under the uniform masking model, $\Prob{\estimator{\lambda}_j < 0} \to 0$ as $n \to \infty$ when $\tparam{\lambda}_j > 0$. Negative estimates in finite samples suggest either:
+Under the uniform masking model, $\Prob{\estimator{\lambda}_j < 0} \to 0$ as $n \to \infty$ when $\tparam{\lambda}_j > 0$. However, for finite $n$ the violation probability can be substantial, particularly when the failure rates are strongly asymmetric. Monte Carlo experiments (Section~\ref{subsec:validation}) show rejection rates of $3\%$ at $n=50$ for the symmetric configuration $\tparam{\vec{\lambda}} = (3,3,3)^\top$ but $27\%$ for the strongly asymmetric $\tparam{\vec{\lambda}} = (1,3,5)^\top$. Negative estimates indicate:
 \begin{enumerate}
-\item Small sample size (insufficient averaging over candidate sets)
-\item True parameter near zero (component rarely fails)
+\item Insufficient sample size for the degree of parameter asymmetry
+\item True parameter near zero relative to other components
 \item Potential model misspecification (uniform masking assumption violated)
 \end{enumerate}
 
@@ -709,18 +729,20 @@ When negative estimates occur, the constrained MLE (setting $\lambda_j = 0$ and 
 \estimator{\lambda}_2 = \frac{\cnt{1,2}}{(\cnt{1,2} + \cnt{1,3})\bar{t}}, \quad
 \estimator{\lambda}_3 = \frac{\cnt{1,3}}{(\cnt{1,2} + \cnt{1,3})\bar{t}}
 \end{equation}
-This corresponds to the two-component system where component 1 never fails.
+This reduces to the two-component MLE for components 2 and 3, treating $\lambda_1 = 0$ as fixed.
 \end{remark}
 
 The Fisher information matrix is:
+\begingroup\small
 \begin{equation}
-\infomatrx(\tparam{\vec{\lambda}} | w=2) = \frac{1}{2(\tparam{\lambda}_1 + \tparam{\lambda}_2 + \tparam{\lambda}_3)}
+\infomatrx(\tparam{\vec{\lambda}} | w{=}2) = \frac{1}{2(\tparam{\lambda}_1 + \tparam{\lambda}_2 + \tparam{\lambda}_3)}
 \begin{bmatrix}
-\frac{1}{\tparam{\lambda}_1+\tparam{\lambda}_2}+\frac{1}{\tparam{\lambda}_1+\tparam{\lambda}_3} & \frac{1}{\tparam{\lambda}_1+\tparam{\lambda}_2} & \frac{1}{\tparam{\lambda}_1+\tparam{\lambda}_3}\\
-\frac{1}{\tparam{\lambda}_1+\tparam{\lambda}_2} & \frac{1}{\tparam{\lambda}_1+\tparam{\lambda}_2}+\frac{1}{\tparam{\lambda}_2+\tparam{\lambda}_3} & \frac{1}{\tparam{\lambda}_2+\tparam{\lambda}_3}\\
+\frac{1}{\tparam{\lambda}_1+\tparam{\lambda}_2}+\frac{1}{\tparam{\lambda}_1+\tparam{\lambda}_3} & \frac{1}{\tparam{\lambda}_1+\tparam{\lambda}_2} & \frac{1}{\tparam{\lambda}_1+\tparam{\lambda}_3}\\[4pt]
+\frac{1}{\tparam{\lambda}_1+\tparam{\lambda}_2} & \frac{1}{\tparam{\lambda}_1+\tparam{\lambda}_2}+\frac{1}{\tparam{\lambda}_2+\tparam{\lambda}_3} & \frac{1}{\tparam{\lambda}_2+\tparam{\lambda}_3}\\[4pt]
 \frac{1}{\tparam{\lambda}_1+\tparam{\lambda}_3} & \frac{1}{\tparam{\lambda}_2+\tparam{\lambda}_3} & \frac{1}{\tparam{\lambda}_1+\tparam{\lambda}_3}+\frac{1}{\tparam{\lambda}_2+\tparam{\lambda}_3}
 \end{bmatrix}
 \end{equation}
+\endgroup
 
 The inverse (asymptotic variance-covariance) is obtained by symbolic matrix inversion:
 \begin{equation}
@@ -769,85 +791,62 @@ The $1/3$ MSE ratio holds regardless of the parameter values $\tparam{\vec{\lamb
 
 \subsection{Numerical Validation}
 
-We validate the asymptotic theory through Monte Carlo simulation studies. For each configuration, we generate $r$ independent samples of size $n$, compute the MLE for each sample, and compare the empirical covariance with the theoretical asymptotic covariance.
+We validate the asymptotic theory through Monte Carlo simulation studies.
+\label{subsec:validation}
 
-\subsubsection{Experimental Design}
+\subsubsection{Design}
 
-We consider multiple parameter configurations to assess robustness:
+For each of three parameter configurations, we generate $R = 10^5$ independent samples of size $n$ under the uniform masking model ($m=3$, $w=2$), compute the closed-form MLE via Corollary~\ref{cor:mle_3comp_w2}, and compare the empirical covariance of the MLEs with the theoretical asymptotic covariance $\frac{1}{n}\infomatrx^{-1}$.
+
+The configurations span increasing parameter asymmetry:
 \begin{itemize}
 \item \textbf{Symmetric}: $\tparam{\vec{\lambda}} = (3, 3, 3)^\top$ (equal failure rates)
-\item \textbf{Moderate imbalance}: $\tparam{\vec{\lambda}} = (2, 3, 4)^\top$ (1:1.5:2 ratio)
-\item \textbf{Strong imbalance}: $\tparam{\vec{\lambda}} = (1, 3, 5)^\top$ (1:3:5 ratio)
+\item \textbf{Moderate}: $\tparam{\vec{\lambda}} = (2, 3, 4)^\top$ (1:1.5:2 ratio)
+\item \textbf{Strong}: $\tparam{\vec{\lambda}} = (1, 3, 5)^\top$ (1:3:5 ratio)
 \end{itemize}
+Sample sizes range from $n = 10$ to $n = 5000$.
 
-For each configuration, we vary the sample size: $n \in \{100, 500, 1000, 5000\}$. All simulations use $r=10{,}000$ Monte Carlo replications and masking cardinality $w=2$.
+\textbf{Identifiability filtering.} Samples that violate the triangle inequality~\eqref{eq:triangle_ineq}---i.e., where any MLE component is non-positive---are discarded before computing the empirical covariance. These samples do not satisfy the sample-level separability condition and are outside the regime where the asymptotic theory applies.
 
-\subsubsection{Comparison Metrics}
+\subsubsection{Results}
 
-We quantify agreement between theoretical and empirical covariances using:
-\begin{itemize}
-\item \textbf{Frobenius norm of difference}: $\|\widehat{\text{Cov}} - \frac{1}{n}\infomatrx^{-1}\|_F$
-\item \textbf{Maximum element-wise absolute difference}: $\max_{i,j} |\widehat{\text{Cov}}_{ij} - \frac{1}{n}[\infomatrx^{-1}]_{ij}|$
-\item \textbf{Relative Frobenius error}: $\|\widehat{\text{Cov}} - \frac{1}{n}\infomatrx^{-1}\|_F / \|\frac{1}{n}\infomatrx^{-1}\|_F$
-\end{itemize}
+Agreement is measured by the relative Frobenius error
+\begin{equation*}
+\left\|\widehat{\mathrm{Cov}} - \tfrac{1}{n}\infomatrx^{-1}\right\|_F \Big/ \left\|\tfrac{1}{n}\infomatrx^{-1}\right\|_F,
+\end{equation*}
+plotted in Figure~\ref{fig:convergence}.
 
-\subsubsection{Representative Results}
+For the symmetric and moderate configurations, the relative error tracks the $O(n^{-1/2})$ reference line closely and falls below $2\%$ by $n = 200$. The strong asymmetry configuration $(1,3,5)$ converges more slowly---the error remains above $15\%$ for $n \leq 200$, reflecting the fact that the rarest component ($\lambda_1 = 1$) is the actual failure cause in only $\lambda_1/\Lambda = 1/9$ of observations. For all configurations, the error drops below $1\%$ by $n = 1000$.
 
-\textbf{Configuration 1}: $\tparam{\vec{\lambda}} = (2, 3, 4)^\top$, $n=1000$, $w=2$
+\textbf{Rejection rates.} The fraction of non-identifiable samples decreases rapidly with $n$ but depends strongly on the parameter configuration. At $n = 50$: the symmetric case rejects $3\%$, the moderate case rejects $9\%$, and the strong case rejects $27\%$. By $n = 200$, the symmetric and moderate cases show essentially zero rejections, while the strong case still rejects $7\%$. These rates provide practitioners with guidance on the minimum sample sizes needed for reliable closed-form inference: roughly $n \geq 50$ for balanced parameters, $n \geq 200$ for moderate imbalance, and $n \geq 500$ for strongly asymmetric configurations.
 
-The theoretical asymptotic variance-covariance matrix (evaluated at $n=1000$) is:
-\begin{equation}
-\frac{1}{1000}\infomatrx^{-1}(\tparam{\vec{\lambda}} | w=2) = \begin{bmatrix}
-0.081 & -0.036 & -0.027\\
--0.036 & 0.081 & -0.018\\
--0.027 & -0.018 & 0.081
-\end{bmatrix}
-\end{equation}
-
-The empirical variance-covariance from $r=10{,}000$ Monte Carlo replications is:
-\begin{equation}
-\widehat{\text{Cov}} = \begin{bmatrix}
-0.081 & -0.037 & -0.027\\
--0.037 & 0.082 & -0.018\\
--0.027 & -0.018 & 0.081
-\end{bmatrix}
-\end{equation}
-
-Comparison metrics:
-\begin{itemize}
-\item Frobenius norm error: $0.0012$
-\item Maximum element-wise error: $0.001$
-\item Relative Frobenius error: $0.79\%$
-\end{itemize}
-
-\textbf{Configuration 2}: $\tparam{\vec{\lambda}} = (1, 3, 5)^\top$, $n=5000$, $w=2$
-
-The theoretical and empirical covariances agree to within $0.3\%$ relative Frobenius error, confirming that asymptotic approximations remain accurate even under strong parameter imbalance when $n$ is sufficiently large.
-
-\subsubsection{Finite-Sample Behavior}
-
-To assess convergence rates, we plot the relative Frobenius error as a function of sample size for each parameter configuration. The error decreases approximately as $O(n^{-1/2})$, consistent with central limit theorem predictions.
-
-For $n=100$, the asymptotic approximation shows $3$-$5\%$ relative error, which decreases to less than $1\%$ for $n \geq 1000$. This suggests that asymptotic confidence intervals are reliable for practical sample sizes exceeding $n=1000$.
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.75\textwidth]{fig_convergence}
+  \caption{Relative Frobenius error between the empirical covariance of the MLE and the theoretical asymptotic covariance $\frac{1}{n}\infomatrx^{-1}(\vec{\lambda}\mid w{=}2)$, as a function of sample size $n$ ($R=10^5$ replications per point; non-identifiable samples filtered via the triangle inequality~\eqref{eq:triangle_ineq}). The symmetric and moderate configurations track the $O(n^{-1/2})$ reference line (dashed); the strongly asymmetric case converges more slowly due to the rarity of candidate sets involving the weakest component.}
+  \label{fig:convergence}
+\end{figure}
 
 \subsubsection{Implementation Note}
 
-Detailed simulation code, including data generation, MLE computation via Corollary~\ref{cor:mle_3comp_w2}, and metric calculation, is available at \url{https://github.com/queelius/series_system_estimation}. The simulations were implemented in Python using NumPy for matrix operations and verified against independent R implementations.
+Detailed simulation code, including data generation, MLE computation via Corollary~\ref{cor:mle_3comp_w2}, and metric calculation, is available in the companion repository at \url{https://github.com/queelius/expo-masked-fim}. The simulations were implemented in R using only base packages; the self-contained script \texttt{research/validate\_asymptotic\_covariance.R} reproduces all results in this section.
 
 \section{Conclusion}
 \label{sec:conclusion}
 
-We have developed a comprehensive framework for statistical inference in series systems with exponentially distributed component lifetimes when failure data is masked. The exponential case admits closed-form expressions for the maximum likelihood estimator, Fisher information matrix, and sufficient statistics.
+We have derived closed-form statistical inference for exponential series systems under uniform masking---a tractable specialization of the distribution-agnostic C1--C2--C3 framework~\cite{towell2025masked}. The uniform masking assumption is strong (Section~\ref{subsec:limitations}), but it is precisely this strength that enables the complete analytical results obtained here.
 
-The main practical insights are:
+The main insights are:
 \begin{enumerate}
-\item The information content of masked data is quantified by the Fisher information matrix, which depends on the masking cardinality $w$
-\item Minimal sufficient statistics are the mean system lifetime and candidate set frequencies
-\item For $m$-component systems with $w=m-1$, a closed-form MLE exists (the three-component case is developed in detail)
-\item Asymptotic confidence intervals provide practical uncertainty quantification
+\item The Fisher information matrix has an explicit closed-form expression for any $(m, w)$, quantifying how diagnostic precision (smaller $w$) translates into statistical efficiency
+\item The mean system lifetime and candidate set frequency vector are sufficient statistics, reducing the data to $1 + \binom{m}{w}$ real numbers
+\item For $w = m-1$---the maximally uninformative masking configuration that remains identifiable---the score equations linearize and a closed-form MLE exists for arbitrary~$m$. This provides worst-case analytical performance bounds for the hardest identifiable masking scenario
+\item At $w = m$, the Fisher information matrix is singular, reflecting the non-identifiability of completely masked data established in the general theory~\cite{towell2025masked}
+\item Monte Carlo validation confirms that the asymptotic covariance matches empirical behavior for practical sample sizes (Figure~\ref{fig:convergence})
 \end{enumerate}
 
 \subsection{Model Assumptions and Limitations}
+\label{subsec:limitations}
 
 This work makes two key assumptions that limit its direct applicability but enable analytical tractability:
 
@@ -902,7 +901,7 @@ Such models sacrifice analytical tractability but more accurately reflect real d
 
 \item \textbf{Variable masking cardinality}: Remark~\ref{rem:variable_w} provides the optimal combination formula when $w$ varies across observations. Further extensions could model $w$ as random, depending on diagnostic difficulty or component type
 
-\item \textbf{Non-exponential lifetime distributions}: Extend to Weibull (aging/wear-out), gamma (multi-stage failures), or lognormal (time-dependent hazards) distributions. Numerical methods will be required, but asymptotic theory remains applicable.
+\item \textbf{Non-exponential lifetimes}: Extend to Weibull (aging/wear-out), gamma (multi-stage failures), or lognormal (time-dependent hazards) distributions. Numerical methods will be required, but asymptotic theory remains applicable.
 
 \item \textbf{Covariate effects}: Incorporate covariate information (operating conditions, environmental factors) via proportional hazards models or accelerated failure time frameworks
 
@@ -915,9 +914,9 @@ The uniform masking, exponential lifetime framework provides a foundation for un
 
 \begin{appendices}
 
-\section{Numerical Solution Methods}
+\section{Numerical Solution for General \texorpdfstring{$w$}{w}}
 
-For cases without closed-form solutions, the MLE must be computed numerically. The Newton-Raphson algorithm is effective:
+Theorem~\ref{thm:mle_general_wm1} provides a closed-form MLE for $w = m-1$, and the $w = 1$ case is trivial (exact component identification). For intermediate masking cardinalities $1 < w < m-1$, the score equations~\eqref{eq:expo_score} do not admit linearization and the MLE must be computed numerically. The Newton-Raphson algorithm is effective:
 
 \begin{algorithm}[H]
 \caption{Newton-Raphson for Exponential MLE}
@@ -933,12 +932,12 @@ $k \gets 0$\;
 \Return{$\vec{\lambda}^{(k)}$}
 \end{algorithm}
 
-The Hessian for the exponential log-likelihood is:
+The Hessian of the log-likelihood (note: negative semidefinite, so the observed information is $-\nabla^2 \ell$) is:
 \begin{equation}
 \left[\nabla^2 \ell(\vec{\lambda} | \mfs)\right]_{jk} = -\sum_{i=1}^{n} \frac{\SetIndicator{\cand_i \times \cand_i}(j,k)}{\left(\sum_{p \in \cand_i} \lambda_p\right)^2}
 \end{equation}
 
-Convergence is typically rapid when initialized at a reasonable starting point such as $\vec{\lambda}^{(0)} = (1/\bar{t}, \ldots, 1/\bar{t})$.
+Convergence is typically rapid when initialized at $\vec{\lambda}^{(0)} = \frac{1}{m\bar{t}}(1, \ldots, 1)$, which distributes the system rate $1/\bar{t}$ equally among components.
 
 \end{appendices}
 
