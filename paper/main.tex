@@ -130,7 +130,9 @@ The 1990s saw significant development of Bayesian approaches to masked data. Rei
 
 Flehinger et al.~\cite{flehinger1998,flehinger2002} contributed to the theoretical foundations by studying survival analysis with competing risks and masked failure causes, developing parametric models that accommodate general patterns of missing failure types. Sarhan~\cite{sarhan2001} provided both maximum likelihood and Bayes procedures for estimating component reliabilities in series systems with exponentially distributed lifetimes, focusing on practical implementation issues.
 
-More recent work has expanded the scope to include interval-censored data~\cite{reliability}, Bayesian modeling frameworks~\cite{kuo2007}, and applications to specific engineering contexts. The competing risks framework continues to provide a natural setting for masked data analysis~\cite{agustin}, connecting reliability engineering with survival analysis and biostatistics. Towell~\cite{towell2025masked} develops a distribution-agnostic likelihood framework under three conditions on the masking mechanism (C1--C2--C3) that enable the unknown masking distribution to be eliminated from the likelihood, and establishes formal identifiability conditions based on the combinatorial structure of the candidate sets. The present paper specializes that framework to exponential lifetimes under a stronger uniform masking assumption (see Remark~\ref{rem:c1c2c3_comparison} below), which enables the closed-form results that are the focus of this work.
+Craiu and Duchesne~\cite{craiu2004} developed EM-based inference for piecewise-constant cause-specific hazards with masked failure causes, providing both E- and M-steps in closed form---a semiparametric counterpart to the fully parametric closed-form results derived here.
+
+More recent work has expanded the scope to include interval-censored data~\cite{reliability}, Bayesian modeling frameworks~\cite{kuo2007}, nonparametric Bayesian methods with dependent competing risks~\cite{liu2021}, and applications to specific engineering contexts. Identifiability---the structural question underlying all masked-data analysis---has been revisited through phase-type models by Lindqvist~\cite{lindqvist2023}, who provides identifiable parameterizations for competing risks with multiple absorbing states. The competing risks framework continues to provide a natural setting for masked data analysis~\cite{agustin}, connecting reliability engineering with survival analysis and biostatistics; see Monterrubio-G\'omez et al.~\cite{monterrubio2024} for a recent comprehensive review. Towell~\cite{towell2025masked} develops a distribution-agnostic likelihood framework under three conditions on the masking mechanism (C1--C2--C3) that enable the unknown masking distribution to be eliminated from the likelihood, and establishes formal identifiability conditions based on the combinatorial structure of the candidate sets. The present paper specializes that framework to exponential lifetimes under a stronger uniform masking assumption (see Remark~\ref{rem:c1c2c3_comparison} below), which enables the closed-form results that are the focus of this work.
 
 Despite this substantial body of work, \emph{closed-form analytical results remain limited}. Specifically:
 \begin{itemize}
@@ -161,7 +163,7 @@ The closed-form results for $w=m-1$ are particularly significant because this is
 
 \subsection{Paper organization}
 
-Section~\ref{sec:model} introduces the probabilistic model for series systems with masked failures. Section~\ref{sec:general_fim} develops the likelihood and Fisher information for general parametric families. Section~\ref{sec:exponential} presents the main results for exponentially distributed components, including the MLE, information matrix, and sufficient statistics. Section~\ref{sec:three_component} provides detailed analysis of three-component systems. Section~\ref{sec:conclusion} concludes with discussion. Appendix~A provides a Newton--Raphson algorithm for the general-$w$ case.
+Section~\ref{sec:model} introduces the probabilistic model for series systems with masked failures. Section~\ref{sec:general_fim} develops the likelihood and Fisher information for general parametric families. Section~\ref{sec:exponential} presents the main results for exponentially distributed components, including the MLE, information matrix, and sufficient statistics. Section~\ref{sec:three_component} derives the closed-form MLE for $w = m-1$ and develops the three-component case in detail. Section~\ref{sec:conclusion} concludes with discussion. Appendix~A provides a Newton--Raphson algorithm for the general-$w$ case.
 
 \section{Probabilistic Model}
 \label{sec:model}
@@ -602,7 +604,7 @@ Condition (R1) excludes boundary cases where components have zero failure rate. 
 \begin{equation}
 \infomatrx(\tparam{\vec{\lambda}} | w) = \frac{1}{\binom{m-1}{w-1}\Lambda} \sum_{\cand: |\cand|=w} \frac{\vec{e}_{\cand}\vec{e}_{\cand}^\top}{\sum_{p \in \cand} \tparam{\lambda}_p}
 \end{equation}
-where $\vec{e}_{\cand} \in \{0,1\}^m$ is the indicator vector of $\cand$ and $\Lambda = \sum_j \tparam{\lambda}_j$. Each summand is positive semidefinite, so for any $\vec{v} \neq \vec{0}$ it suffices to show $\vec{e}_{\cand}^\top \vec{v} \neq 0$ for some $\cand$. Suppose $\vec{e}_{\cand}^\top \vec{v} = 0$ for all $|\cand| = w$. Any two components $j \neq k$ appear together in some size-$w$ subset (since $w \geq 1$ and $m \geq 2$); replacing one member by the other in such a set and subtracting gives $v_j = v_k$. Hence all entries of $\vec{v}$ are equal, and $w v_1 = 0$ forces $\vec{v} = \vec{0}$, a contradiction. At the boundary $w = m$, all observations share the single candidate set $\{1,\ldots,m\}$, the FIM has rank one, and only the total rate $\sum_j \lambda_j$ is identifiable. Condition (R3) holds by the experimental design.
+where $\vec{e}_{\cand} \in \{0,1\}^m$ is the indicator vector of $\cand$ and $\Lambda = \sum_j \tparam{\lambda}_j$. Each summand is positive semidefinite, so for any $\vec{v} \neq \vec{0}$ it suffices to show $\vec{e}_{\cand}^\top \vec{v} \neq 0$ for some $\cand$. Suppose $\vec{e}_{\cand}^\top \vec{v} = 0$ for all $|\cand| = w$. For $w = 1$, the candidate sets are singletons $\{j\}$, so $v_j = 0$ for each $j$ and $\vec{v} = \vec{0}$, a contradiction. For $w \geq 2$, any two components $j \neq k$ appear together in some size-$w$ subset; replacing one member by the other in such a set and subtracting gives $v_j = v_k$. Hence all entries of $\vec{v}$ are equal, and $w v_1 = 0$ forces $\vec{v} = \vec{0}$, a contradiction. At the boundary $w = m$, all observations share the single candidate set $\{1,\ldots,m\}$, the FIM has rank one, and only the total rate $\sum_j \lambda_j$ is identifiable. Condition (R3) holds by the experimental design.
 
 \begin{theorem}
 \label{thm:asymptotic_normal}
@@ -623,14 +625,14 @@ An asymptotic $(1-\alpha) \times 100\%$ confidence interval for $\tparam{\lambda
 \end{equation}
 where $z_{1-\alpha/2}$ is the $(1-\alpha/2)$-quantile of the standard normal distribution.
 
-\section{Three-Component Systems}
+\section{Explicit MLE for \texorpdfstring{$w = m-1$}{w = m-1}}
 \label{sec:three_component}
 
-We provide detailed analysis for systems with $m=3$ components, which admits several closed-form results.
+We derive the closed-form MLE for general $m$-component systems with masking cardinality $w = m-1$, and then develop the three-component case ($m=3$, $w=2$) in detail as an illustration.
 
-\subsection{Candidate Sets of Size Two}
+\subsection{Closed-Form MLE}
 
-Consider observations where each candidate set has cardinality $w=m-1$, meaning exactly one component is excluded from each candidate set. For general $m$, a closed-form MLE exists.
+When each candidate set has cardinality $w=m-1$, exactly one component is excluded from each candidate set. The score equations linearize, yielding a closed-form solution for arbitrary $m$.
 
 \begin{theorem}
 \label{thm:mle_general_wm1}
@@ -874,7 +876,7 @@ The exponential assumption fails when:
 \item Failure mechanisms are time-dependent
 \end{itemize}
 
-For non-exponential distributions (Weibull, gamma, lognormal), the likelihood equations generally do not admit closed-form solutions, and the Fisher information matrix must be computed numerically or via simulation.
+For non-exponential distributions (Weibull, gamma, lognormal), the likelihood equations generally do not admit closed-form solutions, and the Fisher information matrix must be computed numerically or via simulation; see~\cite{craiu2004,liu2021} for EM-based and Bayesian approaches that handle more general hazard structures.
 
 \textbf{Justification}: Despite these limitations, we adopt these assumptions because they enable \emph{complete analytical solutions}. The resulting formulas provide:
 \begin{enumerate}
