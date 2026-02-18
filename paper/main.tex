@@ -842,7 +842,7 @@ The main insights are:
 \begin{enumerate}
 \item The Fisher information matrix has an explicit closed-form expression for any $(m, w)$, quantifying how diagnostic precision (smaller $w$) translates into statistical efficiency
 \item The mean system lifetime and candidate set frequency vector are sufficient statistics, reducing the data to $1 + \binom{m}{w}$ real numbers
-\item For $w = m-1$---the maximally uninformative masking configuration that remains identifiable---the score equations linearize and a closed-form MLE exists for arbitrary~$m$. This provides worst-case analytical performance bounds for the hardest identifiable masking scenario
+\item For $w = m-1$---the maximally uninformative masking configuration that remains identifiable---the score equations linearize and a closed-form MLE exists for arbitrary~$m$. Combined with the exponential lifetime assumption, this yields a \emph{doubly worst-case reference model}: exponential lifetimes maximize entropy among fixed-mean distributions, while uniform masking at $w = m-1$ minimizes diagnostic information among identifiable configurations (Proposition~\ref{prop:mutual_info}). The closed-form results thus provide analytical performance bounds for the hardest identifiable masking scenario
 \item At $w = m$, the Fisher information matrix is singular, reflecting the non-identifiability of completely masked data established in the general theory~\cite{towell2025masked}
 \item Monte Carlo validation confirms that the asymptotic covariance matches empirical behavior for practical sample sizes (Figure~\ref{fig:convergence})
 \end{enumerate}
