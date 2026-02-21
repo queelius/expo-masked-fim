@@ -159,7 +159,7 @@ This paper provides a complete analytical treatment of maximum likelihood estima
     \item \textbf{Numerical validation}: We provide Monte Carlo evidence confirming the theoretical asymptotic covariance matches empirical behavior for finite samples
 \end{enumerate}
 
-The closed-form results for $w=m-1$ are particularly significant because this is the \emph{maximally uninformative identifiable} masking configuration. The masking cardinality ranges from $w=1$ (exact cause identification, no masking) through $w=m$ (complete masking, non-identifiable). Each candidate set of size $w$ excludes $m-w$ components from suspicion, so larger $w$ means less diagnostic information per observation. At $w=m-1$, each observation excludes only a single component, retaining the minimum information needed for identifiability. The $w=m-1$ case therefore serves as a natural analytical worst-case bound: if closed-form inference is possible here, it establishes performance limits for the hardest identifiable masking scenario.
+The closed-form results for $w=m-1$ are particularly significant because this is the \emph{maximally symmetric identifiable} masking configuration under uniform masking. The masking cardinality ranges from $w=1$ (exact cause identification, no masking) through $w=m$ (complete masking, non-identifiable). Each candidate set of size $w$ excludes $m-w$ components from suspicion, so under uniform masking, larger $w$ means less diagnostic information per observation. At $w=m-1$, each observation excludes only a single component, retaining the minimum diagnostic information needed for identifiability under uniform masking. The $w=m-1$ case is also where the score equations linearize, enabling the closed-form MLE that is the central result of this paper.
 
 \subsection{Paper organization}
 
@@ -249,7 +249,7 @@ The uniform masking model is most appropriate when:
 \item No prior information about component reliabilities is used during diagnosis
 \end{itemize}
 
-Despite its limitations, the uniform masking model with $w = m-1$ serves as a natural \emph{reference model} for masked failure data: it is the \emph{maximally uninformative identifiable} masking configuration, since each observation excludes only a single component from suspicion and retains the minimum diagnostic information needed for identifiability. In this sense, uniform masking at $w = m-1$ plays a role analogous to the exponential distribution in lifetime modeling---both are analytically tractable worst cases that provide baseline performance bounds, and both owe their tractability to a maximum-entropy--like property (constant hazard rate for the exponential; uniform inclusion probability for the masking model).
+Despite its limitations, the uniform masking model with $w = m-1$ serves as a natural \emph{reference model} for masked failure data. Uniform masking minimizes diagnostic information $\RV{I}(\RV{K}; \cand)$ among identifiable masking mechanisms at each cardinality (Proposition~\ref{prop:mutual_info}), though note that diagnostic information about the failed component and Fisher information about the parameters~$\vec{\lambda}$ are distinct quantities (see the remark following Proposition~\ref{prop:mutual_info}). The analytical tractability of uniform masking arises from its maximal symmetry---uniform inclusion probability for non-failed components---analogous to how the exponential distribution's tractability arises from the constant hazard rate.
 \end{remark}
 
 The following result makes the ``maximum-entropy--like'' claim precise. It is distribution-free: it depends only on the masking mechanism, not on the component lifetime distributions.
@@ -274,7 +274,9 @@ which is the uniform masking distribution with cardinality $w+1$. This establish
 \end{proof}
 
 \begin{remark}
-In the symmetric case $\tparam{\lambda}_1 = \cdots = \tparam{\lambda}_m$, the mutual information has the explicit form $\RV{I}(\RV{K}; \cand_w) = \ln(m/w)$, which ranges from $\ln m$ (exact identification, $w=1$) through $\ln(m/(m-1))$ (maximum masking with identifiability, $w=m-1$) to $0$ (complete masking, $w=m$). Combined with the exponential lifetime assumption, the configuration $(w = m-1,\, \expdist)$ is thus doubly ``worst case'': exponential lifetimes maximize entropy among distributions with a given mean, and uniform masking at $w = m-1$ minimizes diagnostic information among identifiable masking models.
+In the symmetric case $\tparam{\lambda}_1 = \cdots = \tparam{\lambda}_m$, the mutual information has the explicit form $\RV{I}(\RV{K}; \cand_w) = \ln(m/w)$, which ranges from $\ln m$ (exact identification, $w=1$) through $\ln(m/(m-1))$ (maximum masking with identifiability, $w=m-1$) to $0$ (complete masking, $w=m$).
+
+Note that $\RV{I}(\RV{K}; \cand)$ measures how well the candidate set identifies the \emph{failed component}, not how precisely the \emph{parameters}~$\tparam{\vec{\lambda}}$ can be estimated. The Fisher information matrix (Proposition~\ref{prop:expo_fisher}) depends on the full masking mechanism, not only on $\RV{I}(\RV{K}; \cand)$. Indeed, a deterministic masking rule at $w = m-1$ that maps each failure cause to a unique candidate set recovers the same FIM as complete identification ($w = 1$), despite having cardinality $w = m-1$ (Proposition~\ref{prop:deterministic_masking}). Uniform masking, by contrast, provides no preferential information about component identity; the resulting closed-form FIM serves as an analytical benchmark under maximal masking symmetry, not a worst-case bound.
 \end{remark}
 
 \begin{remark}[Relationship to the C1--C2--C3 Framework]
@@ -572,6 +574,36 @@ Therefore:
 This completes the derivation of equation~\eqref{eq:expo_fisher_element}.
 \end{proof}
 
+\begin{proposition}[Information Recovery under Deterministic Masking]
+\label{prop:deterministic_masking}
+For an $m$-component exponential series system with $1 \leq w \leq m-1$, suppose the masking mechanism is \emph{separating-deterministic}: there exists an injection $\varphi\colon \{1, \ldots, m\} \to \{\cand \subseteq \{1,\ldots,m\} : |\cand| = w\}$ satisfying $k \in \varphi(k)$ and $\Prob{\cand = \varphi(k) \mid \RV{K} = k} = 1$ for each~$k$. Then the Fisher information matrix equals that of complete identification ($w = 1$):
+\begin{equation}
+\label{eq:deterministic_fim}
+[\infomatrx(\tparam{\vec{\lambda}} \mid \varphi)]_{jk} = \frac{\delta_{jk}}{\Lambda\, \tparam{\lambda}_j}
+\end{equation}
+where $\Lambda = \sum_{j=1}^m \tparam{\lambda}_j$ and $\delta_{jk}$ is the Kronecker delta. In particular, for $w = m-1$ the candidate sets $\{1,\ldots,m\} \setminus \{j\}$ are in bijection with the $m$ components, and any derangement $\sigma$ (a permutation with no fixed point) defines such a mechanism via $\varphi(k) = \{1,\ldots,m\} \setminus \{\sigma(k)\}$. Derangements exist for all $m \geq 2$.
+\end{proposition}
+
+\begin{proof}
+Since $\varphi$ is injective, each candidate set in the image of~$\varphi$ is produced by exactly one component, so the map $\cand \mapsto \varphi^{-1}(\cand)$ recovers the failed component with certainty. Marginalizing the joint density~\eqref{eq:expo_joint} over the failure cause:
+\[
+\pdf(\ti, \cand \mid \vec{\lambda})
+= \sum_{k=1}^{m} \tparam{\lambda}_k \, e^{-\Lambda \ti}\, \Prob{\cand = \cand \mid \RV{K} = k}
+= \lambda_{\varphi^{-1}(\cand)}\, e^{-\Lambda \ti},
+\]
+where the second equality uses $\Prob{\cand = \cand \mid \RV{K} = k} = \SetIndicator{\{\varphi(k)\}}(\cand)$ and the injectivity of~$\varphi$. The log-density is thus
+\[
+\ln \pdf(\ti, \cand \mid \vec{\lambda}) = \ln \lambda_{\varphi^{-1}(\cand)} - \Lambda\, \ti,
+\]
+which has the same functional form as the unmasked log-density with identified cause $\RV{K} = \varphi^{-1}(\cand)$. The second partial derivative is $\partial^2 / \partial \lambda_j \partial \lambda_k = -\delta_{j,\varphi^{-1}(\cand)}\,\delta_{jk}/\lambda_j^2$, and taking the expectation over $(\sv, \cand)$ gives $[\infomatrx]_{jk} = \delta_{jk}\, \Prob{\RV{K}=j}/\lambda_j^2 = \delta_{jk}/(\Lambda\, \lambda_j)$, where the last step uses $\Prob{\RV{K}=j} = \lambda_j/\Lambda$ (Proposition~\ref{prop:expo_K_indep_S}).
+
+For the existence claim: when $w = m-1$, the candidate sets $c_j = \{1,\ldots,m\} \setminus \{j\}$ satisfy $k \in c_j$ if and only if $j \neq k$, so the map $\varphi(k) = c_{\sigma(k)}$ satisfies $k \in \varphi(k)$ whenever $\sigma(k) \neq k$. The number of derangements of $\{1,\ldots,m\}$ is $D_m = m!\sum_{i=0}^{m}(-1)^i/i! \geq 1$ for $m \geq 2$.
+\end{proof}
+
+\begin{remark}
+Proposition~\ref{prop:deterministic_masking} shows that the Fisher information loss from masking at cardinality~$w$ is not inherent to the cardinality, but depends on the masking mechanism. A well-designed diagnostic that always maps each failure cause to a unique candidate set incurs \emph{no information loss whatsoever}, even at $w = m-1$. The uniform masking model studied in this paper lies at the opposite extreme: it provides no preferential information about component identity, and the resulting FIM (Proposition~\ref{prop:expo_fisher}) is strictly smaller than the complete-identification FIM. Note that the separating-deterministic mechanism violates the symmetry condition C2 (see Remark~\ref{rem:c1c2c3_comparison}), since $\Prob{\cand = \varphi(k) \mid \RV{K}=k} = 1$ but $\Prob{\cand = \varphi(k) \mid \RV{K}=k'} = 0$ for $k' \neq k$ with $k' \in \varphi(k)$.
+\end{remark}
+
 \begin{remark}[Combining Estimates from Variable Masking Cardinality]
 \label{rem:variable_w}
 In practice, diagnostic quality may vary across observations, resulting in data with different masking cardinalities. Suppose the sample is partitioned into $G$ groups, where group $g$ has $n_g$ observations with masking cardinality $w_g$. Each group yields an MLE $\estimator{\vec{\lambda}}^{(g)}$ with asymptotic covariance $n_g^{-1}\infomatrx^{-1}(\tparam{\vec{\lambda}} | w_g)$.
@@ -842,7 +874,7 @@ The main insights are:
 \begin{enumerate}
 \item The Fisher information matrix has an explicit closed-form expression for any $(m, w)$, quantifying how diagnostic precision (smaller $w$) translates into statistical efficiency
 \item The mean system lifetime and candidate set frequency vector are sufficient statistics, reducing the data to $1 + \binom{m}{w}$ real numbers
-\item For $w = m-1$---the maximally uninformative masking configuration that remains identifiable---the score equations linearize and a closed-form MLE exists for arbitrary~$m$. Combined with the exponential lifetime assumption, this yields a \emph{doubly worst-case reference model}: exponential lifetimes maximize entropy among fixed-mean distributions, while uniform masking at $w = m-1$ minimizes diagnostic information among identifiable configurations (Proposition~\ref{prop:mutual_info}). The closed-form results thus provide analytical performance bounds for the hardest identifiable masking scenario
+\item For $w = m-1$, the score equations linearize and a closed-form MLE exists for arbitrary~$m$. Uniform masking at this cardinality minimizes the diagnostic mutual information $\RV{I}(\RV{K}; \cand)$ among identifiable masking mechanisms (Proposition~\ref{prop:mutual_info}), providing a natural symmetry that enables these analytical results. The closed-form FIM serves as a benchmark under maximal masking symmetry, enabling direct computation of asymptotic variances, confidence intervals, and sample size requirements
 \item At $w = m$, the Fisher information matrix is singular, reflecting the non-identifiability of completely masked data established in the general theory~\cite{towell2025masked}
 \item Monte Carlo validation confirms that the asymptotic covariance matches empirical behavior for practical sample sizes (Figure~\ref{fig:convergence})
 \end{enumerate}
