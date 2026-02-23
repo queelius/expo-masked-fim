@@ -5,8 +5,8 @@ title: "Statistical Inference for Series Systems from Masked Failure Time Data: 
 authors:
   - family-names: "Towell"
     given-names: "Alexander"
-    email: "atowell@siue.edu"
-    affiliation: "Southern Illinois University Edwardsville"
+    email: "lex@metafunctor.com"
+    affiliation: "Cooperative Ph.D. Program in Computer Science, Southern Illinois University"
     orcid: "https://orcid.org/0000-0001-6443-9897"
 abstract: >-
   We consider the problem of estimating component failure rates in series

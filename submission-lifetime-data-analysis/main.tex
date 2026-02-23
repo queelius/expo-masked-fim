@@ -1,22 +1,14 @@
-\documentclass[12pt]{article}
-\usepackage[english]{babel}
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-% \usepackage{commath}
-\usepackage{amsmath}
-\usepackage{amsthm}
-\usepackage{amssymb}
-% \usepackage{esvect}
+\documentclass[pdflatex,sn-mathphys-num,Numbered]{sn-jnl}
+
 \usepackage{graphicx}
-\usepackage[numbers]{natbib}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{amsthm}
 \usepackage{bbm}
 \usepackage{mathtools}
 \usepackage{etoolbox}
 \usepackage[linesnumbered,lined,ruled]{algorithm2e}
-\usepackage{caption}
-\usepackage{hyperref}
 \usepackage{mathdots}
-\usepackage{appendix}
+\usepackage[title]{appendix}
 \usepackage{microtype}
 
 % Minimal notation macros (only those used in this document)
@@ -68,49 +60,30 @@
 % Indicator function
 \newcommand{\SetIndicator}[1]{\mathbbm{1}_{#1}}
 
-% Define theorem environments
+% Theorem environments (using sn-jnl predefined styles)
+\theoremstyle{thmstyleone}
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{corollary}[theorem]{Corollary}
 \newtheorem{proposition}[theorem]{Proposition}
-\theoremstyle{definition}
+\theoremstyle{thmstylethree}
 \newtheorem{definition}[theorem]{Definition}
 \newtheorem{assumption}[theorem]{Assumption}
-\theoremstyle{remark}
+\theoremstyle{thmstyletwo}
 \newtheorem{remark}[theorem]{Remark}
 
-\graphicspath{{images/}{../images/},{../../images/}}
+\title[Article Title]{Statistical Inference for Series Systems from Masked Failure Time Data: The Exponential Case}
 
-\hypersetup{
-    pdftitle={Statistical Inference for Series Systems from Masked Failure Time Data: The Exponential Case},
-    pdfauthor={Alexander Towell},
-    pdfsubject={statistical inference},
-    pdfkeywords={maximum likelihood estimation,
-        Fisher information matrix,
-        masked system failure time,
-        series systems,
-        exponential distribution,
-        sufficient statistics,
-        maximum entropy,
-        mutual information},
-    colorlinks=true,
-    linkcolor=blue,
-    citecolor=green,
-    filecolor=magenta,
-    urlcolor=green
-}
+\author*[1]{\fnm{Alexander} \sur{Towell}}\email{lex@metafunctor.com}
 
-\title{Statistical Inference for Series Systems from Masked Failure Time Data: The Exponential Case}
-\author{Alexander Towell\\Cooperative Ph.D.\ Program in Computer Science\\Southern Illinois University\\\texttt{lex@metafunctor.com}}
-\date{}
+\affil*[1]{\orgdiv{Cooperative Ph.D.\ Program in Computer Science}, \orgname{Southern Illinois University}, \orgaddress{\city{Edwardsville/Carbondale}, \state{IL}, \country{USA}}}
+
+\abstract{We derive closed-form statistical inference for \(m\)-component series systems with exponentially distributed lifetimes when the failure cause is only partially observed. Under a uniform masking model---a tractable specialization of the general C1--C2--C3 masked-data likelihood framework---we characterize the score equations, Fisher information matrix, and sufficient statistics for arbitrary system dimension \(m\) and masking cardinality \(w\), and derive a closed-form MLE for the maximally symmetric identifiable case \(w = m-1\). In this case the score equations linearize and the MLE admits a closed-form solution for general \(m\). We prove that uniform masking maximizes the conditional entropy of the candidate set among all symmetric (C2) masking models, and that diagnostic informativeness---measured by the mutual information \(I(K{,}\, C)\)---decreases monotonically with \(w\) via a data processing inequality. The Fisher information matrix quantifies how diagnostic precision (smaller \(w\)) translates into statistical efficiency, and its singularity at \(w = m\) reflects the non-identifiability of completely masked data. Monte Carlo simulations confirm the asymptotic theory at rate \(O(n^{-1/2})\) across diverse parameter configurations. The three-component system with \(w = 2\) is developed in detail as an illustration.}
+
+\keywords{maximum likelihood estimation \and Fisher information matrix \and masked system failure time \and series systems \and exponential distribution \and sufficient statistics \and competing risks}
 
 \begin{document}
+
 \maketitle
-
-\begin{abstract}
-We derive closed-form statistical inference for $m$-component series systems with exponentially distributed lifetimes when the failure cause is only partially observed. Under a uniform masking model---a tractable specialization of the general C1--C2--C3 masked-data likelihood framework---we characterize the score equations, Fisher information matrix, and sufficient statistics for arbitrary system dimension~$m$ and masking cardinality~$w$, and derive a closed-form MLE for the maximally symmetric identifiable case $w = m-1$. In this case the score equations linearize and the MLE admits a closed-form solution for general~$m$. We prove that uniform masking maximizes the conditional entropy of the candidate set among all symmetric (C2) masking models, and that diagnostic informativeness---measured by the mutual information $\mathrm{I}(K; C)$---decreases monotonically with~$w$ via a data processing inequality. The Fisher information matrix quantifies how diagnostic precision (smaller~$w$) translates into statistical efficiency, and its singularity at $w = m$ reflects the non-identifiability of completely masked data. Monte Carlo simulations confirm the asymptotic theory at rate $O(n^{-1/2})$ across diverse parameter configurations. The three-component system with $w = 2$ is developed in detail as an illustration.
-\end{abstract}
-
-\tableofcontents
 
 \section{Introduction}
 \label{sec:intro}
@@ -948,7 +921,6 @@ Convergence is typically rapid when initialized at $\vec{\lambda}^{(0)} = \frac{
 
 \end{appendices}
 
-\bibliographystyle{plain}
 \bibliography{references}
 
 \end{document}
