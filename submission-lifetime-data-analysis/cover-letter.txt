@@ -1,0 +1,46 @@
+Dear Editors,
+
+I am pleased to submit the manuscript "Statistical Inference for Series
+Systems from Masked Failure Time Data: The Exponential Case" for
+consideration as an Original Research article in Lifetime Data Analysis.
+
+The paper derives closed-form statistical inference for m-component series
+systems with exponentially distributed lifetimes when the failure cause is
+only partially observed. Under a uniform masking model, I obtain:
+
+  - An explicit Fisher information matrix for arbitrary system dimension m
+    and masking cardinality w
+  - Sufficient statistics reducing the data to 1 + C(m,w) real numbers
+  - A closed-form MLE for the maximally symmetric identifiable case w = m-1,
+    where the score equations linearize
+  - Asymptotic normality with explicit variance formulas
+  - A proof that uniform masking maximizes conditional entropy among symmetric
+    masking models, with diagnostic informativeness decreasing monotonically
+    in w via a data processing inequality
+
+While closed-form MLEs have been derived for specific small systems
+(Miyakawa 1984; Lin et al. 1993), the Fisher information matrix, sufficient
+statistics, and asymptotic theory have not previously been obtained for
+arbitrary m. The closed-form results eliminate the need for numerical
+optimization or Monte Carlo simulation for variance estimation, providing
+direct insight into the information structure of masked failure data.
+
+Monte Carlo simulations (R = 100,000 replications) confirm the asymptotic
+theory at rate O(n^{-1/2}) across symmetric, moderate, and strongly
+asymmetric parameter configurations.
+
+This work connects the competing risks and reliability engineering
+literatures, both core areas of Lifetime Data Analysis, and I believe
+it is well suited to the journal's scope.
+
+The manuscript has not been submitted elsewhere. All simulation code is
+publicly available at https://github.com/queelius/expo-masked-fim.
+
+Thank you for your consideration.
+
+Sincerely,
+Alexander Towell
+Cooperative Ph.D. Program in Computer Science
+Southern Illinois University
+lex@metafunctor.com
+ORCID: 0000-0001-6443-9897
