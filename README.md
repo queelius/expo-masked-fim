@@ -1,7 +1,6 @@
 # Statistical Inference for Series Systems from Masked Failure Time Data
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![GitHub release](https://img.shields.io/github/v/release/queelius/expo-masked-fim)](https://github.com/queelius/expo-masked-fim/releases)
+> **Status: Archived.** This research project has been discontinued. The paper is mathematically correct but addresses a niche problem (closed-form MLE under exponential lifetimes with uniform masking) that lacks a natural audience — the masked failure data community has largely moved to Bayesian, nonparametric, and machine learning methods under weaker assumptions. The most interesting insight from this work — the distinction between diagnostic information I(K;C) and Fisher information about parameters — was developed into a separate paper on [deterministic masking](https://github.com/queelius/deterministic-masking). The preprint is preserved on [Zenodo (doi:10.5281/zenodo.15151227)](https://doi.org/10.5281/zenodo.15151227) for archival purposes.
 
 ## Abstract
 
@@ -16,7 +15,7 @@ We consider the problem of estimating component failure rates in series systems 
 
 ## Paper
 
-The full paper is available at [`paper/main.pdf`](paper/main.pdf) (29 pages).
+The full paper is available at [`paper/main.pdf`](paper/main.pdf). The preprint is on [Zenodo](https://doi.org/10.5281/zenodo.15151227).
 
 ### Building from Source
 
@@ -25,32 +24,16 @@ cd paper
 latexmk -pdf main.tex
 ```
 
-## Repository Structure
-
-```
-paper/              # LaTeX source and PDF
-├── main.tex        # Paper source
-├── main.pdf        # Compiled PDF
-└── references.bib  # Bibliography
-docs/               # Documentation site (MkDocs)
-research/           # Numerical validation code (C++)
-archive/            # Historical versions
-```
-
 ## Citation
 
-If you use this work, please cite:
-
 ```bibtex
-@article{towell2026masked,
+@misc{towell2026masked,
   title={Statistical Inference for Series Systems from Masked Failure Time Data: The Exponential Case},
   author={Towell, Alexander},
   year={2026},
-  url={https://github.com/queelius/expo-masked-fim}
+  doi={10.5281/zenodo.15151227}
 }
 ```
-
-Or use the [CITATION.cff](CITATION.cff) file for automatic citation in GitHub.
 
 ## License
 
@@ -59,6 +42,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Author
 
 **Alexander Towell**
-Southern Illinois University Edwardsville
-[atowell@siue.edu](mailto:atowell@siue.edu)
+[lex@metafunctor.com](mailto:lex@metafunctor.com)
 [ORCID: 0000-0001-6443-9897](https://orcid.org/0000-0001-6443-9897)
